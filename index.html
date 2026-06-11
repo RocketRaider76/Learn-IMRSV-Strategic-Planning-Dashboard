@@ -1,0 +1,1576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Learn New Mexico · Strategic Planning Platform</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Serif+Display&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --lnm-navy:#0f2240;--lnm-navy2:#1a3560;--lnm-gold:#d4a843;--lnm-gold2:#e8c06a;
+  --teal:#27a892;--teal2:#1d7a6b;--blue:#378add;--blue2:#185fa5;
+  --purple:#7f77dd;--coral:#d85a30;--green:#22a55a;
+  --text:#1a1a2e;--text2:#3a4a6b;--text3:#6b7a99;
+  --white:#ffffff;--surf:#f4f7fb;--bg:#eef2f8;--bord:#d0dbe8;--bord2:#b8c8d8;
+  --rad:10px;--rad2:16px;--rad3:20px;
+  --shadow:0 2px 12px rgba(0,0,0,.08);--shadow2:0 8px 32px rgba(0,0,0,.12);
+}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px}
+h1,h2,h3,h4{font-weight:600}
+button{font-family:'DM Sans',sans-serif;cursor:pointer}
+textarea,input,select{font-family:'DM Sans',sans-serif}
+
+/* ── LOADING SCREEN ── */
+#loadingScreen{position:fixed;inset:0;background:#0f2240;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;transition:opacity .4s}
+#loadingScreen.hide{opacity:0;pointer-events:none}
+.loading-logo{font-family:'DM Serif Display',serif;font-size:28px;color:#fff;margin-bottom:8px}
+.loading-sub{font-size:13px;color:rgba(255,255,255,.5);margin-bottom:32px}
+.loading-bar{width:200px;height:3px;background:rgba(255,255,255,.15);border-radius:10px;overflow:hidden}
+.loading-fill{height:100%;background:var(--lnm-gold);border-radius:10px;animation:loadProg 1.5s ease forwards}
+@keyframes loadProg{from{width:0}to{width:100%}}
+
+/* ── LOGIN ── */
+#loginScreen{display:none;min-height:100vh;background:linear-gradient(135deg,#0b1b33 0%,#0f2240 60%,#0d3050 100%);align-items:center;justify-content:center;padding:20px}
+#loginScreen.show{display:flex}
+.login-wrap{width:100%;max-width:420px}
+.login-brand{text-align:center;margin-bottom:32px}
+.login-brand h1{font-family:'DM Serif Display',serif;font-size:26px;font-weight:400;color:#fff}
+.login-brand p{font-size:13px;color:rgba(255,255,255,.5);margin-top:4px}
+.login-card{background:#fff;border-radius:var(--rad2);padding:36px;box-shadow:var(--shadow2)}
+.login-tabs{display:grid;grid-template-columns:1fr 1fr;gap:0;border:1.5px solid var(--bord);border-radius:10px;overflow:hidden;margin-bottom:24px}
+.ltab{padding:10px;text-align:center;font-size:12px;font-weight:700;cursor:pointer;background:var(--surf);color:var(--text3);border:none;transition:all .2s;letter-spacing:.03em;text-transform:uppercase}
+.ltab.on{background:var(--lnm-navy);color:#fff}
+.login-field{margin-bottom:14px}
+.login-field label{display:block;font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:5px}
+.login-field input{width:100%;padding:10px 13px;border-radius:8px;border:1.5px solid var(--bord);background:var(--surf);font-size:13px;color:var(--text);outline:none;transition:border-color .2s}
+.login-field input:focus{border-color:var(--lnm-navy);background:#fff}
+.login-btn{width:100%;padding:12px;border-radius:10px;background:var(--lnm-navy);color:#fff;font-size:13px;font-weight:700;border:none;margin-top:8px;transition:background .2s;letter-spacing:.03em}
+.login-btn:hover{background:var(--lnm-navy2)}
+.login-err{font-size:12px;color:#c0392b;margin-top:10px;min-height:16px;font-weight:500;text-align:center}
+.login-footer{text-align:center;font-size:11px;color:rgba(255,255,255,.3);margin-top:20px}
+
+/* ── APP SHELL ── */
+#adminApp,#clientApp{display:none;min-height:100vh}
+#adminApp.show,#clientApp.show{display:flex;flex-direction:column}
+
+/* ── ADMIN APP ── */
+#adminApp{background:#0f2240}
+.admin-topbar{background:#0a1a33;padding:0 24px;display:flex;align-items:center;gap:0;border-bottom:1px solid rgba(255,255,255,.08);flex-shrink:0;height:56px}
+.admin-brand{font-family:'DM Serif Display',serif;font-size:16px;color:#fff;font-weight:400;margin-right:32px;white-space:nowrap}
+.admin-brand span{color:var(--lnm-gold);font-size:12px;font-family:'DM Sans',sans-serif;font-weight:600;display:block;margin-top:-2px}
+.admin-tabs{display:flex;gap:2px;flex:1}
+.admin-tab{padding:0 18px;height:56px;display:flex;align-items:center;gap:7px;font-size:12px;font-weight:600;color:rgba(255,255,255,.45);border:none;background:none;border-bottom:2px solid transparent;transition:all .2s;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}
+.admin-tab:hover{color:rgba(255,255,255,.8)}
+.admin-tab.on{color:#fff;border-bottom-color:var(--lnm-gold)}
+.admin-topbar-right{display:flex;align-items:center;gap:10px;margin-left:auto}
+.topbar-badge{font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;white-space:nowrap}
+.topbar-badge.admin{background:rgba(212,168,67,.18);color:var(--lnm-gold);border:1px solid rgba(212,168,67,.3)}
+.sign-out-btn{background:transparent;border:1px solid rgba(255,255,255,.15);border-radius:7px;padding:6px 12px;font-size:11px;font-weight:600;color:rgba(255,255,255,.5);transition:all .2s}
+.sign-out-btn:hover{border-color:rgba(255,255,255,.3);color:rgba(255,255,255,.8)}
+.admin-body{flex:1;overflow-y:auto;padding:24px;background:var(--bg)}
+.admin-panel{display:none}.admin-panel.on{display:block}
+
+/* ── CLIENT APP ── */
+#clientApp{background:var(--bg)}
+.client-topbar{background:#fff;border-bottom:1px solid var(--bord);padding:0 24px;display:flex;align-items:center;gap:0;flex-shrink:0;height:56px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.client-brand{font-size:15px;font-weight:700;color:var(--lnm-navy);margin-right:32px;white-space:nowrap}
+.client-brand span{color:var(--text3);font-size:11px;font-weight:500;display:block;margin-top:-2px}
+.client-tabs{display:flex;gap:2px;flex:1}
+.client-tab{padding:0 16px;height:56px;display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--text3);border:none;background:none;border-bottom:2px solid transparent;transition:all .2s;white-space:nowrap}
+.client-tab:hover{color:var(--text)}
+.client-tab.on{color:var(--lnm-navy);border-bottom-color:var(--lnm-navy)}
+.client-topbar-right{display:flex;align-items:center;gap:10px;margin-left:auto}
+.client-user-badge{font-size:11px;font-weight:600;color:var(--text3)}
+.client-body{flex:1;overflow-y:auto;padding:24px;max-width:860px;margin:0 auto;width:100%}
+.client-panel{display:none}.client-panel.on{display:block}
+
+/* ── SHARED COMPONENTS ── */
+.page-header{margin-bottom:24px}
+.page-header h2{font-size:20px;font-weight:700;color:var(--text)}
+.page-header p{font-size:13px;color:var(--text3);margin-top:3px}
+.card{background:#fff;border:1px solid var(--bord);border-radius:var(--rad2);padding:20px;margin-bottom:16px;box-shadow:var(--shadow)}
+.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;gap:12px;flex-wrap:wrap}
+.card-title{font-size:14px;font-weight:700;color:var(--text)}
+.card-sub{font-size:12px;color:var(--text3);margin-top:2px}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:8px;font-size:12px;font-weight:700;border:none;transition:all .2s;white-space:nowrap;letter-spacing:.02em}
+.btn-primary{background:var(--lnm-navy);color:#fff}.btn-primary:hover{background:var(--lnm-navy2)}
+.btn-gold{background:var(--lnm-gold);color:var(--lnm-navy)}.btn-gold:hover{background:var(--lnm-gold2)}
+.btn-teal{background:var(--teal);color:#fff}.btn-teal:hover{background:var(--teal2)}
+.btn-ghost{background:var(--surf);color:var(--text2);border:1px solid var(--bord2)}.btn-ghost:hover{background:var(--bord)}
+.btn-danger{background:#fff0f0;color:#c0392b;border:1px solid #f5c6cb}.btn-danger:hover{background:#ffe0e0}
+.btn-sm{padding:5px 10px;font-size:11px}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:.04em}
+.badge-gold{background:rgba(212,168,67,.12);color:#8a6200;border:1px solid rgba(212,168,67,.25)}
+.badge-teal{background:rgba(39,168,146,.1);color:var(--teal2);border:1px solid rgba(39,168,146,.2)}
+.badge-blue{background:rgba(55,138,221,.1);color:var(--blue2);border:1px solid rgba(55,138,221,.2)}
+.badge-gray{background:var(--surf);color:var(--text3);border:1px solid var(--bord2)}
+.badge-green{background:rgba(34,165,90,.1);color:#1a7a40;border:1px solid rgba(34,165,90,.2)}
+.badge-red{background:#fff0f0;color:#c0392b;border:1px solid #f5c6cb}
+.tag-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.divider{height:1px;background:var(--bord);margin:16px 0}
+.empty-state{text-align:center;padding:48px 20px;color:var(--text3)}
+.empty-state i{font-size:36px;margin-bottom:12px;display:block;opacity:.4}
+.empty-state p{font-size:13px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.form-field{margin-bottom:12px}
+.form-field label{display:block;font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px}
+.form-field input,.form-field select,.form-field textarea{width:100%;padding:9px 12px;border-radius:8px;border:1.5px solid var(--bord);background:var(--surf);font-size:13px;color:var(--text);outline:none;transition:border-color .2s;font-family:inherit}
+.form-field input:focus,.form-field select:focus,.form-field textarea:focus{border-color:var(--lnm-navy);background:#fff}
+.form-field textarea{min-height:80px;resize:vertical}
+
+/* ── GAUGE ── */
+.gauge-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:20px}
+.gauge-card{background:#fff;border:1px solid var(--bord);border-radius:var(--rad);padding:14px 10px;text-align:center;box-shadow:var(--shadow)}
+.gauge-svg{display:block;margin:0 auto 6px}
+.gauge-pct{font-size:20px;font-weight:700;line-height:1}
+.gauge-label{font-size:11px;font-weight:600;color:var(--text);margin-top:3px;line-height:1.3}
+.gauge-status{font-size:10px;color:var(--text3);margin-top:2px}
+.gauge-slider{width:100%;margin-top:8px;accent-color:var(--lnm-navy)}
+
+/* ── PHASE CARDS (drag) ── */
+.phases-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:20px}
+.phase-card{background:#fff;border:1.5px solid var(--bord);border-radius:var(--rad);padding:12px;cursor:grab;position:relative;overflow:hidden;transition:all .2s}
+.phase-card:hover{box-shadow:var(--shadow2);border-color:var(--bord2)}
+.phase-card.dragging{opacity:.5;cursor:grabbing}
+.phase-card.drag-over{border-color:var(--lnm-gold);background:#fffbe8}
+.phase-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.phase-card.status-done::before{background:var(--teal)}
+.phase-card.status-active::before{background:var(--lnm-gold)}
+.phase-card.status-pending::before{background:var(--bord2)}
+.phase-num{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:3px}
+.phase-card.status-done .phase-num{color:var(--teal)}
+.phase-card.status-active .phase-num{color:var(--lnm-gold)}
+.phase-name{font-size:12px;font-weight:600;color:var(--text);line-height:1.3}
+.phase-meta{font-size:10px;color:var(--text3);margin-top:3px}
+.phase-dot{width:16px;height:16px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:8px;margin-top:6px}
+.phase-dot.done{background:rgba(39,168,146,.15);color:var(--teal)}
+.phase-dot.active{background:rgba(212,168,67,.15);color:var(--lnm-gold)}
+.phase-dot.pending{background:var(--surf);color:var(--text3)}
+
+/* ── STAT CARDS ── */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px}
+.stat-card{background:#fff;border:1px solid var(--bord);border-radius:var(--rad);padding:16px;box-shadow:var(--shadow)}
+.stat-val{font-size:26px;font-weight:700;line-height:1;margin-bottom:4px}
+.stat-label{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.07em}
+.stat-sub{font-size:11px;color:var(--text3);margin-top:2px}
+
+/* ── FORMS LIST ── */
+.forms-list{display:flex;flex-direction:column;gap:10px}
+.form-item{background:#fff;border:1px solid var(--bord);border-radius:var(--rad);padding:16px;display:flex;align-items:center;gap:14px;box-shadow:var(--shadow);transition:border-color .2s}
+.form-item:hover{border-color:var(--bord2)}
+.form-item-icon{width:40px;height:40px;border-radius:10px;background:var(--surf);border:1px solid var(--bord2);display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--lnm-navy);flex-shrink:0}
+.form-item-info{flex:1}
+.form-item-name{font-size:13px;font-weight:700;color:var(--text)}
+.form-item-meta{font-size:11px;color:var(--text3);margin-top:2px}
+.form-item-actions{display:flex;gap:6px;flex-shrink:0}
+
+/* ── FORM BUILDER ── */
+.builder-wrap{display:grid;grid-template-columns:1fr 320px;gap:16px;align-items:start}
+.builder-canvas{background:#fff;border:1px solid var(--bord);border-radius:var(--rad2);padding:20px;min-height:400px}
+.builder-sidebar{position:sticky;top:16px}
+.question-item{background:var(--surf);border:1.5px solid var(--bord);border-radius:var(--rad);padding:14px;margin-bottom:8px;cursor:grab;position:relative;transition:all .2s}
+.question-item:hover{border-color:var(--bord2);box-shadow:var(--shadow)}
+.question-item.dragging{opacity:.4;cursor:grabbing}
+.question-item.drag-over{border-color:var(--lnm-gold);background:#fffbe8}
+.q-drag-handle{position:absolute;left:8px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:14px;cursor:grab}
+.q-content{padding-left:20px}
+.q-label{font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px}
+.q-type-badge{font-size:10px;font-weight:600;padding:2px 6px;border-radius:4px;background:var(--bord);color:var(--text3);margin-left:6px}
+.q-actions{position:absolute;right:8px;top:8px;display:flex;gap:4px}
+.q-action-btn{width:24px;height:24px;border-radius:5px;border:none;background:transparent;color:var(--text3);display:flex;align-items:center;justify-content:center;font-size:12px;transition:all .15s}
+.q-action-btn:hover{background:var(--bord);color:var(--text)}
+.q-action-btn.danger:hover{background:#fff0f0;color:#c0392b}
+.field-type-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.field-type-btn{padding:10px 8px;border-radius:8px;border:1.5px solid var(--bord);background:var(--surf);text-align:center;cursor:pointer;transition:all .2s;font-size:11px;font-weight:600;color:var(--text2)}
+.field-type-btn:hover{border-color:var(--lnm-navy);color:var(--lnm-navy);background:#eef2f8}
+.field-type-btn i{display:block;font-size:18px;margin-bottom:4px;color:var(--text3)}
+.field-type-btn:hover i{color:var(--lnm-navy)}
+
+/* ── CLIENTS TABLE ── */
+.clients-table{width:100%;border-collapse:collapse}
+.clients-table th{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);padding:8px 12px;text-align:left;border-bottom:1px solid var(--bord)}
+.clients-table td{padding:10px 12px;border-bottom:1px solid var(--bord);font-size:12px;color:var(--text2);vertical-align:middle}
+.clients-table tr:last-child td{border-bottom:none}
+.clients-table tr:hover td{background:var(--surf)}
+.client-av{width:28px;height:28px;border-radius:50%;background:var(--lnm-navy);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;margin-right:8px;vertical-align:middle;flex-shrink:0}
+
+/* ── REPORTS ── */
+.completion-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px}
+.completion-card{background:#fff;border:1px solid var(--bord);border-radius:var(--rad);padding:16px;box-shadow:var(--shadow)}
+.completion-card h4{font-size:13px;font-weight:700;margin-bottom:12px;color:var(--text)}
+.client-completion-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.ccr-name{font-size:12px;color:var(--text2);flex:1}
+.ccr-bar{flex:2;height:6px;background:var(--surf);border-radius:10px;overflow:hidden;border:1px solid var(--bord)}
+.ccr-fill{height:100%;background:var(--teal);border-radius:10px;transition:width .4s}
+.ccr-pct{font-size:11px;font-weight:600;color:var(--text3);min-width:30px;text-align:right}
+
+/* ── CLIENT VIEW ── */
+.client-hero{background:linear-gradient(135deg,var(--lnm-navy) 0%,var(--lnm-navy2) 100%);border-radius:var(--rad2);padding:28px;margin-bottom:20px;position:relative;overflow:hidden}
+.client-hero::before{content:'';position:absolute;top:-40px;right:-40px;width:200px;height:200px;border-radius:50%;background:rgba(212,168,67,.07)}
+.client-hero h2{font-family:'DM Serif Display',serif;font-size:22px;font-weight:400;color:#fff;margin-bottom:4px}
+.client-hero p{font-size:12px;color:rgba(255,255,255,.5)}
+.client-hero-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:20px}
+.chs{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:var(--rad);padding:12px}
+.chs-val{font-size:22px;font-weight:700;color:#fff}
+.chs-lbl{font-size:10px;color:rgba(255,255,255,.45);text-transform:uppercase;letter-spacing:.07em;margin-top:2px}
+
+/* CLIENT FORM VIEW */
+.client-form-card{background:#fff;border:1px solid var(--bord);border-radius:var(--rad2);padding:20px;margin-bottom:16px;box-shadow:var(--shadow)}
+.cfc-header{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:16px}
+.cfc-title{font-size:15px;font-weight:700;color:var(--text)}
+.cfc-meta{font-size:12px;color:var(--text3);margin-top:2px}
+.cfc-progress{font-size:11px;font-weight:600;color:var(--teal);background:rgba(39,168,146,.1);border:1px solid rgba(39,168,146,.2);border-radius:20px;padding:3px 10px;white-space:nowrap}
+.client-question{margin-bottom:18px}
+.client-question .q-text{font-size:13px;font-weight:600;color:var(--text);margin-bottom:8px;line-height:1.5}
+.client-question .q-required{color:#c0392b;margin-left:3px}
+.client-input{width:100%;padding:9px 12px;border-radius:8px;border:1.5px solid var(--bord);background:var(--surf);font-size:13px;color:var(--text);outline:none;transition:border-color .2s;font-family:inherit}
+.client-input:focus{border-color:var(--lnm-navy);background:#fff}
+.client-textarea{width:100%;min-height:80px;padding:9px 12px;border-radius:8px;border:1.5px solid var(--bord);background:var(--surf);font-size:13px;color:var(--text);outline:none;resize:vertical;font-family:inherit;transition:border-color .2s}
+.client-textarea:focus{border-color:var(--lnm-navy);background:#fff}
+.mc-option{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:8px;border:1.5px solid var(--bord);background:var(--surf);margin-bottom:6px;cursor:pointer;transition:all .2s;font-size:13px;color:var(--text2)}
+.mc-option:hover{border-color:var(--bord2);background:#fff}
+.mc-option.selected{border-color:var(--lnm-navy);background:#eef2f8;color:var(--lnm-navy);font-weight:600}
+.mc-option input{accent-color:var(--lnm-navy);width:14px;height:14px}
+.star-rating{display:flex;gap:6px}
+.star-btn{width:32px;height:32px;border-radius:6px;border:1.5px solid var(--bord);background:var(--surf);font-size:18px;color:var(--text3);display:flex;align-items:center;justify-content:center;transition:all .15s}
+.star-btn.on{background:#faeeda;border-color:var(--lnm-gold);color:#854f0b}
+.save-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-top:16px;border-top:1px solid var(--bord);margin-top:4px;flex-wrap:wrap}
+.save-status{font-size:12px;color:var(--text3);display:flex;align-items:center;gap:6px}
+.save-status.saved{color:var(--teal)}
+
+/* ── MODAL ── */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(2px)}
+.modal-overlay.open{display:flex}
+.modal{background:#fff;border-radius:var(--rad2);padding:28px;max-width:560px;width:100%;max-height:85vh;overflow-y:auto;box-shadow:var(--shadow2)}
+.modal-header{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:20px}
+.modal-header h3{font-size:16px;font-weight:700;color:var(--text)}
+.modal-header p{font-size:12px;color:var(--text3);margin-top:3px}
+.modal-close{background:none;border:none;font-size:20px;color:var(--text3);line-height:1;padding:0;flex-shrink:0}
+.modal-footer{display:flex;justify-content:flex-end;gap:8px;margin-top:20px;padding-top:16px;border-top:1px solid var(--bord)}
+
+/* ── SETTINGS ── */
+.settings-section{margin-bottom:24px}
+.settings-section h3{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--bord)}
+.color-preview{width:32px;height:32px;border-radius:6px;border:1px solid var(--bord);display:inline-block;vertical-align:middle;margin-left:8px}
+
+/* ── PROGRESS BAR ── */
+.prog-bar{height:6px;background:var(--surf);border-radius:10px;overflow:hidden;border:1px solid var(--bord);margin-top:4px}
+.prog-fill{height:100%;border-radius:10px;transition:width .5s;background:var(--teal)}
+.prog-fill.gold{background:var(--lnm-gold)}
+
+/* ── TOAST ── */
+#toast{position:fixed;bottom:24px;right:24px;background:#1a1a2e;color:#fff;padding:12px 20px;border-radius:10px;font-size:13px;font-weight:500;z-index:9999;transform:translateY(80px);opacity:0;transition:all .3s;box-shadow:var(--shadow2);display:flex;align-items:center;gap:8px}
+#toast.show{transform:translateY(0);opacity:1}
+#toast.success{background:#1a7a40}
+#toast.error{background:#c0392b}
+
+/* ── RESPONSIVE ── */
+@media(max-width:768px){
+  .gauge-grid{grid-template-columns:repeat(3,1fr)}
+  .phases-grid{grid-template-columns:repeat(3,1fr)}
+  .stats-row{grid-template-columns:repeat(2,1fr)}
+  .builder-wrap{grid-template-columns:1fr}
+  .form-row{grid-template-columns:1fr}
+  .admin-tab span{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- LOADING -->
+<div id="loadingScreen">
+  <div class="loading-logo">Learn New Mexico</div>
+  <div class="loading-sub">Strategic Planning Platform</div>
+  <div class="loading-bar"><div class="loading-fill"></div></div>
+</div>
+
+<!-- LOGIN -->
+<div id="loginScreen">
+  <div class="login-wrap">
+    <div class="login-brand">
+      <h1>Learn New Mexico</h1>
+      <p>Strategic Planning Platform</p>
+    </div>
+    <div class="login-card">
+      <div class="login-tabs">
+        <button class="ltab on" onclick="setLoginTab('admin',this)"><i class="ti ti-shield-check"></i> LNM Admin</button>
+        <button class="ltab" onclick="setLoginTab('client',this)"><i class="ti ti-user"></i> Client</button>
+      </div>
+      <div class="form-field"><label>Username</label><input type="text" id="loginUser" placeholder="Enter username" autocomplete="username"></div>
+      <div class="form-field"><label>Password</label><input type="password" id="loginPass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"></div>
+      <button class="login-btn" onclick="doLogin()"><i class="ti ti-lock"></i> Sign In</button>
+      <div class="login-err" id="loginErr"></div>
+    </div>
+    <div class="login-footer">Authorized users only · Learn New Mexico © 2025</div>
+  </div>
+</div>
+
+<!-- ADMIN APP -->
+<div id="adminApp">
+  <div class="admin-topbar">
+    <div class="admin-brand">Learn New Mexico <span>Strategic Planning Platform</span></div>
+    <div class="admin-tabs">
+      <button class="admin-tab on" onclick="adminTab('dashboard',this)"><i class="ti ti-layout-dashboard"></i> <span>Dashboard</span></button>
+      <button class="admin-tab" onclick="adminTab('forms',this)"><i class="ti ti-forms"></i> <span>Form Builder</span></button>
+      <button class="admin-tab" onclick="adminTab('clients',this)"><i class="ti ti-users"></i> <span>Clients</span></button>
+      <button class="admin-tab" onclick="adminTab('reports',this)"><i class="ti ti-chart-bar"></i> <span>Reports</span></button>
+      <button class="admin-tab" onclick="adminTab('settings',this)"><i class="ti ti-settings"></i> <span>Settings</span></button>
+    </div>
+    <div class="admin-topbar-right">
+      <div class="topbar-badge admin"><i class="ti ti-shield-check"></i> LNM Admin</div>
+      <button class="sign-out-btn" onclick="signOut()"><i class="ti ti-logout"></i> Sign out</button>
+    </div>
+  </div>
+  <div class="admin-body">
+
+    <!-- DASHBOARD TAB -->
+    <div class="admin-panel on" id="panel-dashboard">
+      <div class="page-header">
+        <h2>Dashboard Overview</h2>
+        <p>Platform-wide status across all districts and clients</p>
+      </div>
+      <div class="stats-row" id="adminStats">
+        <div class="stat-card"><div class="stat-val" style="color:var(--lnm-navy)" id="stat-districts">0</div><div class="stat-label">Districts</div><div class="stat-sub">Active deployments</div></div>
+        <div class="stat-card"><div class="stat-val" style="color:var(--teal)" id="stat-clients">0</div><div class="stat-label">Clients</div><div class="stat-sub">Across all districts</div></div>
+        <div class="stat-card"><div class="stat-val" style="color:var(--lnm-gold)" id="stat-forms">0</div><div class="stat-label">Forms</div><div class="stat-sub">Published & active</div></div>
+        <div class="stat-card"><div class="stat-val" style="color:var(--coral)" id="stat-responses">0</div><div class="stat-label">Responses</div><div class="stat-sub">Total submissions</div></div>
+      </div>
+      <div id="districtDashboards"></div>
+    </div>
+
+    <!-- FORMS TAB -->
+    <div class="admin-panel" id="panel-forms">
+      <div class="page-header" style="display:flex;align-items:center;justify-content:space-between">
+        <div><h2>Form Builder</h2><p>Create and manage forms across all districts</p></div>
+        <button class="btn btn-primary" onclick="openNewFormModal()"><i class="ti ti-plus"></i> New Form</button>
+      </div>
+      <div id="formsList"></div>
+    </div>
+
+    <!-- CLIENTS TAB -->
+    <div class="admin-panel" id="panel-clients">
+      <div class="page-header" style="display:flex;align-items:center;justify-content:space-between">
+        <div><h2>Client Manager</h2><p>Manage client accounts and form assignments per district</p></div>
+        <button class="btn btn-primary" onclick="openNewClientModal()"><i class="ti ti-user-plus"></i> Add Client</button>
+      </div>
+      <div id="clientsList"></div>
+    </div>
+
+    <!-- REPORTS TAB -->
+    <div class="admin-panel" id="panel-reports">
+      <div class="page-header"><h2>Reports</h2><p>Completion tracking and response exports across all districts</p></div>
+      <div id="reportsContent"></div>
+    </div>
+
+    <!-- SETTINGS TAB -->
+    <div class="admin-panel" id="panel-settings">
+      <div class="page-header"><h2>Settings</h2><p>Configure districts, phases, and platform defaults</p></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start">
+        <div>
+          <div class="card">
+            <div class="settings-section">
+              <h3><i class="ti ti-building"></i> Districts</h3>
+              <div id="districtsList" style="margin-bottom:12px"></div>
+              <button class="btn btn-primary btn-sm" onclick="openNewDistrictModal()"><i class="ti ti-plus"></i> Add District</button>
+            </div>
+          </div>
+          <div class="card">
+            <div class="settings-section">
+              <h3><i class="ti ti-lock"></i> Admin Credentials</h3>
+              <div class="form-field"><label>Username</label><input type="text" id="adminUsernameInput" value="admin"></div>
+              <div class="form-field"><label>New Password</label><input type="password" id="adminPasswordInput" placeholder="Leave blank to keep current"></div>
+              <button class="btn btn-ghost btn-sm" onclick="saveAdminCreds()"><i class="ti ti-check"></i> Save credentials</button>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="card">
+            <div class="settings-section">
+              <h3><i class="ti ti-timeline"></i> Phase Configuration</h3>
+              <p style="font-size:12px;color:var(--text3);margin-bottom:12px">Drag to reorder phases. Changes apply to all districts.</p>
+              <div id="phaseSettingsList"></div>
+              <button class="btn btn-ghost btn-sm" style="margin-top:8px" onclick="addPhase()"><i class="ti ti-plus"></i> Add Phase</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- CLIENT APP -->
+<div id="clientApp">
+  <div class="client-topbar">
+    <div class="client-brand" id="clientBrandName">District <span id="clientBrandSub">Strategic Planning</span></div>
+    <div class="client-tabs">
+      <button class="client-tab on" onclick="clientTab('overview',this)"><i class="ti ti-layout-dashboard"></i> Overview</button>
+      <button class="client-tab" onclick="clientTab('myforms',this)"><i class="ti ti-forms"></i> My Forms</button>
+      <button class="client-tab" onclick="clientTab('progress',this)"><i class="ti ti-chart-bar"></i> My Progress</button>
+    </div>
+    <div class="client-topbar-right">
+      <span class="client-user-badge" id="clientUserLabel"></span>
+      <button class="sign-out-btn" style="color:var(--text3);border-color:var(--bord)" onclick="signOut()"><i class="ti ti-logout"></i> Sign out</button>
+    </div>
+  </div>
+  <div style="max-width:960px;margin:0 auto;padding:0 20px;width:100%">
+  <div class="client-body">
+
+    <!-- OVERVIEW TAB -->
+    <div class="client-panel on" id="cpanel-overview">
+      <div class="client-hero">
+        <h2 id="clientDistrictName">Strategic Planning Dashboard</h2>
+        <p id="clientDistrictSub">Fiscal Year 2025–2026 · Learn New Mexico</p>
+        <div class="client-hero-stats">
+          <div class="chs"><div class="chs-val" id="clientStatForms">0</div><div class="chs-lbl">Forms assigned</div></div>
+          <div class="chs"><div class="chs-val" id="clientStatCompleted">0</div><div class="chs-lbl">Completed</div></div>
+          <div class="chs"><div class="chs-val" id="clientStatProgress">0%</div><div class="chs-lbl">Overall progress</div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div><div class="card-title">Phase Timeline</div><div class="card-sub">Current strategic planning progress</div></div></div>
+        <div class="phases-grid" id="clientPhaseGrid"></div>
+        <div class="gauge-grid" id="clientGaugeGrid"></div>
+      </div>
+    </div>
+
+    <!-- MY FORMS TAB -->
+    <div class="client-panel" id="cpanel-myforms">
+      <div class="page-header"><h2>My Forms</h2><p>Complete the forms assigned to you by your LNM administrator</p></div>
+      <div id="clientFormsList"></div>
+    </div>
+
+    <!-- MY PROGRESS TAB -->
+    <div class="client-panel" id="cpanel-progress">
+      <div class="page-header"><h2>My Progress</h2><p>Track your form completion status</p></div>
+      <div id="clientProgressContent"></div>
+    </div>
+
+  </div>
+  </div>
+</div>
+
+<!-- MODALS -->
+<div class="modal-overlay" id="modal-newForm">
+  <div class="modal">
+    <div class="modal-header">
+      <div><h3 id="formModalTitle">Create New Form</h3><p>Build a form to assign to district clients</p></div>
+      <button class="modal-close" onclick="closeModal('modal-newForm')"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="form-row">
+      <div class="form-field"><label>Form Title</label><input type="text" id="fmTitle" placeholder="e.g. Phase 1 Discovery Survey"></div>
+      <div class="form-field"><label>District</label><select id="fmDistrict"></select></div>
+    </div>
+    <div class="form-row">
+      <div class="form-field"><label>Phase (optional)</label><select id="fmPhase"><option value="">Not tied to a phase</option></select></div>
+      <div class="form-field"><label>Status</label><select id="fmStatus"><option value="draft">Draft</option><option value="active">Active</option></select></div>
+    </div>
+    <div class="form-field"><label>Description</label><textarea id="fmDesc" placeholder="Brief description of this form's purpose..."></textarea></div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-newForm')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveForm()"><i class="ti ti-check"></i> Save & Open Builder</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-newClient">
+  <div class="modal">
+    <div class="modal-header">
+      <div><h3>Add Client</h3><p>Create a client account and assign forms</p></div>
+      <button class="modal-close" onclick="closeModal('modal-newClient')"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="form-row">
+      <div class="form-field"><label>Display Name</label><input type="text" id="clName" placeholder="e.g. Jane Smith"></div>
+      <div class="form-field"><label>District</label><select id="clDistrict"></select></div>
+    </div>
+    <div class="form-row">
+      <div class="form-field"><label>Username</label><input type="text" id="clUsername" placeholder="e.g. jsmith"></div>
+      <div class="form-field"><label>Password</label><input type="password" id="clPassword" placeholder="Set password"></div>
+    </div>
+    <div class="form-field"><label>Assign Forms</label><div id="clFormAssign" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:4px"></div></div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-newClient')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveClient()"><i class="ti ti-check"></i> Add Client</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-newDistrict">
+  <div class="modal">
+    <div class="modal-header">
+      <div><h3>Add District</h3><p>Create a new district deployment</p></div>
+      <button class="modal-close" onclick="closeModal('modal-newDistrict')"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="form-field"><label>District Name</label><input type="text" id="dName" placeholder="e.g. Portales Municipal School District"></div>
+    <div class="form-row">
+      <div class="form-field"><label>Short Name / Abbreviation</label><input type="text" id="dShort" placeholder="e.g. PMSD"></div>
+      <div class="form-field"><label>Fiscal Year</label><input type="text" id="dFY" placeholder="e.g. 2025–2026"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-newDistrict')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveDistrict()"><i class="ti ti-check"></i> Create District</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-formBuilder">
+  <div class="modal" style="max-width:760px">
+    <div class="modal-header">
+      <div><h3 id="builderFormName">Form Builder</h3><p id="builderFormMeta">Add and arrange questions</p></div>
+      <button class="modal-close" onclick="closeModal('modal-formBuilder')"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="builder-wrap">
+      <div>
+        <div style="margin-bottom:12px;display:flex;align-items:center;justify-content:space-between">
+          <span style="font-size:12px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em">Questions</span>
+          <span style="font-size:11px;color:var(--text3)" id="builderQCount">0 questions</span>
+        </div>
+        <div id="builderQuestions"></div>
+        <div id="builderEmpty" class="empty-state" style="padding:24px"><i class="ti ti-plus-circle"></i><p>Add your first question using the field types on the right</p></div>
+      </div>
+      <div class="builder-sidebar">
+        <div class="card" style="padding:14px">
+          <div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px">Add Field</div>
+          <div class="field-type-grid">
+            <div class="field-type-btn" onclick="addQuestion('text')"><i class="ti ti-text-size"></i>Short Text</div>
+            <div class="field-type-btn" onclick="addQuestion('textarea')"><i class="ti ti-align-left"></i>Long Text</div>
+            <div class="field-type-btn" onclick="addQuestion('radio')"><i class="ti ti-circle-dot"></i>Multiple Choice</div>
+            <div class="field-type-btn" onclick="addQuestion('checkbox')"><i class="ti ti-checkbox"></i>Checkboxes</div>
+            <div class="field-type-btn" onclick="addQuestion('rating')"><i class="ti ti-star"></i>Rating</div>
+            <div class="field-type-btn" onclick="addQuestion('number')"><i class="ti ti-numbers"></i>Number</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-formBuilder')">Close</button>
+      <button class="btn btn-gold" onclick="saveBuilderQuestions()"><i class="ti ti-upload"></i> Save & Publish Form</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-editQuestion">
+  <div class="modal">
+    <div class="modal-header">
+      <div><h3>Edit Question</h3></div>
+      <button class="modal-close" onclick="closeModal('modal-editQuestion')"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="form-field"><label>Question Text</label><input type="text" id="eqText" placeholder="Enter your question..."></div>
+    <div class="form-field"><label>Helper text (optional)</label><input type="text" id="eqHelper" placeholder="Additional instructions for the respondent..."></div>
+    <div id="eqOptionsWrap" style="display:none">
+      <div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Options</div>
+      <div id="eqOptionsList"></div>
+      <button class="btn btn-ghost btn-sm" onclick="addOption()" style="margin-top:6px"><i class="ti ti-plus"></i> Add option</button>
+    </div>
+    <div class="form-field" style="margin-top:8px">
+      <label><input type="checkbox" id="eqRequired" style="margin-right:6px;accent-color:var(--lnm-navy)"> Required field</label>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-editQuestion')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveQuestion()"><i class="ti ti-check"></i> Save Question</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-viewResponses">
+  <div class="modal" style="max-width:700px">
+    <div class="modal-header">
+      <div><h3 id="respModalTitle">Form Responses</h3><p id="respModalMeta"></p></div>
+      <button class="modal-close" onclick="closeModal('modal-viewResponses')"><i class="ti ti-x"></i></button>
+    </div>
+    <div id="responsesContent"></div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-viewResponses')">Close</button>
+      <button class="btn btn-teal" onclick="exportResponsesCSV()"><i class="ti ti-download"></i> Export CSV</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"><i class="ti ti-check"></i> <span id="toastMsg">Saved</span></div>
+
+<script>
+// ════════════════════════════════════════════
+// STATE
+// ════════════════════════════════════════════
+let APP = {
+  role: null,
+  currentUser: null,
+  currentDistrict: null,
+  adminCreds: { u: 'admin', p: 'lnm2025' },
+  districts: [
+    { id: 'pmsd', name: 'Portales Municipal School District', short: 'PMSD', fy: '2025–2026' }
+  ],
+  phases: [
+    { id: 'p1', name: 'Discovery & Audit', month: 'June', order: 1 },
+    { id: 'p2', name: 'Stakeholder Engagement', month: 'Jul–Aug', order: 2 },
+    { id: 'p3', name: 'Plan Development', month: 'September', order: 3 },
+    { id: 'p4', name: 'Refinement & Adoption', month: 'October', order: 4 },
+    { id: 'p5', name: 'Implementation', month: 'Ongoing', order: 5 }
+  ],
+  forms: [],
+  clients: [
+    { id: 'c1', name: 'Client User 1', u: 'client1', p: 'pmsd2025', district: 'pmsd', forms: [] },
+    { id: 'c2', name: 'Client User 2', u: 'client2', p: 'pmsd2025', district: 'pmsd', forms: [] }
+  ],
+  responses: {},
+  phaseProgress: {},
+  currentBuilderFormId: null,
+  currentEditQIdx: null
+};
+
+// ════════════════════════════════════════════
+// INIT
+// ════════════════════════════════════════════
+window.addEventListener('load', async () => {
+  try { await loadFromBlobs(); } catch(e) { console.warn('Blob load failed, using defaults:', e); }
+  setTimeout(() => {
+    document.getElementById('loadingScreen').classList.add('hide');
+    document.getElementById('loginScreen').classList.add('show');
+  }, 1600);
+});
+
+// ════════════════════════════════════════════
+// NETLIFY BLOBS API
+// ════════════════════════════════════════════
+async function loadFromBlobs() {
+  const res = await fetch('/.netlify/functions/load-config');
+  if (!res.ok) return;
+  const data = await res.json();
+  if (data.ok && data.config) {
+    const c = data.config;
+    if (c.adminCreds) APP.adminCreds = c.adminCreds;
+    if (c.districts && c.districts.length) APP.districts = c.districts;
+    if (c.phases && c.phases.length) APP.phases = c.phases;
+    if (c.forms) APP.forms = c.forms;
+    if (c.clients && c.clients.length) APP.clients = c.clients;
+    if (c.phaseProgress) APP.phaseProgress = c.phaseProgress;
+  }
+}
+
+async function saveToBlobs() {
+  try {
+    await fetch('/.netlify/functions/save-config', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ config: {
+        adminCreds: APP.adminCreds,
+        districts: APP.districts,
+        phases: APP.phases,
+        forms: APP.forms,
+        clients: APP.clients,
+        phaseProgress: APP.phaseProgress
+      }})
+    });
+  } catch(e) { console.warn('Save failed:', e); }
+}
+
+async function saveResponse(username, formId, answers) {
+  try {
+    await fetch('/.netlify/functions/save-response', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, formId, answers, savedAt: new Date().toISOString() })
+    });
+  } catch(e) { console.warn('Response save failed:', e); }
+}
+
+async function loadMyResponses(username) {
+  try {
+    const res = await fetch(`/.netlify/functions/load-my-responses?username=${encodeURIComponent(username)}`);
+    const data = await res.json();
+    if (data.ok && data.responses) APP.responses[username] = data.responses;
+  } catch(e) { console.warn('Load responses failed:', e); }
+}
+
+async function loadAllResponses() {
+  try {
+    const res = await fetch('/.netlify/functions/load-responses');
+    const data = await res.json();
+    if (data.ok && data.responses) APP.responses = data.responses;
+  } catch(e) { console.warn('Load all responses failed:', e); }
+}
+
+// ════════════════════════════════════════════
+// LOGIN
+// ════════════════════════════════════════════
+let loginTab = 'admin';
+function setLoginTab(t, el) {
+  loginTab = t;
+  document.querySelectorAll('.ltab').forEach(x => x.classList.remove('on'));
+  el.classList.add('on');
+}
+
+async function doLogin() {
+  const u = document.getElementById('loginUser').value.trim();
+  const p = document.getElementById('loginPass').value;
+  const err = document.getElementById('loginErr');
+  err.textContent = '';
+  if (!u || !p) { err.textContent = 'Please enter username and password.'; return; }
+
+  if (loginTab === 'admin') {
+    if (u === APP.adminCreds.u && p === APP.adminCreds.p) {
+      APP.role = 'admin'; APP.currentUser = 'admin';
+      await loadAllResponses();
+      launchAdmin();
+    } else { err.textContent = 'Invalid admin credentials.'; }
+  } else {
+    const client = APP.clients.find(c => c.u === u && c.p === p);
+    if (client) {
+      APP.role = 'client'; APP.currentUser = u; APP.currentDistrict = client.district;
+      await loadMyResponses(u);
+      launchClient(client);
+    } else { err.textContent = 'Invalid credentials. Please try again.'; }
+    document.getElementById('loginPass').value = '';
+  }
+}
+
+function signOut() {
+  APP.role = null; APP.currentUser = null; APP.currentDistrict = null;
+  document.getElementById('adminApp').classList.remove('show');
+  document.getElementById('clientApp').classList.remove('show');
+  document.getElementById('loginScreen').classList.add('show');
+  document.getElementById('loginUser').value = '';
+  document.getElementById('loginPass').value = '';
+}
+
+// ════════════════════════════════════════════
+// ADMIN LAUNCH
+// ════════════════════════════════════════════
+function launchAdmin() {
+  document.getElementById('loginScreen').classList.remove('show');
+  document.getElementById('adminApp').classList.add('show');
+  renderAdminDashboard();
+  renderFormsList();
+  renderClientsList();
+  renderReports();
+  renderSettings();
+}
+
+function adminTab(name, el) {
+  document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('on'));
+  document.querySelectorAll('.admin-panel').forEach(p => p.classList.remove('on'));
+  el.classList.add('on');
+  document.getElementById('panel-' + name).classList.add('on');
+  if (name === 'dashboard') renderAdminDashboard();
+  if (name === 'forms') renderFormsList();
+  if (name === 'clients') renderClientsList();
+  if (name === 'reports') renderReports();
+  if (name === 'settings') renderSettings();
+}
+
+// ════════════════════════════════════════════
+// ADMIN DASHBOARD
+// ════════════════════════════════════════════
+function renderAdminDashboard() {
+  const totalResponses = Object.values(APP.responses).reduce((a,b) => a + Object.keys(b||{}).length, 0);
+  document.getElementById('stat-districts').textContent = APP.districts.length;
+  document.getElementById('stat-clients').textContent = APP.clients.length;
+  document.getElementById('stat-forms').textContent = APP.forms.filter(f=>f.status==='active').length;
+  document.getElementById('stat-responses').textContent = totalResponses;
+
+  const wrap = document.getElementById('districtDashboards');
+  wrap.innerHTML = '';
+  APP.districts.forEach(d => {
+    const distClients = APP.clients.filter(c => c.district === d.id);
+    const distForms = APP.forms.filter(f => f.district === d.id);
+    const prog = APP.phaseProgress[d.id] || {};
+
+    const div = document.createElement('div');
+    div.className = 'card';
+    div.innerHTML = `
+      <div class="card-header">
+        <div>
+          <div class="card-title"><i class="ti ti-building" style="margin-right:6px;color:var(--lnm-navy)"></i>${d.name}</div>
+          <div class="card-sub">${d.short} · FY ${d.fy}</div>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <span class="badge badge-blue"><i class="ti ti-users"></i> ${distClients.length} clients</span>
+          <span class="badge badge-gold"><i class="ti ti-forms"></i> ${distForms.length} forms</span>
+        </div>
+      </div>
+      <div class="gauge-grid" id="dg-${d.id}"></div>
+      <div style="display:flex;gap:8px;margin-top:4px;flex-wrap:wrap">
+        ${distClients.map(c => {
+          const assigned = c.forms || [];
+          const done = assigned.filter(fid => APP.responses[c.u] && APP.responses[c.u][fid]).length;
+          const pct = assigned.length ? Math.round((done/assigned.length)*100) : 0;
+          return `<div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text2)">
+            <span class="client-av" style="width:22px;height:22px;font-size:9px">${c.name.charAt(0)}</span>
+            ${c.name} — ${pct}%
+          </div>`;
+        }).join('')}
+      </div>`;
+    wrap.appendChild(div);
+    renderGauges('dg-'+d.id, d.id, true);
+  });
+}
+
+// ════════════════════════════════════════════
+// GAUGES
+// ════════════════════════════════════════════
+const PHASE_COLORS = ['#27a892','#d4a843','#378add','#7f77dd','#d85a30'];
+function gaugeArc(pct, color, size) {
+  const r=size/2-5,cx=size/2,cy=size/2,start=-210,sweep=240;
+  const a1=start*Math.PI/180,a2=(start+sweep*(pct/100))*Math.PI/180;
+  const x1=cx+r*Math.cos(a1),y1=cy+r*Math.sin(a1);
+  const x2=cx+r*Math.cos(a2),y2=cy+r*Math.sin(a2);
+  const la=sweep*(pct/100)>180?1:0;
+  const ax=(start+sweep)*Math.PI/180;
+  const x1f=cx+r*Math.cos(start*Math.PI/180),y1f=cy+r*Math.sin(start*Math.PI/180);
+  const xf=cx+r*Math.cos(ax),yf=cy+r*Math.sin(ax);
+  return `<svg class="gauge-svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
+    <path d="M ${x1f} ${y1f} A ${r} ${r} 0 1 1 ${xf} ${yf}" fill="none" stroke="#d0dbe8" stroke-width="4" stroke-linecap="round"/>
+    ${pct>0?`<path d="M ${x1} ${y1} A ${r} ${r} 0 ${la} 1 ${x2} ${y2}" fill="none" stroke="${color}" stroke-width="4" stroke-linecap="round"/>`:''}
+  </svg>`;
+}
+
+function renderGauges(containerId, districtId, isAdmin) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  container.innerHTML = '';
+  const prog = APP.phaseProgress[districtId] || {};
+  APP.phases.forEach((ph, i) => {
+    const pct = prog[ph.id] || 0;
+    const color = PHASE_COLORS[i % PHASE_COLORS.length];
+    const status = pct >= 100 ? 'Complete' : pct > 0 ? 'In progress' : 'Upcoming';
+    const card = document.createElement('div');
+    card.className = 'gauge-card';
+    card.id = `gauge-${districtId}-${ph.id}`;
+    card.innerHTML = `${gaugeArc(pct,color,72)}
+      <div class="gauge-pct" style="color:${color}" id="gpct-${districtId}-${ph.id}">${pct}%</div>
+      <div class="gauge-label">${ph.name}</div>
+      <div class="gauge-status">${status}</div>
+      ${isAdmin ? `<input type="range" class="gauge-slider" min="0" max="100" step="1" value="${pct}"
+        oninput="updateGauge('${districtId}','${ph.id}',+this.value,this)" aria-label="${ph.name} progress">` : ''}`;
+    container.appendChild(card);
+  });
+}
+
+function updateGauge(districtId, phaseId, val, slider) {
+  if (!APP.phaseProgress[districtId]) APP.phaseProgress[districtId] = {};
+  APP.phaseProgress[districtId][phaseId] = val;
+  const card = document.getElementById(`gauge-${districtId}-${phaseId}`);
+  if (card) {
+    const pctEl = document.getElementById(`gpct-${districtId}-${phaseId}`);
+    const i = APP.phases.findIndex(p=>p.id===phaseId);
+    const color = PHASE_COLORS[i % PHASE_COLORS.length];
+    const old = card.querySelector('svg');
+    if (old) { const t=document.createElement('div');t.innerHTML=gaugeArc(val,color,72);card.replaceChild(t.firstChild,old); }
+    if (pctEl) pctEl.textContent = val+'%';
+    card.querySelector('.gauge-status').textContent = val>=100?'Complete':val>0?'In progress':'Upcoming';
+  }
+  saveToBlobs();
+  // update client view if visible
+  renderClientPhaseGrid();
+  renderClientGaugeGrid();
+}
+
+// ════════════════════════════════════════════
+// FORMS
+// ════════════════════════════════════════════
+function renderFormsList() {
+  const wrap = document.getElementById('formsList');
+  if (!APP.forms.length) {
+    wrap.innerHTML = `<div class="empty-state"><i class="ti ti-forms"></i><p>No forms yet. Create your first form to get started.</p></div>`;
+    return;
+  }
+  wrap.innerHTML = '';
+  APP.districts.forEach(d => {
+    const dForms = APP.forms.filter(f => f.district === d.id);
+    if (!dForms.length) return;
+    const sec = document.createElement('div');
+    sec.innerHTML = `<div style="font-size:12px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin:16px 0 8px;display:flex;align-items:center;gap:8px">
+      <i class="ti ti-building" style="color:var(--lnm-navy)"></i> ${d.name} <span class="badge badge-blue">${dForms.length}</span></div>
+      <div class="forms-list" id="fl-${d.id}"></div>`;
+    wrap.appendChild(sec);
+    const list = document.getElementById('fl-'+d.id);
+    dForms.forEach(f => {
+      const qCount = (f.questions||[]).length;
+      const assigned = APP.clients.filter(c=>c.forms&&c.forms.includes(f.id)).length;
+      const item = document.createElement('div');
+      item.className = 'form-item';
+      item.innerHTML = `
+        <div class="form-item-icon"><i class="ti ti-clipboard-list"></i></div>
+        <div class="form-item-info">
+          <div class="form-item-name">${f.title}</div>
+          <div class="form-item-meta">${qCount} questions · ${assigned} clients assigned · Phase: ${f.phase||'Standalone'}</div>
+          <div class="tag-row">
+            <span class="badge ${f.status==='active'?'badge-green':'badge-gray'}">${f.status==='active'?'Active':'Draft'}</span>
+            ${f.desc?`<span class="badge badge-gray" style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${f.desc}</span>`:''}
+          </div>
+        </div>
+        <div class="form-item-actions">
+          <button class="btn btn-ghost btn-sm" onclick="openFormBuilder('${f.id}')"><i class="ti ti-pencil"></i> Edit</button>
+          <button class="btn btn-ghost btn-sm" onclick="openViewResponses('${f.id}')"><i class="ti ti-eye"></i> Responses</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteForm('${f.id}')"><i class="ti ti-trash"></i></button>
+        </div>`;
+      list.appendChild(item);
+    });
+  });
+}
+
+function openNewFormModal() {
+  populateDistrictSelects();
+  document.getElementById('fmTitle').value='';
+  document.getElementById('fmDesc').value='';
+  document.getElementById('fmStatus').value='draft';
+  const phSel = document.getElementById('fmPhase');
+  phSel.innerHTML = '<option value="">Not tied to a phase</option>';
+  APP.phases.forEach(p => phSel.innerHTML += `<option value="${p.id}">${p.name}</option>`);
+  document.getElementById('formModalTitle').textContent = 'Create New Form';
+  openModal('modal-newForm');
+}
+
+function saveForm() {
+  const title = document.getElementById('fmTitle').value.trim();
+  const district = document.getElementById('fmDistrict').value;
+  if (!title) { showToast('Please enter a form title','error'); return; }
+  const form = {
+    id: 'f'+Date.now(),
+    title,
+    district,
+    phase: document.getElementById('fmPhase').value,
+    status: document.getElementById('fmStatus').value,
+    desc: document.getElementById('fmDesc').value.trim(),
+    questions: [],
+    createdAt: new Date().toISOString()
+  };
+  APP.forms.push(form);
+  saveToBlobs();
+  closeModal('modal-newForm');
+  renderFormsList();
+  openFormBuilder(form.id);
+  showToast('Form created — add questions below');
+}
+
+function deleteForm(id) {
+  if (!confirm('Delete this form? All responses will be lost.')) return;
+  APP.forms = APP.forms.filter(f=>f.id!==id);
+  APP.clients.forEach(c => { if(c.forms) c.forms = c.forms.filter(fid=>fid!==id); });
+  saveToBlobs();
+  renderFormsList();
+  showToast('Form deleted','error');
+}
+
+// ════════════════════════════════════════════
+// FORM BUILDER
+// ════════════════════════════════════════════
+function openFormBuilder(formId) {
+  APP.currentBuilderFormId = formId;
+  const form = APP.forms.find(f=>f.id===formId);
+  if (!form) return;
+  document.getElementById('builderFormName').textContent = form.title;
+  document.getElementById('builderFormMeta').textContent = `${APP.districts.find(d=>d.id===form.district)?.name||''} · ${form.phase||'Standalone'}`;
+  renderBuilderQuestions();
+  openModal('modal-formBuilder');
+}
+
+function renderBuilderQuestions() {
+  const form = APP.forms.find(f=>f.id===APP.currentBuilderFormId);
+  if (!form) return;
+  const qs = form.questions || [];
+  const wrap = document.getElementById('builderQuestions');
+  const empty = document.getElementById('builderEmpty');
+  document.getElementById('builderQCount').textContent = qs.length + ' question' + (qs.length!==1?'s':'');
+  wrap.innerHTML = '';
+  empty.style.display = qs.length ? 'none' : 'block';
+  qs.forEach((q, idx) => {
+    const div = document.createElement('div');
+    div.className = 'question-item';
+    div.draggable = true;
+    div.dataset.idx = idx;
+    div.innerHTML = `
+      <i class="ti ti-grip-vertical q-drag-handle"></i>
+      <div class="q-content">
+        <div class="q-label">${q.text||'Untitled question'}<span class="q-type-badge">${q.type}</span>${q.required?'<span style="color:#c0392b;margin-left:4px">*</span>':''}</div>
+        ${q.helper?`<div style="font-size:11px;color:var(--text3);margin-top:2px">${q.helper}</div>`:''}
+        ${(q.options||[]).length?`<div style="font-size:11px;color:var(--text3);margin-top:4px">${q.options.slice(0,3).join(' · ')}${q.options.length>3?'…':''}</div>`:''}
+      </div>
+      <div class="q-actions">
+        <button class="q-action-btn" onclick="editQuestion(${idx})" title="Edit"><i class="ti ti-pencil"></i></button>
+        <button class="q-action-btn" onclick="moveQuestion(${idx},-1)" title="Move up"><i class="ti ti-arrow-up"></i></button>
+        <button class="q-action-btn" onclick="moveQuestion(${idx},1)" title="Move down"><i class="ti ti-arrow-down"></i></button>
+        <button class="q-action-btn danger" onclick="removeQuestion(${idx})" title="Remove"><i class="ti ti-trash"></i></button>
+      </div>`;
+    setupQDrag(div, idx);
+    wrap.appendChild(div);
+  });
+}
+
+function addQuestion(type) {
+  const form = APP.forms.find(f=>f.id===APP.currentBuilderFormId);
+  if (!form) return;
+  const q = { id:'q'+Date.now(), type, text:'', helper:'', required:false, options: (type==='radio'||type==='checkbox')?['Option 1','Option 2']:[] };
+  form.questions = form.questions || [];
+  form.questions.push(q);
+  APP.currentEditQIdx = form.questions.length - 1;
+  renderBuilderQuestions();
+  editQuestion(APP.currentEditQIdx);
+}
+
+function editQuestion(idx) {
+  APP.currentEditQIdx = idx;
+  const form = APP.forms.find(f=>f.id===APP.currentBuilderFormId);
+  const q = form.questions[idx];
+  document.getElementById('eqText').value = q.text || '';
+  document.getElementById('eqHelper').value = q.helper || '';
+  document.getElementById('eqRequired').checked = q.required || false;
+  const optWrap = document.getElementById('eqOptionsWrap');
+  const hasOpts = q.type==='radio'||q.type==='checkbox';
+  optWrap.style.display = hasOpts ? 'block' : 'none';
+  if (hasOpts) renderOptionsList(q.options||[]);
+  openModal('modal-editQuestion');
+}
+
+function renderOptionsList(opts) {
+  const list = document.getElementById('eqOptionsList');
+  list.innerHTML = '';
+  opts.forEach((o,i) => {
+    const row = document.createElement('div');
+    row.style.cssText = 'display:flex;gap:6px;margin-bottom:6px;align-items:center';
+    row.innerHTML = `<input type="text" value="${o}" style="flex:1;padding:7px 10px;border-radius:7px;border:1.5px solid var(--bord);background:var(--surf);font-size:12px;font-family:inherit;outline:none" onchange="updateOption(${i},this.value)">
+      <button onclick="removeOption(${i})" style="background:#fff0f0;border:1px solid #f5c6cb;border-radius:6px;padding:6px 8px;color:#c0392b;font-size:12px"><i class="ti ti-x"></i></button>`;
+    list.appendChild(row);
+  });
+}
+
+function addOption() {
+  const form = APP.forms.find(f=>f.id===APP.currentBuilderFormId);
+  const q = form.questions[APP.currentEditQIdx];
+  q.options = q.options || [];
+  q.options.push('Option ' + (q.options.length+1));
+  renderOptionsList(q.options);
+}
+function updateOption(i, val) {
+  const form = APP.forms.find(f=>f.id===APP.currentBuilderFormId);
+  form.questions[APP.currentEditQIdx].options[i] = val;
+}
+function removeOption(i) {
+  const form = APP.forms.find(f=>f.id===APP.currentBuilderFormId);
+  form.questions[APP.currentEditQIdx].options.splice(i,1);
+  renderOptionsList(form.questions[APP.currentEditQIdx].options);
+}
+
+function saveQuestion() {
+  const form = APP.forms.find(f=>f.id===APP.currentBuilderFormId);
+  const q = form.questions[APP.currentEditQIdx];
+  q.text = document.getElementById('eqText').value.trim();
+  q.helper = document.getElementById('eqHelper').value.trim();
+  q.required = document.getElementById('eqRequired').checked;
+  closeModal('modal-editQuestion');
+  renderBuilderQuestions();
+}
+
+function removeQuestion(idx) {
+  const form = APP.forms.find(f=>f.id===APP.currentBuilderFormId);
+  form.questions.splice(idx,1);
+  renderBuilderQuestions();
+}
+
+function moveQuestion(idx, dir) {
+  const form = APP.forms.find(f=>f.id===APP.currentBuilderFormId);
+  const qs = form.questions;
+  const newIdx = idx+dir;
+  if (newIdx<0||newIdx>=qs.length) return;
+  [qs[idx],qs[newIdx]] = [qs[newIdx],qs[idx]];
+  renderBuilderQuestions();
+}
+
+function saveBuilderQuestions() {
+  const form = APP.forms.find(f=>f.id===APP.currentBuilderFormId);
+  if (form) { form.status='active'; saveToBlobs(); }
+  closeModal('modal-formBuilder');
+  renderFormsList();
+  showToast('Form published successfully');
+}
+
+function setupQDrag(el, idx) {
+  el.addEventListener('dragstart', e => { e.dataTransfer.setData('qidx',idx); el.classList.add('dragging'); });
+  el.addEventListener('dragend', () => el.classList.remove('dragging'));
+  el.addEventListener('dragover', e => { e.preventDefault(); el.classList.add('drag-over'); });
+  el.addEventListener('dragleave', () => el.classList.remove('drag-over'));
+  el.addEventListener('drop', e => {
+    e.preventDefault(); el.classList.remove('drag-over');
+    const from = +e.dataTransfer.getData('qidx'), to = idx;
+    if (from===to) return;
+    const form = APP.forms.find(f=>f.id===APP.currentBuilderFormId);
+    const [q] = form.questions.splice(from,1);
+    form.questions.splice(to,0,q);
+    renderBuilderQuestions();
+  });
+}
+
+// ════════════════════════════════════════════
+// CLIENTS
+// ════════════════════════════════════════════
+function renderClientsList() {
+  const wrap = document.getElementById('clientsList');
+  wrap.innerHTML = '';
+  APP.districts.forEach(d => {
+    const dClients = APP.clients.filter(c=>c.district===d.id);
+    const sec = document.createElement('div');
+    sec.className = 'card';
+    sec.innerHTML = `<div class="card-header"><div><div class="card-title"><i class="ti ti-building" style="margin-right:6px;color:var(--lnm-navy)"></i>${d.name}</div></div></div>
+      ${dClients.length ? `<table class="clients-table">
+        <thead><tr><th>Client</th><th>Username</th><th>Assigned forms</th><th>Completion</th><th>Actions</th></tr></thead>
+        <tbody id="ct-${d.id}"></tbody></table>` :
+        `<div class="empty-state" style="padding:24px"><i class="ti ti-user-off"></i><p>No clients for this district yet</p></div>`}`;
+    wrap.appendChild(sec);
+    if (!dClients.length) return;
+    const tbody = document.getElementById('ct-'+d.id);
+    dClients.forEach(c => {
+      const assigned = c.forms || [];
+      const done = assigned.filter(fid => APP.responses[c.u] && APP.responses[c.u][fid]).length;
+      const pct = assigned.length ? Math.round((done/assigned.length)*100) : 0;
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td><span class="client-av">${c.name.charAt(0)}</span>${c.name}</td>
+        <td><code style="background:var(--surf);padding:2px 6px;border-radius:4px;font-size:11px;border:1px solid var(--bord)">${c.u}</code></td>
+        <td>${assigned.length} form${assigned.length!==1?'s':''}</td>
+        <td><div style="display:flex;align-items:center;gap:8px"><div class="prog-bar" style="flex:1;width:80px"><div class="prog-fill" style="width:${pct}%"></div></div><span style="font-size:11px;font-weight:600;color:var(--text3)">${pct}%</span></div></td>
+        <td><div style="display:flex;gap:4px">
+          <button class="btn btn-ghost btn-sm" onclick="openEditClient('${c.id}')"><i class="ti ti-pencil"></i></button>
+          <button class="btn btn-danger btn-sm" onclick="deleteClient('${c.id}')"><i class="ti ti-trash"></i></button>
+        </div></td>`;
+      tbody.appendChild(row);
+    });
+  });
+}
+
+function openNewClientModal() {
+  populateDistrictSelects();
+  ['clName','clUsername','clPassword'].forEach(id => document.getElementById(id).value='');
+  renderClientFormAssign('clFormAssign', null);
+  openModal('modal-newClient');
+}
+
+function openEditClient(cid) {
+  const client = APP.clients.find(c=>c.id===cid);
+  if (!client) return;
+  populateDistrictSelects();
+  document.getElementById('clName').value = client.name;
+  document.getElementById('clUsername').value = client.u;
+  document.getElementById('clPassword').value = '';
+  document.getElementById('clDistrict').value = client.district;
+  renderClientFormAssign('clFormAssign', client);
+  // Store editing id
+  document.getElementById('modal-newClient').dataset.editId = cid;
+  openModal('modal-newClient');
+}
+
+function renderClientFormAssign(containerId, client) {
+  const wrap = document.getElementById(containerId);
+  wrap.innerHTML = '';
+  const distId = document.getElementById('clDistrict')?.value;
+  const distForms = APP.forms.filter(f=>f.district===distId&&f.status==='active');
+  if (!distForms.length) { wrap.innerHTML = '<span style="font-size:12px;color:var(--text3)">No active forms for this district</span>'; return; }
+  distForms.forEach(f => {
+    const checked = client && client.forms && client.forms.includes(f.id);
+    const lbl = document.createElement('label');
+    lbl.style.cssText='display:flex;align-items:center;gap:6px;padding:6px 10px;border-radius:7px;border:1.5px solid var(--bord);background:var(--surf);font-size:12px;cursor:pointer;transition:all .2s';
+    lbl.innerHTML = `<input type="checkbox" value="${f.id}" ${checked?'checked':''} style="accent-color:var(--lnm-navy)"> ${f.title}`;
+    lbl.querySelector('input').addEventListener('change', ()=>{lbl.style.borderColor=lbl.querySelector('input').checked?'var(--lnm-navy)':'var(--bord)';lbl.style.background=lbl.querySelector('input').checked?'#eef2f8':'var(--surf)';});
+    if (checked) {lbl.style.borderColor='var(--lnm-navy)';lbl.style.background='#eef2f8';}
+    wrap.appendChild(lbl);
+  });
+}
+
+function saveClient() {
+  const name = document.getElementById('clName').value.trim();
+  const u = document.getElementById('clUsername').value.trim();
+  const p = document.getElementById('clPassword').value;
+  const district = document.getElementById('clDistrict').value;
+  const editId = document.getElementById('modal-newClient').dataset.editId;
+  if (!name||!u) { showToast('Name and username required','error'); return; }
+  const forms = [...document.querySelectorAll('#clFormAssign input:checked')].map(i=>i.value);
+
+  if (editId) {
+    const c = APP.clients.find(x=>x.id===editId);
+    if (c) { c.name=name; c.u=u; if(p) c.p=p; c.district=district; c.forms=forms; }
+    delete document.getElementById('modal-newClient').dataset.editId;
+  } else {
+    if (!p) { showToast('Password required for new client','error'); return; }
+    if (APP.clients.find(c=>c.u===u)) { showToast('Username already exists','error'); return; }
+    APP.clients.push({ id:'c'+Date.now(), name, u, p, district, forms });
+  }
+  saveToBlobs();
+  closeModal('modal-newClient');
+  renderClientsList();
+  renderAdminDashboard();
+  showToast('Client saved');
+}
+
+function deleteClient(id) {
+  if (!confirm('Delete this client? Their responses will be lost.')) return;
+  APP.clients = APP.clients.filter(c=>c.id!==id);
+  saveToBlobs();
+  renderClientsList();
+  showToast('Client removed','error');
+}
+
+// ════════════════════════════════════════════
+// REPORTS
+// ════════════════════════════════════════════
+function renderReports() {
+  const wrap = document.getElementById('reportsContent');
+  wrap.innerHTML = '';
+  APP.districts.forEach(d => {
+    const distForms = APP.forms.filter(f=>f.district===d.id&&f.status==='active');
+    const distClients = APP.clients.filter(c=>c.district===d.id);
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML = `<div class="card-header"><div><div class="card-title"><i class="ti ti-building" style="margin-right:6px;color:var(--lnm-navy)"></i>${d.name} — Completion Tracker</div></div>
+      <button class="btn btn-teal btn-sm" onclick="exportDistrictCSV('${d.id}')"><i class="ti ti-download"></i> Export CSV</button></div>
+      <div class="completion-grid" id="rg-${d.id}"></div>`;
+    wrap.appendChild(card);
+    const rg = document.getElementById('rg-'+d.id);
+    distForms.forEach(f => {
+      const ccard = document.createElement('div');
+      ccard.className = 'completion-card';
+      ccard.innerHTML = `<h4><i class="ti ti-clipboard-list" style="margin-right:6px;color:var(--lnm-navy)"></i>${f.title}</h4>
+        ${distClients.filter(c=>c.forms&&c.forms.includes(f.id)).map(c=>{
+          const done = APP.responses[c.u] && APP.responses[c.u][f.id] ? 100 : 0;
+          return `<div class="client-completion-row">
+            <span class="ccr-name"><span class="client-av" style="width:20px;height:20px;font-size:8px;margin-right:4px">${c.name.charAt(0)}</span>${c.name}</span>
+            <div class="ccr-bar"><div class="ccr-fill" style="width:${done}%"></div></div>
+            <span class="ccr-pct">${done}%</span>
+          </div>`;
+        }).join('') || '<div style="font-size:12px;color:var(--text3)">No clients assigned</div>'}`;
+      rg.appendChild(ccard);
+    });
+    if (!distForms.length) rg.innerHTML = '<div class="empty-state" style="padding:16px"><p>No active forms for this district</p></div>';
+  });
+}
+
+function openViewResponses(formId) {
+  const form = APP.forms.find(f=>f.id===formId);
+  if (!form) return;
+  document.getElementById('respModalTitle').textContent = form.title;
+  const assignedClients = APP.clients.filter(c=>c.forms&&c.forms.includes(formId));
+  document.getElementById('respModalMeta').textContent = `${assignedClients.length} clients assigned`;
+  const wrap = document.getElementById('responsesContent');
+  wrap.innerHTML = '';
+  if (!assignedClients.length) { wrap.innerHTML = '<div class="empty-state"><p>No clients assigned to this form</p></div>'; openModal('modal-viewResponses'); return; }
+  assignedClients.forEach(c => {
+    const resp = APP.responses[c.u] && APP.responses[c.u][formId];
+    const sec = document.createElement('div');
+    sec.style.cssText='margin-bottom:16px;padding:14px;background:var(--surf);border:1px solid var(--bord);border-radius:var(--rad)';
+    sec.innerHTML = `<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+      <div style="font-size:13px;font-weight:700;color:var(--text)"><span class="client-av" style="margin-right:6px">${c.name.charAt(0)}</span>${c.name}</div>
+      <span class="badge ${resp?'badge-green':'badge-gray'}">${resp?'Submitted':'Not started'}</span></div>
+      ${resp ? (form.questions||[]).map((q,i)=>`<div style="margin-bottom:8px"><div style="font-size:11px;font-weight:700;color:var(--text3);margin-bottom:2px">${q.text}</div><div style="font-size:13px;color:var(--text2)">${resp[q.id]||'<em style="color:var(--text3)">No response</em>'}</div></div>`).join('') : '<div style="font-size:12px;color:var(--text3)">No responses submitted yet</div>'}`;
+    wrap.appendChild(sec);
+  });
+  document.getElementById('modal-viewResponses').dataset.formId = formId;
+  openModal('modal-viewResponses');
+}
+
+function exportResponsesCSV() {
+  const formId = document.getElementById('modal-viewResponses').dataset.formId;
+  exportDistrictFormCSV(formId);
+}
+
+function exportDistrictCSV(districtId) {
+  const distForms = APP.forms.filter(f=>f.district===districtId);
+  distForms.forEach(f => exportDistrictFormCSV(f.id));
+}
+
+function exportDistrictFormCSV(formId) {
+  const form = APP.forms.find(f=>f.id===formId);
+  if (!form) return;
+  const clients = APP.clients.filter(c=>c.forms&&c.forms.includes(formId));
+  const qs = form.questions||[];
+  const headers = ['Client','Username',...qs.map(q=>q.text||q.id),'Submitted At'];
+  const rows = clients.map(c=>{
+    const resp = APP.responses[c.u]&&APP.responses[c.u][formId];
+    return [c.name,c.u,...qs.map(q=>resp?String(resp[q.id]||''):''),...[resp?resp._savedAt||'':'Not submitted']];
+  });
+  const csv = [headers,...rows].map(r=>r.map(x=>`"${String(x).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const blob = new Blob([csv],{type:'text/csv'});
+  const a = document.createElement('a'); a.href=URL.createObjectURL(blob);
+  a.download = form.title.replace(/\s+/g,'_')+'_responses.csv'; a.click();
+  showToast('CSV exported');
+}
+
+// ════════════════════════════════════════════
+// SETTINGS
+// ════════════════════════════════════════════
+function renderSettings() {
+  renderDistrictsList();
+  renderPhaseSettings();
+  document.getElementById('adminUsernameInput').value = APP.adminCreds.u;
+}
+
+function renderDistrictsList() {
+  const wrap = document.getElementById('districtsList');
+  wrap.innerHTML = '';
+  APP.districts.forEach(d => {
+    const row = document.createElement('div');
+    row.style.cssText='display:flex;align-items:center;justify-content:space-between;padding:8px 10px;background:var(--surf);border:1px solid var(--bord);border-radius:8px;margin-bottom:6px';
+    row.innerHTML = `<div><div style="font-size:12px;font-weight:700;color:var(--text)">${d.name}</div>
+      <div style="font-size:11px;color:var(--text3)">${d.short} · FY ${d.fy}</div></div>
+      <button class="btn btn-danger btn-sm" onclick="deleteDistrict('${d.id}')"><i class="ti ti-trash"></i></button>`;
+    wrap.appendChild(row);
+  });
+}
+
+function renderPhaseSettings() {
+  const wrap = document.getElementById('phaseSettingsList');
+  wrap.innerHTML = '';
+  APP.phases.sort((a,b)=>a.order-b.order).forEach((p,i) => {
+    const row = document.createElement('div');
+    row.style.cssText='display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--surf);border:1px solid var(--bord);border-radius:8px;margin-bottom:6px;cursor:grab';
+    row.innerHTML = `<i class="ti ti-grip-vertical" style="color:var(--text3)"></i>
+      <div style="flex:1">
+        <input type="text" value="${p.name}" style="width:100%;border:none;background:transparent;font-size:12px;font-weight:600;color:var(--text);outline:none;font-family:inherit" onchange="updatePhaseName('${p.id}',this.value)">
+        <input type="text" value="${p.month}" style="width:100%;border:none;background:transparent;font-size:11px;color:var(--text3);outline:none;font-family:inherit" onchange="updatePhaseMonth('${p.id}',this.value)">
+      </div>
+      <button class="btn btn-danger btn-sm" onclick="deletePhase('${p.id}')"><i class="ti ti-trash"></i></button>`;
+    wrap.appendChild(row);
+  });
+}
+
+function updatePhaseName(id,val){ const p=APP.phases.find(x=>x.id===id);if(p){p.name=val;saveToBlobs();} }
+function updatePhaseMonth(id,val){ const p=APP.phases.find(x=>x.id===id);if(p){p.month=val;saveToBlobs();} }
+function addPhase(){
+  APP.phases.push({id:'p'+Date.now(),name:'New Phase',month:'TBD',order:APP.phases.length+1});
+  saveToBlobs(); renderPhaseSettings();
+}
+function deletePhase(id){
+  if(APP.phases.length<=1){showToast('Must have at least one phase','error');return;}
+  APP.phases=APP.phases.filter(p=>p.id!==id); saveToBlobs(); renderPhaseSettings();
+}
+
+function openNewDistrictModal(){ document.getElementById('dName').value='';document.getElementById('dShort').value='';document.getElementById('dFY').value='2025–2026';openModal('modal-newDistrict'); }
+function saveDistrict(){
+  const name=document.getElementById('dName').value.trim(),short=document.getElementById('dShort').value.trim(),fy=document.getElementById('dFY').value.trim();
+  if(!name){showToast('District name required','error');return;}
+  APP.districts.push({id:'d'+Date.now(),name,short:short||name.split(' ').map(w=>w[0]).join(''),fy:fy||'2025–2026'});
+  saveToBlobs(); closeModal('modal-newDistrict'); renderDistrictsList(); renderAdminDashboard(); showToast('District added');
+}
+function deleteDistrict(id){
+  if(!confirm('Delete this district and all associated data?'))return;
+  APP.districts=APP.districts.filter(d=>d.id!==id);
+  APP.forms=APP.forms.filter(f=>f.district!==id);
+  APP.clients=APP.clients.filter(c=>c.district!==id);
+  saveToBlobs(); renderDistrictsList(); renderAdminDashboard(); showToast('District deleted','error');
+}
+
+function saveAdminCreds(){
+  const u=document.getElementById('adminUsernameInput').value.trim();
+  const p=document.getElementById('adminPasswordInput').value;
+  if(!u){showToast('Username required','error');return;}
+  APP.adminCreds.u=u; if(p) APP.adminCreds.p=p;
+  saveToBlobs(); showToast('Admin credentials updated');
+}
+
+// ════════════════════════════════════════════
+// CLIENT LAUNCH
+// ════════════════════════════════════════════
+function launchClient(client) {
+  document.getElementById('loginScreen').classList.remove('show');
+  document.getElementById('clientApp').classList.add('show');
+  const district = APP.districts.find(d=>d.id===client.district);
+  document.getElementById('clientBrandName').textContent = district?.short || 'District';
+  document.getElementById('clientBrandSub').textContent = 'Strategic Planning';
+  document.getElementById('clientUserLabel').textContent = client.name;
+  document.getElementById('clientDistrictName').textContent = district?.name || 'Strategic Planning Dashboard';
+  document.getElementById('clientDistrictSub').textContent = `Fiscal Year ${district?.fy||'2025–2026'} · Learn New Mexico`;
+  renderClientOverview(client);
+  renderClientForms(client);
+  renderClientProgress(client);
+}
+
+function clientTab(name, el) {
+  document.querySelectorAll('.client-tab').forEach(t=>t.classList.remove('on'));
+  document.querySelectorAll('.client-panel').forEach(p=>p.classList.remove('on'));
+  el.classList.add('on');
+  document.getElementById('cpanel-'+name).classList.add('on');
+}
+
+function renderClientOverview(client) {
+  const assigned = client.forms||[];
+  const done = assigned.filter(fid=>APP.responses[client.u]&&APP.responses[client.u][fid]).length;
+  const pct = assigned.length ? Math.round((done/assigned.length)*100) : 0;
+  document.getElementById('clientStatForms').textContent = assigned.length;
+  document.getElementById('clientStatCompleted').textContent = done;
+  document.getElementById('clientStatProgress').textContent = pct+'%';
+  renderClientPhaseGrid();
+  renderClientGaugeGrid();
+}
+
+function renderClientPhaseGrid() {
+  const wrap = document.getElementById('clientPhaseGrid');
+  if (!wrap) return;
+  wrap.innerHTML = '';
+  const distId = APP.currentDistrict;
+  const prog = APP.phaseProgress[distId]||{};
+  APP.phases.forEach((ph,i) => {
+    const pct = prog[ph.id]||0;
+    const status = pct>=100?'done':pct>0?'active':'pending';
+    const card = document.createElement('div');
+    card.className = `phase-card status-${status}`;
+    card.innerHTML = `<div class="phase-num">Phase ${i+1}</div>
+      <div class="phase-name">${ph.name}</div>
+      <div class="phase-meta">${ph.month}</div>
+      <div class="phase-dot ${status}">${status==='done'?'✓':status==='active'?'●':'○'}</div>`;
+    wrap.appendChild(card);
+  });
+}
+
+function renderClientGaugeGrid() {
+  const wrap = document.getElementById('clientGaugeGrid');
+  if (!wrap) return;
+  renderGauges('clientGaugeGrid', APP.currentDistrict, false);
+}
+
+function renderClientForms(client) {
+  const wrap = document.getElementById('clientFormsList');
+  wrap.innerHTML = '';
+  const assigned = client.forms||[];
+  if (!assigned.length) { wrap.innerHTML = '<div class="empty-state"><i class="ti ti-forms"></i><p>No forms assigned to you yet. Your LNM administrator will assign forms as the strategic planning process progresses.</p></div>'; return; }
+  assigned.forEach(fid => {
+    const form = APP.forms.find(f=>f.id===fid);
+    if (!form) return;
+    const resp = APP.responses[client.u]&&APP.responses[client.u][fid];
+    const qs = form.questions||[];
+    const answered = resp ? qs.filter(q=>resp[q.id]&&String(resp[q.id]).trim()).length : 0;
+    const pct = qs.length ? Math.round((answered/qs.length)*100) : 0;
+    const cfc = document.createElement('div');
+    cfc.className = 'client-form-card';
+    cfc.innerHTML = `<div class="cfc-header">
+      <div><div class="cfc-title">${form.title}</div><div class="cfc-meta">${qs.length} questions${form.phase?' · '+APP.phases.find(p=>p.id===form.phase)?.name:''}${form.desc?' · '+form.desc:''}</div></div>
+      <span class="cfc-progress">${answered}/${qs.length} answered</span></div>
+      <div class="prog-bar" style="margin-bottom:16px"><div class="prog-fill" style="width:${pct}%"></div></div>
+      <div id="qwrap-${fid}"></div>
+      <div class="save-bar">
+        <div class="save-status" id="ss-${fid}"><i class="ti ti-clock"></i> Unsaved changes</div>
+        <button class="btn btn-teal" onclick="submitForm('${fid}','${client.u}')"><i class="ti ti-device-floppy"></i> Save responses</button>
+      </div>`;
+    wrap.appendChild(cfc);
+    renderFormQuestions(fid, client.u, qs, resp);
+  });
+}
+
+function renderFormQuestions(formId, username, questions, existingResp) {
+  const wrap = document.getElementById('qwrap-'+formId);
+  if (!wrap) return;
+  wrap.innerHTML = '';
+  questions.forEach((q,i) => {
+    const val = existingResp && existingResp[q.id] ? existingResp[q.id] : '';
+    const div = document.createElement('div');
+    div.className = 'client-question';
+    let input = '';
+    if (q.type==='text') input=`<input type="text" class="client-input" id="qi-${formId}-${q.id}" value="${String(val).replace(/"/g,'&quot;')}" placeholder="Your answer...">`;
+    else if (q.type==='textarea') input=`<textarea class="client-textarea" id="qi-${formId}-${q.id}" placeholder="Your answer...">${val}</textarea>`;
+    else if (q.type==='number') input=`<input type="number" class="client-input" id="qi-${formId}-${q.id}" value="${val}" placeholder="0" style="max-width:160px">`;
+    else if (q.type==='rating') {
+      const curVal = parseInt(val)||0;
+      input=`<div class="star-rating" id="qi-${formId}-${q.id}" data-val="${curVal}">${[1,2,3,4,5].map(n=>`<button class="star-btn${n<=curVal?' on':''}" onclick="setStar('${formId}','${q.id}',${n})" type="button">★</button>`).join('')}</div>`;
+    }
+    else if (q.type==='radio') input=`<div>${(q.options||[]).map((o,oi)=>`<label class="mc-option${val===o?' selected':''}"><input type="radio" name="qi-${formId}-${q.id}" value="${o}" ${val===o?'checked':''} onchange="this.closest('.client-question').querySelectorAll('.mc-option').forEach(x=>x.classList.remove('selected'));this.closest('.mc-option').classList.add('selected')"> ${o}</label>`).join('')}</div>`;
+    else if (q.type==='checkbox') {
+      const vals = val ? (Array.isArray(val)?val:val.split('|')) : [];
+      input=`<div id="qi-${formId}-${q.id}">${(q.options||[]).map(o=>`<label class="mc-option${vals.includes(o)?' selected':''}"><input type="checkbox" value="${o}" ${vals.includes(o)?'checked':''} onchange="this.closest('.mc-option').classList.toggle('selected',this.checked)"> ${o}</label>`).join('')}</div>`;
+    }
+    div.innerHTML = `<div class="q-text">${i+1}. ${q.text}${q.required?'<span class="q-required">*</span>':''}</div>
+      ${q.helper?`<div style="font-size:12px;color:var(--text3);margin-bottom:8px">${q.helper}</div>`:''}${input}`;
+    wrap.appendChild(div);
+  });
+}
+
+function setStar(formId, qid, val) {
+  const row = document.getElementById(`qi-${formId}-${qid}`);
+  if (!row) return;
+  row.dataset.val = val;
+  row.querySelectorAll('.star-btn').forEach((b,i)=>b.classList.toggle('on',i+1<=val));
+}
+
+async function submitForm(formId, username) {
+  const form = APP.forms.find(f=>f.id===formId);
+  if (!form) return;
+  const answers = { _savedAt: new Date().toISOString() };
+  (form.questions||[]).forEach(q => {
+    const el = document.getElementById(`qi-${formId}-${q.id}`);
+    if (!el) return;
+    if (q.type==='radio') {
+      const checked = document.querySelector(`input[name="qi-${formId}-${q.id}"]:checked`);
+      answers[q.id] = checked ? checked.value : '';
+    } else if (q.type==='checkbox') {
+      const checked = [...el.querySelectorAll('input:checked')].map(i=>i.value);
+      answers[q.id] = checked;
+    } else if (q.type==='rating') {
+      answers[q.id] = parseInt(el.dataset.val)||0;
+    } else {
+      answers[q.id] = el.value || '';
+    }
+  });
+  if (!APP.responses[username]) APP.responses[username] = {};
+  APP.responses[username][formId] = answers;
+  await saveResponse(username, formId, answers);
+  const ss = document.getElementById('ss-'+formId);
+  if (ss) { ss.className='save-status saved'; ss.innerHTML='<i class="ti ti-check"></i> Saved successfully'; }
+  showToast('Responses saved');
+  const client = APP.clients.find(c=>c.u===username);
+  if (client) { renderClientOverview(client); renderClientProgress(client); }
+}
+
+function renderClientProgress(client) {
+  const wrap = document.getElementById('clientProgressContent');
+  if (!wrap) return;
+  wrap.innerHTML = '';
+  const assigned = client.forms||[];
+  if (!assigned.length) { wrap.innerHTML='<div class="empty-state"><i class="ti ti-chart-bar"></i><p>No forms assigned yet</p></div>'; return; }
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.innerHTML = '<div class="card-header"><div class="card-title">Form completion status</div></div>';
+  assigned.forEach(fid => {
+    const form = APP.forms.find(f=>f.id===fid);
+    if (!form) return;
+    const resp = APP.responses[client.u]&&APP.responses[client.u][fid];
+    const qs = form.questions||[];
+    const answered = resp ? qs.filter(q=>resp[q.id]&&String(resp[q.id]).trim()).length : 0;
+    const pct = qs.length ? Math.round((answered/qs.length)*100) : 0;
+    card.innerHTML += `<div style="margin-bottom:14px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+        <span style="font-size:13px;font-weight:600;color:var(--text)">${form.title}</span>
+        <span class="badge ${pct===100?'badge-green':pct>0?'badge-gold':'badge-gray'}">${pct===100?'Complete':pct>0?'In progress':'Not started'}</span>
+      </div>
+      <div class="prog-bar"><div class="prog-fill${pct===100?'':' gold'}" style="width:${pct}%"></div></div>
+      <div style="font-size:11px;color:var(--text3);margin-top:3px">${answered} of ${qs.length} questions answered</div>
+    </div>`;
+  });
+  wrap.appendChild(card);
+}
+
+// ════════════════════════════════════════════
+// UTILITIES
+// ════════════════════════════════════════════
+function populateDistrictSelects() {
+  ['fmDistrict','clDistrict'].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.innerHTML = APP.districts.map(d=>`<option value="${d.id}">${d.name}</option>`).join('');
+  });
+  const clDist = document.getElementById('clDistrict');
+  if (clDist) clDist.addEventListener('change', () => renderClientFormAssign('clFormAssign', null));
+}
+
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); document.querySelectorAll('.modal-overlay').forEach(m=>{ if(m.id!==id) return; }); }
+document.querySelectorAll && document.addEventListener('click', e => { if (e.target.classList.contains('modal-overlay')) e.target.classList.remove('open'); });
+
+let toastTimer;
+function showToast(msg, type='success') {
+  const t=document.getElementById('toast'), tm=document.getElementById('toastMsg');
+  t.className=''; t.classList.add('show',type);
+  t.querySelector('i').className = type==='error'?'ti ti-alert-triangle':'ti ti-check';
+  tm.textContent=msg;
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>t.classList.remove('show'),3000);
+}
+</script>
+</body>
+</html>
