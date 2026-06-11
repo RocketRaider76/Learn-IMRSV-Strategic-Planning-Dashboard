@@ -15,7 +15,11 @@ exports.handler = async function(event, context) {
     if (!body.content) {
       return { statusCode: 400, headers, body: JSON.stringify({ ok: false, error: "No content provided" }) };
     }
-    const store = getStore("pmsd-dashboard");
+    const store = getStore({
+      name: "pmsd-dashboard",
+      siteID: process.env.NETLIFY_SITE_ID,
+      token: process.env.NETLIFY_AUTH_TOKEN
+    });
     await store.setJSON("published-content", body.content);
     return { statusCode: 200, headers, body: JSON.stringify({ ok: true }) };
   } catch (err) {
