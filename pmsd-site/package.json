@@ -1,7 +1,0 @@
-{
-  "name": "lnm-strategic-platform",
-  "version": "2.0.0",
-  "dependencies": {
-    "@netlify/blobs": "^7.3.0"
-  }
-}
