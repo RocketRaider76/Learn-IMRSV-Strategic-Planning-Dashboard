@@ -738,8 +738,7 @@ function markPending() {
 }
 async function publishChanges() {
   const btn = document.getElementById('publishBtn');
-  btn.innerHTML = '<i class="ti ti-loader"></i> Saving...';
-  btn.disabled = true;
+  if (btn) { btn.innerHTML = '<i class="ti ti-loader"></i> Saving...'; btn.disabled = true; }
 
   // Collect all editable field content
   const content = {};
@@ -781,21 +780,21 @@ async function publishChanges() {
     const data = await res.json();
     if (data.ok) {
       pendingChanges = false;
-      document.getElementById('pendingDot').style.display = 'none';
-      document.getElementById('toolbarMsg').innerHTML = 'Admin mode · <strong style="color:#e8c06a">Click any text</strong> to edit it';
-      btn.innerHTML = '<i class="ti ti-check"></i> Published!';
+      const dot = document.getElementById('pendingDot');
+      const msg = document.getElementById('toolbarMsg');
+      if (dot) dot.style.display = 'none';
+      if (msg) msg.innerHTML = 'Admin mode · <strong style="color:#e8c06a">Click any text</strong> to edit it';
+      if (btn) { btn.innerHTML = '<i class="ti ti-check"></i> Published!'; }
       setTimeout(()=>{
-        btn.innerHTML = '<i class="ti ti-upload"></i> Publish Changes';
-        btn.disabled = false;
+        if (btn) { btn.innerHTML = '<i class="ti ti-upload"></i> Publish Changes'; btn.disabled = false; }
       }, 2500);
     } else {
       throw new Error(data.error);
     }
   } catch(err) {
-    btn.innerHTML = '<i class="ti ti-alert-triangle"></i> Save failed';
-    btn.disabled = false;
+    if (btn) { btn.innerHTML = '<i class="ti ti-alert-triangle"></i> Save failed'; btn.disabled = false; }
     console.error('Publish error:', err);
-    setTimeout(()=>{ btn.innerHTML = '<i class="ti ti-upload"></i> Publish Changes'; }, 3000);
+    setTimeout(()=>{ if (btn) btn.innerHTML = '<i class="ti ti-upload"></i> Publish Changes'; }, 3000);
   }
 }
 
