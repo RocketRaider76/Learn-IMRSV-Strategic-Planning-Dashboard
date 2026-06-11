@@ -6,7 +6,11 @@ exports.handler = async function(event, context) {
     "Access-Control-Allow-Origin": "*"
   };
   try {
-    const store = getStore("pmsd-dashboard");
+    const store = getStore({
+      name: "pmsd-dashboard",
+      siteID: process.env.NETLIFY_SITE_ID,
+      token: process.env.NETLIFY_AUTH_TOKEN
+    });
     const content = await store.get("published-content", { type: "json" });
     return {
       statusCode: 200,
