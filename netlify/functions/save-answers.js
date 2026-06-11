@@ -15,7 +15,11 @@ exports.handler = async function(event, context) {
     if (!body.username || !body.answers) {
       return { statusCode: 400, headers, body: JSON.stringify({ ok: false, error: "Missing username or answers" }) };
     }
-    const store = getStore("pmsd-answers");
+    const store = getStore({
+      name: "pmsd-answers",
+      siteID: process.env.NETLIFY_SITE_ID,
+      token: process.env.NETLIFY_AUTH_TOKEN
+    });
     await store.setJSON(`answers-${body.username}`, {
       username: body.username,
       answers: body.answers,
