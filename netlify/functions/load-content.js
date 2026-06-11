@@ -1,19 +1,23 @@
-import { getStore } from "@netlify/blobs";
+const { getStore } = require("@netlify/blobs");
 
-export default async (req, context) => {
+exports.handler = async function(event, context) {
+  const headers = {
+    "Content-Type": "application/json",
+    "Access-Control-Allow-Origin": "*"
+  };
   try {
-    const store = getStore({ name: "pmsd-dashboard", consistency: "strong" });
+    const store = getStore("pmsd-dashboard");
     const content = await store.get("published-content", { type: "json" });
-    return new Response(JSON.stringify({ ok: true, content: content || null }), {
-      status: 200,
-      headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" }
-    });
+    return {
+      statusCode: 200,
+      headers,
+      body: JSON.stringify({ ok: true, content: content || null })
+    };
   } catch (err) {
-    return new Response(JSON.stringify({ ok: false, error: err.message }), {
-      status: 500,
-      headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" }
-    });
+    return {
+      statusCode: 500,
+      headers,
+      body: JSON.stringify({ ok: false, error: err.message })
+    };
   }
 };
-
-export const config = { path: "/api/load-content" };
