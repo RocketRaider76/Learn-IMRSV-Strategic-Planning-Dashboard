@@ -1,27 +1,19 @@
-import { getStore } from "@netlify/blobs";
+const { getStore } = require("@netlify/blobs");
 
-export default async (req, context) => {
+exports.handler = async function(event, context) {
+  const headers = {
+    "Content-Type": "application/json",
+    "Access-Control-Allow-Origin": "*"
+  };
   try {
-    const url = new URL(req.url);
-    const username = url.searchParams.get("username");
+    const username = event.queryStringParameters && event.queryStringParameters.username;
     if (!username) {
-      return new Response(JSON.stringify({ ok: false, error: "No username provided" }), {
-        status: 400,
-        headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" }
-      });
+      return { statusCode: 400, headers, body: JSON.stringify({ ok: false, error: "No username provided" }) };
     }
-    const store = getStore({ name: "pmsd-answers", consistency: "strong" });
+    const store = getStore("pmsd-answers");
     const data = await store.get(`answers-${username}`, { type: "json" });
-    return new Response(JSON.stringify({ ok: true, data: data || null }), {
-      status: 200,
-      headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" }
-    });
+    return { statusCode: 200, headers, body: JSON.stringify({ ok: true, data: data || null }) };
   } catch (err) {
-    return new Response(JSON.stringify({ ok: false, error: err.message }), {
-      status: 500,
-      headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" }
-    });
+    return { statusCode: 500, headers, body: JSON.stringify({ ok: false, error: err.message }) };
   }
 };
-
-export const config = { path: "/api/load-answers" };
