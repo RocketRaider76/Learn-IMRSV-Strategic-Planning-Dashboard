@@ -1,0 +1,1107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Learn New Mexico · Strategic Planning Platform</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Serif+Display&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#0f2240;--navy2:#1a3560;--gold:#d4a843;--gold2:#e8c06a;
+  --teal:#27a892;--teal2:#1d7a6b;--blue:#378add;--blue2:#185fa5;
+  --purple:#7f77dd;--coral:#d85a30;--green:#22a55a;--red:#c0392b;
+  --text:#1a1a2e;--text2:#3a4a6b;--text3:#6b7a99;
+  --white:#fff;--surf:#f4f7fb;--bg:#eef2f8;--bord:#d0dbe8;--bord2:#b8c8d8;
+  --rad:10px;--rad2:16px;
+  --shadow:0 2px 12px rgba(0,0,0,.07);--shadow2:0 8px 32px rgba(0,0,0,.13);
+}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px}
+button{font-family:'DM Sans',sans-serif;cursor:pointer}
+input,textarea,select{font-family:'DM Sans',sans-serif}
+
+/* ── LOADING ── */
+#loadingScreen{position:fixed;inset:0;background:var(--navy);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;transition:opacity .5s}
+#loadingScreen.hide{opacity:0;pointer-events:none}
+.ld-title{font-family:'DM Serif Display',serif;font-size:30px;color:#fff;margin-bottom:6px}
+.ld-sub{font-size:13px;color:rgba(255,255,255,.45);margin-bottom:36px}
+.ld-bar{width:180px;height:3px;background:rgba(255,255,255,.12);border-radius:10px;overflow:hidden}
+.ld-fill{height:100%;background:var(--gold);border-radius:10px;animation:ldprog 1.6s ease forwards}
+@keyframes ldprog{from{width:0}to{width:100%}}
+
+/* ── LOGIN ── */
+#loginScreen{display:none;min-height:100vh;background:linear-gradient(135deg,#08162a 0%,#0f2240 55%,#0d2e4a 100%);align-items:center;justify-content:center;padding:20px}
+#loginScreen.show{display:flex}
+.login-brand{text-align:center;margin-bottom:28px}
+.login-brand h1{font-family:'DM Serif Display',serif;font-size:28px;font-weight:400;color:#fff}
+.login-brand p{font-size:13px;color:rgba(255,255,255,.4);margin-top:4px}
+.login-card{background:#fff;border-radius:var(--rad2);padding:36px;max-width:400px;width:100%;box-shadow:var(--shadow2)}
+.login-tabs{display:grid;grid-template-columns:1fr 1fr;border:1.5px solid var(--bord);border-radius:10px;overflow:hidden;margin-bottom:22px}
+.ltab{padding:10px;text-align:center;font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;background:var(--surf);color:var(--text3);border:none;transition:all .2s}
+.ltab.on{background:var(--navy);color:#fff}
+.lf{margin-bottom:13px}
+.lf label{display:block;font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px}
+.lf input{width:100%;padding:10px 12px;border-radius:8px;border:1.5px solid var(--bord);background:var(--surf);font-size:13px;color:var(--text);outline:none;transition:border-color .2s}
+.lf input:focus{border-color:var(--navy);background:#fff}
+.login-btn{width:100%;padding:11px;border-radius:9px;background:var(--navy);color:#fff;font-size:13px;font-weight:700;border:none;margin-top:6px;transition:background .2s;letter-spacing:.03em}
+.login-btn:hover{background:var(--navy2)}
+.login-err{font-size:12px;color:var(--red);margin-top:9px;min-height:16px;text-align:center;font-weight:500}
+.login-footer{text-align:center;font-size:11px;color:rgba(255,255,255,.25);margin-top:18px}
+
+/* ── ADMIN SHELL ── */
+#adminApp,#clientApp{display:none;min-height:100vh;flex-direction:column}
+#adminApp.show,#clientApp.show{display:flex}
+
+/* ── ADMIN TOPBAR ── */
+.admin-topbar{height:54px;background:#09192e;display:flex;align-items:center;padding:0 20px;gap:16px;flex-shrink:0;border-bottom:1px solid rgba(255,255,255,.07)}
+.atb-brand{font-family:'DM Serif Display',serif;font-size:17px;color:#fff;font-weight:400;white-space:nowrap}
+.atb-brand span{display:block;font-size:10px;font-family:'DM Sans',sans-serif;font-weight:600;color:rgba(255,255,255,.35);letter-spacing:.08em;text-transform:uppercase;margin-top:-1px}
+.atb-breadcrumb{display:flex;align-items:center;gap:6px;font-size:12px;color:rgba(255,255,255,.4);flex:1}
+.atb-breadcrumb .sep{color:rgba(255,255,255,.2)}
+.atb-breadcrumb .crumb{color:rgba(255,255,255,.7);font-weight:500}
+.atb-breadcrumb .crumb.link{cursor:pointer;transition:color .2s}
+.atb-breadcrumb .crumb.link:hover{color:#fff}
+.atb-right{display:flex;align-items:center;gap:8px;margin-left:auto}
+.atb-badge{font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;background:rgba(212,168,67,.15);color:var(--gold);border:1px solid rgba(212,168,67,.25)}
+.signout-btn{background:transparent;border:1px solid rgba(255,255,255,.12);border-radius:7px;padding:5px 11px;font-size:11px;font-weight:600;color:rgba(255,255,255,.45);transition:all .2s}
+.signout-btn:hover{border-color:rgba(255,255,255,.3);color:rgba(255,255,255,.8)}
+
+/* ── ADMIN BODY ── */
+.admin-body{flex:1;overflow-y:auto;background:var(--bg)}
+
+/* ── VIEWS ── */
+.view{display:none;padding:24px;max-width:1100px;margin:0 auto;width:100%}
+.view.on{display:block}
+
+/* ── DISTRICT CARDS (homepage) ── */
+.districts-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
+.district-card{background:var(--white);border:1px solid var(--bord);border-radius:var(--rad2);padding:22px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden;box-shadow:var(--shadow)}
+.district-card:hover{box-shadow:var(--shadow2);border-color:var(--bord2);transform:translateY(-2px)}
+.district-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--navy),var(--blue))}
+.dc-header{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:14px}
+.dc-icon{width:44px;height:44px;border-radius:11px;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;flex-shrink:0}
+.dc-name{font-size:14px;font-weight:700;color:var(--text);line-height:1.3}
+.dc-short{font-size:11px;color:var(--text3);margin-top:2px}
+.dc-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+.dc-stat{text-align:center;padding:8px;background:var(--surf);border-radius:8px;border:1px solid var(--bord)}
+.dc-stat .v{font-size:18px;font-weight:700;color:var(--navy);line-height:1}
+.dc-stat .l{font-size:10px;color:var(--text3);margin-top:2px;text-transform:uppercase;letter-spacing:.06em}
+.add-district-card{background:transparent;border:2px dashed var(--bord2);border-radius:var(--rad2);padding:22px;cursor:pointer;transition:all .2s;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;min-height:180px;color:var(--text3)}
+.add-district-card:hover{border-color:var(--navy);color:var(--navy);background:var(--surf)}
+.add-district-card i{font-size:28px}
+.add-district-card span{font-size:13px;font-weight:600}
+
+/* ── DISTRICT WORKSPACE ── */
+.district-tabs{display:flex;gap:0;border-bottom:1px solid var(--bord);margin-bottom:22px;background:var(--white);border-radius:var(--rad2) var(--rad2) 0 0;overflow:hidden;box-shadow:var(--shadow)}
+.dtab{padding:14px 22px;font-size:13px;font-weight:600;color:var(--text3);border:none;background:none;border-bottom:2px solid transparent;transition:all .2s;display:flex;align-items:center;gap:7px;margin-bottom:-1px}
+.dtab:hover{color:var(--text)}
+.dtab.on{color:var(--navy);border-bottom-color:var(--navy);background:var(--surf)}
+.district-panel{display:none}.district-panel.on{display:block}
+
+/* ── FORMS LIST ── */
+.forms-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+.form-card{background:var(--white);border:1px solid var(--bord);border-radius:var(--rad2);padding:18px;box-shadow:var(--shadow);transition:all .2s;cursor:pointer}
+.form-card:hover{box-shadow:var(--shadow2);border-color:var(--bord2)}
+.fc-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:12px}
+.fc-icon{width:38px;height:38px;border-radius:9px;background:var(--surf);border:1px solid var(--bord);display:flex;align-items:center;justify-content:center;font-size:17px;color:var(--navy);flex-shrink:0}
+.fc-title{font-size:13px;font-weight:700;color:var(--text);line-height:1.3}
+.fc-meta{font-size:11px;color:var(--text3);margin-top:2px}
+.fc-actions{display:flex;gap:5px;flex-shrink:0}
+.add-form-card{background:transparent;border:2px dashed var(--bord2);border-radius:var(--rad2);padding:18px;cursor:pointer;transition:all .2s;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;min-height:120px;color:var(--text3)}
+.add-form-card:hover{border-color:var(--navy);color:var(--navy);background:var(--surf)}
+
+/* ══════════════════════════════════════
+   JOTFORM-STYLE BUILDER (full page)
+══════════════════════════════════════ */
+#builderView{display:none;flex-direction:column;height:calc(100vh - 54px)}
+#builderView.on{display:flex}
+.builder-topbar{height:52px;background:var(--white);border-bottom:1px solid var(--bord);display:flex;align-items:center;padding:0 20px;gap:14px;flex-shrink:0;box-shadow:var(--shadow)}
+.btb-back{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:var(--text2);background:none;border:none;transition:color .2s}
+.btb-back:hover{color:var(--navy)}
+.btb-title{font-size:15px;font-weight:700;color:var(--text);flex:1}
+.btb-title input{border:none;background:transparent;font-size:15px;font-weight:700;color:var(--text);font-family:inherit;outline:none;width:100%}
+.btb-title input:focus{border-bottom:2px solid var(--gold)}
+.btb-actions{display:flex;gap:8px;margin-left:auto}
+
+.builder-body{display:flex;flex:1;overflow:hidden}
+
+/* LEFT PANEL */
+.builder-left{width:220px;background:var(--white);border-right:1px solid var(--bord);overflow-y:auto;flex-shrink:0;padding:16px}
+.bleft-section{margin-bottom:18px}
+.bleft-section h4{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--text3);margin-bottom:10px}
+.field-btn{display:flex;align-items:center;gap:9px;width:100%;padding:9px 11px;border-radius:8px;border:1px solid var(--bord);background:var(--surf);font-size:12px;font-weight:600;color:var(--text2);transition:all .18s;margin-bottom:5px}
+.field-btn:hover{border-color:var(--navy);color:var(--navy);background:#eef2f8}
+.field-btn i{font-size:16px;color:var(--text3);width:18px;text-align:center}
+.field-btn:hover i{color:var(--navy)}
+
+/* CANVAS */
+.builder-canvas{flex:1;overflow-y:auto;padding:24px;background:#f0f4f9}
+.canvas-inner{max-width:700px;margin:0 auto}
+.canvas-form-header{background:var(--white);border-radius:var(--rad2);padding:22px 24px;margin-bottom:12px;border:1px solid var(--bord);box-shadow:var(--shadow)}
+.canvas-form-title{font-size:20px;font-weight:700;color:var(--text);margin-bottom:4px}
+.canvas-form-desc{font-size:13px;color:var(--text3)}
+.canvas-empty{background:var(--white);border:2px dashed var(--bord2);border-radius:var(--rad2);padding:48px;text-align:center;color:var(--text3)}
+.canvas-empty i{font-size:36px;display:block;margin-bottom:10px;opacity:.4}
+.canvas-empty p{font-size:13px}
+
+/* QUESTION CARDS ON CANVAS */
+.qcard{background:var(--white);border:2px solid var(--bord);border-radius:var(--rad);padding:18px 18px 16px;margin-bottom:10px;position:relative;transition:all .2s;cursor:default}
+.qcard:hover,.qcard.selected{border-color:var(--navy);box-shadow:0 0 0 3px rgba(15,34,64,.07)}
+.qcard.dragging{opacity:.4}
+.qcard.drag-over{border-color:var(--gold);background:#fffbe8}
+.qcard-drag{position:absolute;left:0;top:0;bottom:0;width:24px;display:flex;align-items:center;justify-content:center;color:var(--bord2);cursor:grab;transition:color .15s;border-radius:var(--rad) 0 0 var(--rad)}
+.qcard:hover .qcard-drag{color:var(--text3)}
+.qcard-body{padding-left:12px}
+.qcard-label{font-size:13px;font-weight:700;color:var(--text);margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.qcard-required{color:var(--red);font-size:13px}
+.qcard-helper{font-size:12px;color:var(--text3);margin-bottom:8px}
+.qcard-preview{pointer-events:none}
+.qcard-preview input,.qcard-preview textarea,.qcard-preview select{width:100%;padding:8px 10px;border-radius:7px;border:1.5px solid var(--bord);background:var(--surf);font-size:13px;color:var(--text3);font-family:inherit}
+.qcard-preview textarea{min-height:60px;resize:none}
+.qcard-actions{position:absolute;top:10px;right:10px;display:flex;gap:4px;opacity:0;transition:opacity .15s}
+.qcard:hover .qcard-actions{opacity:1}
+.qcard-btn{width:26px;height:26px;border-radius:6px;border:none;background:transparent;color:var(--text3);display:flex;align-items:center;justify-content:center;font-size:13px;transition:all .15s}
+.qcard-btn:hover{background:var(--surf);color:var(--text)}
+.qcard-btn.del:hover{background:#fff0f0;color:var(--red)}
+.mc-preview{display:flex;flex-direction:column;gap:5px}
+.mc-opt-preview{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text3);padding:6px 10px;background:var(--surf);border-radius:6px;border:1px solid var(--bord)}
+.star-preview{display:flex;gap:5px}
+.star-preview span{font-size:20px;color:var(--bord2)}
+
+/* QUESTION EDITOR PANEL (right side) */
+.builder-right{width:280px;background:var(--white);border-left:1px solid var(--bord);overflow-y:auto;flex-shrink:0;padding:16px;transition:all .2s}
+.bright-empty{text-align:center;padding:32px 16px;color:var(--text3)}
+.bright-empty i{font-size:28px;display:block;margin-bottom:8px;opacity:.4}
+.bright-empty p{font-size:12px}
+.bright-section{margin-bottom:18px}
+.bright-section h4{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--bord)}
+.edit-field{margin-bottom:12px}
+.edit-field label{display:block;font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+.edit-field input,.edit-field textarea,.edit-field select{width:100%;padding:8px 10px;border-radius:7px;border:1.5px solid var(--bord);background:var(--surf);font-size:12px;color:var(--text);outline:none;font-family:inherit;transition:border-color .2s}
+.edit-field input:focus,.edit-field textarea:focus,.edit-field select:focus{border-color:var(--navy);background:#fff}
+.edit-field textarea{min-height:56px;resize:vertical}
+.option-row{display:flex;align-items:center;gap:6px;margin-bottom:6px}
+.option-row input{flex:1;padding:7px 9px;border-radius:6px;border:1.5px solid var(--bord);font-size:12px;font-family:inherit;outline:none;background:var(--surf)}
+.option-row input:focus{border-color:var(--navy);background:#fff}
+.option-del{width:22px;height:22px;border-radius:5px;border:none;background:#fff0f0;color:var(--red);font-size:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:7px 0}
+.toggle-row label{font-size:12px;color:var(--text2);font-weight:500}
+.toggle{position:relative;width:34px;height:18px}
+.toggle input{opacity:0;width:0;height:0}
+.toggle-slider{position:absolute;inset:0;background:var(--bord2);border-radius:10px;transition:background .2s;cursor:pointer}
+.toggle-slider::before{content:'';position:absolute;width:13px;height:13px;border-radius:50%;background:#fff;bottom:2.5px;left:2.5px;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.toggle input:checked + .toggle-slider{background:var(--navy)}
+.toggle input:checked + .toggle-slider::before{transform:translateX(15px)}
+
+/* ── CLIENTS TAB ── */
+.clients-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.client-card{background:var(--white);border:1px solid var(--bord);border-radius:var(--rad);padding:14px 16px;display:flex;align-items:center;gap:12px;margin-bottom:8px;box-shadow:var(--shadow);transition:border-color .2s}
+.client-card:hover{border-color:var(--bord2)}
+.client-av{width:36px;height:36px;border-radius:50%;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0}
+.client-info{flex:1}
+.client-name{font-size:13px;font-weight:700;color:var(--text)}
+.client-meta{font-size:11px;color:var(--text3);margin-top:2px}
+.client-actions{display:flex;gap:6px}
+
+/* ── RESPONSES TAB ── */
+.response-form-select{display:flex;align-items:center;gap:12px;margin-bottom:18px;flex-wrap:wrap}
+.response-card{background:var(--white);border:1px solid var(--bord);border-radius:var(--rad);padding:16px;margin-bottom:10px;box-shadow:var(--shadow)}
+.rc-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.rc-client{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:var(--text)}
+.rc-answers{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}
+.rc-answer{padding:10px;background:var(--surf);border-radius:8px;border:1px solid var(--bord)}
+.rc-q{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+.rc-a{font-size:13px;color:var(--text2)}
+
+/* ── SHARED ── */
+.page-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;gap:12px;flex-wrap:wrap}
+.page-hdr h2{font-size:19px;font-weight:700;color:var(--text)}
+.page-hdr p{font-size:12px;color:var(--text3);margin-top:2px}
+.card{background:var(--white);border:1px solid var(--bord);border-radius:var(--rad2);padding:20px;margin-bottom:14px;box-shadow:var(--shadow)}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 15px;border-radius:8px;font-size:12px;font-weight:700;border:none;transition:all .2s;white-space:nowrap}
+.btn-primary{background:var(--navy);color:#fff}.btn-primary:hover{background:var(--navy2)}
+.btn-gold{background:var(--gold);color:var(--navy)}.btn-gold:hover{background:var(--gold2)}
+.btn-teal{background:var(--teal);color:#fff}.btn-teal:hover{background:var(--teal2)}
+.btn-ghost{background:var(--surf);color:var(--text2);border:1px solid var(--bord2)}.btn-ghost:hover{background:var(--bord)}
+.btn-danger{background:#fff0f0;color:var(--red);border:1px solid #f5c6cb}.btn-danger:hover{background:#ffe0e0}
+.btn-sm{padding:5px 10px;font-size:11px}
+.badge{display:inline-flex;align-items:center;gap:3px;padding:3px 8px;border-radius:20px;font-size:10px;font-weight:700}
+.badge-green{background:rgba(34,165,90,.1);color:#1a7a40;border:1px solid rgba(34,165,90,.2)}
+.badge-gray{background:var(--surf);color:var(--text3);border:1px solid var(--bord)}
+.badge-gold{background:rgba(212,168,67,.12);color:#8a6200;border:1px solid rgba(212,168,67,.25)}
+.badge-blue{background:rgba(55,138,221,.1);color:var(--blue2);border:1px solid rgba(55,138,221,.2)}
+.ff{margin-bottom:12px}
+.ff label{display:block;font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px}
+.ff input,.ff select,.ff textarea{width:100%;padding:9px 11px;border-radius:8px;border:1.5px solid var(--bord);background:var(--surf);font-size:13px;color:var(--text);outline:none;font-family:inherit;transition:border-color .2s}
+.ff input:focus,.ff select:focus,.ff textarea:focus{border-color:var(--navy);background:#fff}
+.ff textarea{min-height:72px;resize:vertical}
+.ff-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:1000;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(2px)}
+.modal-overlay.open{display:flex}
+.modal{background:#fff;border-radius:var(--rad2);padding:26px;max-width:500px;width:100%;max-height:85vh;overflow-y:auto;box-shadow:var(--shadow2)}
+.modal h3{font-size:16px;font-weight:700;margin-bottom:4px}
+.modal .msub{font-size:12px;color:var(--text3);margin-bottom:18px}
+.modal-footer{display:flex;justify-content:flex-end;gap:8px;margin-top:18px;padding-top:14px;border-top:1px solid var(--bord)}
+.mclose{float:right;background:none;border:none;font-size:20px;color:var(--text3);line-height:1}
+.prog-bar{height:5px;background:var(--surf);border-radius:10px;overflow:hidden;border:1px solid var(--bord);margin-top:4px}
+.prog-fill{height:100%;border-radius:10px;transition:width .5s;background:var(--teal)}
+
+/* GAUGE */
+.gauge-row{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:16px}
+.gcell{background:var(--white);border:1px solid var(--bord);border-radius:var(--rad);padding:12px 8px;text-align:center;box-shadow:var(--shadow)}
+.gcell svg{display:block;margin:0 auto 4px}
+.gcell .gpct{font-size:17px;font-weight:700;line-height:1}
+.gcell .glbl{font-size:11px;font-weight:600;color:var(--text);margin-top:2px;line-height:1.3}
+.gcell .gsub{font-size:10px;color:var(--text3);margin-top:1px}
+.gcell input[type=range]{width:100%;margin-top:6px;accent-color:var(--navy)}
+
+/* CLIENT APP */
+.client-topbar{height:54px;background:#fff;border-bottom:1px solid var(--bord);display:flex;align-items:center;padding:0 20px;gap:0;box-shadow:var(--shadow);flex-shrink:0}
+.ctb-brand{font-size:15px;font-weight:700;color:var(--navy);margin-right:28px;white-space:nowrap}
+.ctb-brand span{display:block;font-size:11px;font-weight:400;color:var(--text3)}
+.ctabs{display:flex;gap:2px}
+.ctab{height:54px;padding:0 16px;display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--text3);border:none;background:none;border-bottom:2px solid transparent;transition:all .2s;margin-bottom:-1px}
+.ctab:hover{color:var(--text)}
+.ctab.on{color:var(--navy);border-bottom-color:var(--navy)}
+.ctb-right{display:flex;align-items:center;gap:8px;margin-left:auto}
+.client-body{flex:1;overflow-y:auto;padding:20px;max-width:820px;margin:0 auto;width:100%}
+.cpanel{display:none}.cpanel.on{display:block}
+.client-hero{background:linear-gradient(135deg,var(--navy),var(--navy2));border-radius:var(--rad2);padding:26px;margin-bottom:18px;overflow:hidden;position:relative}
+.client-hero::before{content:'';position:absolute;top:-40px;right:-40px;width:180px;height:180px;border-radius:50%;background:rgba(212,168,67,.07)}
+.client-hero h2{font-family:'DM Serif Display',serif;font-size:22px;font-weight:400;color:#fff;margin-bottom:4px}
+.client-hero p{font-size:12px;color:rgba(255,255,255,.45)}
+.hero-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:18px}
+.hs{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:var(--rad);padding:11px}
+.hs-val{font-size:21px;font-weight:700;color:#fff}
+.hs-lbl{font-size:10px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.07em;margin-top:2px}
+.client-form-wrap{background:#fff;border:1px solid var(--bord);border-radius:var(--rad2);padding:22px;margin-bottom:16px;box-shadow:var(--shadow)}
+.cfw-header{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:16px}
+.cfw-title{font-size:15px;font-weight:700;color:var(--text)}
+.cfw-meta{font-size:12px;color:var(--text3);margin-top:2px}
+.cq{margin-bottom:18px}
+.cq-text{font-size:13px;font-weight:600;color:var(--text);margin-bottom:7px;line-height:1.5}
+.cq-req{color:var(--red);margin-left:2px}
+.ci{width:100%;padding:9px 11px;border-radius:8px;border:1.5px solid var(--bord);background:var(--surf);font-size:13px;color:var(--text);outline:none;font-family:inherit;transition:border-color .2s}
+.ci:focus{border-color:var(--navy);background:#fff}
+.ci-ta{width:100%;min-height:80px;padding:9px 11px;border-radius:8px;border:1.5px solid var(--bord);background:var(--surf);font-size:13px;color:var(--text);outline:none;resize:vertical;font-family:inherit;transition:border-color .2s}
+.ci-ta:focus{border-color:var(--navy);background:#fff}
+.mc-opt{display:flex;align-items:center;gap:8px;padding:9px 12px;border-radius:8px;border:1.5px solid var(--bord);background:var(--surf);margin-bottom:6px;cursor:pointer;font-size:13px;color:var(--text2);transition:all .18s}
+.mc-opt:hover{border-color:var(--bord2);background:#fff}
+.mc-opt.sel{border-color:var(--navy);background:#eef2f8;color:var(--navy);font-weight:600}
+.mc-opt input{accent-color:var(--navy);width:14px;height:14px}
+.star-rate{display:flex;gap:5px}
+.star-btn{width:34px;height:34px;border-radius:7px;border:1.5px solid var(--bord);background:var(--surf);font-size:20px;color:var(--bord2);display:flex;align-items:center;justify-content:center;transition:all .15s}
+.star-btn.on{background:#faeeda;border-color:var(--gold);color:#854f0b}
+.save-bar{display:flex;align-items:center;justify-content:space-between;padding-top:14px;border-top:1px solid var(--bord);gap:10px;flex-wrap:wrap}
+.save-status{font-size:12px;color:var(--text3);display:flex;align-items:center;gap:5px}
+.save-status.ok{color:var(--teal)}
+
+/* TOAST */
+#toast{position:fixed;bottom:22px;right:22px;background:#1a1a2e;color:#fff;padding:11px 18px;border-radius:9px;font-size:13px;font-weight:500;z-index:9999;transform:translateY(70px);opacity:0;transition:all .3s;box-shadow:var(--shadow2);display:flex;align-items:center;gap:7px}
+#toast.show{transform:translateY(0);opacity:1}
+#toast.ok{background:var(--teal2)}
+#toast.err{background:var(--red)}
+
+@media(max-width:768px){
+  .districts-grid{grid-template-columns:1fr}
+  .gauge-row{grid-template-columns:repeat(3,1fr)}
+  .ff-row{grid-template-columns:1fr}
+  .builder-left{width:180px}
+  .builder-right{width:220px}
+}
+</style>
+</head>
+<body>
+
+<!-- LOADING -->
+<div id="loadingScreen">
+  <div class="ld-title">Learn New Mexico</div>
+  <div class="ld-sub">Strategic Planning Platform</div>
+  <div class="ld-bar"><div class="ld-fill"></div></div>
+</div>
+
+<!-- LOGIN -->
+<div id="loginScreen">
+  <div>
+    <div class="login-brand"><h1>Learn New Mexico</h1><p>Strategic Planning Platform</p></div>
+    <div class="login-card">
+      <div class="login-tabs">
+        <button class="ltab on" onclick="setLTab('admin',this)"><i class="ti ti-shield-check"></i> LNM Admin</button>
+        <button class="ltab" onclick="setLTab('client',this)"><i class="ti ti-user"></i> Client</button>
+      </div>
+      <div class="lf"><label>Username</label><input type="text" id="lUser" placeholder="Enter username" autocomplete="username"></div>
+      <div class="lf"><label>Password</label><input type="password" id="lPass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"></div>
+      <button class="login-btn" onclick="doLogin()"><i class="ti ti-lock"></i> Sign In</button>
+      <div class="login-err" id="lErr"></div>
+    </div>
+    <div class="login-footer">Authorized users only · Learn New Mexico © 2025</div>
+  </div>
+</div>
+
+<!-- ADMIN APP -->
+<div id="adminApp">
+  <div class="admin-topbar">
+    <div class="atb-brand">Learn New Mexico <span>Strategic Planning Platform</span></div>
+    <div class="atb-breadcrumb" id="breadcrumb"></div>
+    <div class="atb-right">
+      <div class="atb-badge"><i class="ti ti-shield-check"></i> LNM Admin</div>
+      <button class="signout-btn" onclick="signOut()"><i class="ti ti-logout"></i> Sign out</button>
+    </div>
+  </div>
+  <div class="admin-body">
+    <!-- HOME: district cards -->
+    <div class="view on" id="view-home">
+      <div class="page-hdr" style="margin-top:4px">
+        <div><h2>Districts</h2><p>Select a district to manage its forms, clients, and responses</p></div>
+        <button class="btn btn-primary" onclick="openModal('m-district')"><i class="ti ti-plus"></i> Add District</button>
+      </div>
+      <div class="districts-grid" id="districtsGrid"></div>
+    </div>
+
+    <!-- DISTRICT WORKSPACE -->
+    <div class="view" id="view-district">
+      <div class="district-tabs" id="districtTabs">
+        <button class="dtab on" onclick="dTab('forms',this)"><i class="ti ti-clipboard-list"></i> Forms</button>
+        <button class="dtab" onclick="dTab('clients',this)"><i class="ti ti-users"></i> Clients</button>
+        <button class="dtab" onclick="dTab('responses',this)"><i class="ti ti-chart-bar"></i> Responses</button>
+        <button class="dtab" onclick="dTab('dsettings',this)"><i class="ti ti-settings"></i> Settings</button>
+      </div>
+
+      <!-- FORMS -->
+      <div class="district-panel on" id="dp-forms">
+        <div class="page-hdr">
+          <div><h2 id="dpFormsTitle">Forms</h2><p>Build and manage forms for this district</p></div>
+          <button class="btn btn-primary" onclick="openNewForm()"><i class="ti ti-plus"></i> New Form</button>
+        </div>
+        <div class="forms-grid" id="formsGrid"></div>
+      </div>
+
+      <!-- CLIENTS -->
+      <div class="district-panel" id="dp-clients">
+        <div class="clients-header">
+          <div><h2>Clients</h2><p style="font-size:12px;color:var(--text3);margin-top:2px">Manage client accounts for this district</p></div>
+          <button class="btn btn-primary" onclick="openModal('m-client')"><i class="ti ti-user-plus"></i> Add Client</button>
+        </div>
+        <div id="clientsGrid"></div>
+      </div>
+
+      <!-- RESPONSES -->
+      <div class="district-panel" id="dp-responses">
+        <div class="page-hdr"><div><h2>Responses</h2><p>View client submissions per form</p></div>
+          <button class="btn btn-teal btn-sm" onclick="exportCSV()"><i class="ti ti-download"></i> Export CSV</button>
+        </div>
+        <div class="response-form-select">
+          <label style="font-size:12px;font-weight:700;color:var(--text3)">Select form:</label>
+          <select id="respFormSelect" onchange="renderResponses()" style="padding:7px 10px;border-radius:7px;border:1.5px solid var(--bord);font-size:13px;font-family:inherit;background:var(--surf);outline:none"></select>
+        </div>
+        <div id="responsesGrid"></div>
+      </div>
+
+      <!-- SETTINGS -->
+      <div class="district-panel" id="dp-dsettings">
+        <div class="page-hdr"><h2>District Settings</h2></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start">
+          <div class="card">
+            <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);margin-bottom:14px">District Info</div>
+            <div class="ff"><label>District Name</label><input type="text" id="ds-name"></div>
+            <div class="ff-row">
+              <div class="ff"><label>Short Name</label><input type="text" id="ds-short"></div>
+              <div class="ff"><label>Fiscal Year</label><input type="text" id="ds-fy"></div>
+            </div>
+            <div style="display:flex;gap:8px;margin-top:4px">
+              <button class="btn btn-primary btn-sm" onclick="saveDistrictSettings()"><i class="ti ti-check"></i> Save</button>
+              <button class="btn btn-danger btn-sm" onclick="deleteDistrict()"><i class="ti ti-trash"></i> Delete District</button>
+            </div>
+          </div>
+          <div class="card">
+            <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);margin-bottom:14px">Phase Progress</div>
+            <div class="gauge-row" id="settingsGauges"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FORM BUILDER (full page, flex) -->
+    <div id="builderView">
+      <div class="builder-topbar">
+        <button class="btb-back" onclick="closeBuilder()"><i class="ti ti-arrow-left"></i> Back to Forms</button>
+        <div style="width:1px;height:24px;background:var(--bord);margin:0 6px"></div>
+        <div class="btb-title"><input type="text" id="builderTitle" placeholder="Form title..." onchange="updateFormTitle(this.value)"></div>
+        <div class="btb-actions">
+          <select id="builderStatus" style="padding:7px 10px;border-radius:7px;border:1.5px solid var(--bord);font-size:12px;font-family:inherit;background:var(--surf);outline:none" onchange="updateFormStatus(this.value)">
+            <option value="draft">Draft</option>
+            <option value="active">Active</option>
+          </select>
+          <button class="btn btn-gold" onclick="saveBuilder()"><i class="ti ti-check"></i> Save Form</button>
+        </div>
+      </div>
+      <div class="builder-body">
+        <!-- LEFT: field types -->
+        <div class="builder-left">
+          <div class="bleft-section">
+            <h4>Text Fields</h4>
+            <button class="field-btn" onclick="addField('text')"><i class="ti ti-text-size"></i>Short Text</button>
+            <button class="field-btn" onclick="addField('textarea')"><i class="ti ti-align-left"></i>Long Text</button>
+            <button class="field-btn" onclick="addField('number')"><i class="ti ti-numbers"></i>Number</button>
+          </div>
+          <div class="bleft-section">
+            <h4>Choice Fields</h4>
+            <button class="field-btn" onclick="addField('radio')"><i class="ti ti-circle-dot"></i>Multiple Choice</button>
+            <button class="field-btn" onclick="addField('checkbox')"><i class="ti ti-checkbox"></i>Checkboxes</button>
+            <button class="field-btn" onclick="addField('dropdown')"><i class="ti ti-chevron-down"></i>Dropdown</button>
+          </div>
+          <div class="bleft-section">
+            <h4>Scale & Rating</h4>
+            <button class="field-btn" onclick="addField('rating')"><i class="ti ti-star"></i>Star Rating</button>
+            <button class="field-btn" onclick="addField('scale')"><i class="ti ti-adjustments-horizontal"></i>Linear Scale</button>
+          </div>
+          <div class="bleft-section">
+            <h4>Other</h4>
+            <button class="field-btn" onclick="addField('heading')"><i class="ti ti-heading"></i>Section Heading</button>
+            <button class="field-btn" onclick="addField('divider')"><i class="ti ti-minus"></i>Divider</button>
+          </div>
+        </div>
+
+        <!-- CENTER: canvas -->
+        <div class="builder-canvas" id="builderCanvas" onclick="deselectQuestion($event)">
+          <div class="canvas-inner">
+            <div class="canvas-form-header">
+              <div class="canvas-form-title" id="canvasTitle">Form Title</div>
+              <div class="canvas-form-desc" id="canvasDesc">Add a description for this form...</div>
+            </div>
+            <div id="questionsList"></div>
+            <div class="canvas-empty" id="canvasEmpty">
+              <i class="ti ti-mouse-2"></i>
+              <p>Click any field type on the left to add it here</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT: question editor -->
+        <div class="builder-right" id="builderRight">
+          <div class="bright-empty" id="brightEmpty">
+            <i class="ti ti-click"></i>
+            <p>Click a question to edit its properties</p>
+          </div>
+          <div id="brightEditor" style="display:none">
+            <div class="bright-section">
+              <h4>Question Settings</h4>
+              <div class="edit-field"><label>Question Text</label><input type="text" id="eq-text" placeholder="Your question..." oninput="updateSelectedQ('text',this.value)"></div>
+              <div class="edit-field"><label>Helper Text</label><input type="text" id="eq-helper" placeholder="Optional instructions..." oninput="updateSelectedQ('helper',this.value)"></div>
+            </div>
+            <div id="eq-options-section" style="display:none" class="bright-section">
+              <h4>Options</h4>
+              <div id="eq-options-list"></div>
+              <button class="btn btn-ghost btn-sm" onclick="addOption()" style="margin-top:4px;width:100%"><i class="ti ti-plus"></i> Add option</button>
+            </div>
+            <div id="eq-scale-section" style="display:none" class="bright-section">
+              <h4>Scale Settings</h4>
+              <div class="ff-row">
+                <div class="edit-field"><label>Min</label><input type="number" id="eq-min" value="1" oninput="updateSelectedQ('min',+this.value);renderQCard(S.selectedQ)"></div>
+                <div class="edit-field"><label>Max</label><input type="number" id="eq-max" value="10" oninput="updateSelectedQ('max',+this.value);renderQCard(S.selectedQ)"></div>
+              </div>
+            </div>
+            <div class="bright-section">
+              <h4>Validation</h4>
+              <div class="toggle-row">
+                <label>Required field</label>
+                <label class="toggle"><input type="checkbox" id="eq-required" onchange="updateSelectedQ('required',this.checked)"><span class="toggle-slider"></span></label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CLIENT APP -->
+<div id="clientApp">
+  <div class="client-topbar">
+    <div class="ctb-brand" id="ctbBrand">District <span id="ctbSub">Strategic Planning</span></div>
+    <div class="ctabs">
+      <button class="ctab on" onclick="cTab('overview',this)"><i class="ti ti-layout-dashboard"></i> Overview</button>
+      <button class="ctab" onclick="cTab('myforms',this)"><i class="ti ti-forms"></i> My Forms</button>
+      <button class="ctab" onclick="cTab('progress',this)"><i class="ti ti-chart-bar"></i> Progress</button>
+    </div>
+    <div class="ctb-right">
+      <span id="ctbUser" style="font-size:12px;color:var(--text3)"></span>
+      <button class="signout-btn" style="border-color:var(--bord);color:var(--text3)" onclick="signOut()"><i class="ti ti-logout"></i></button>
+    </div>
+  </div>
+  <div class="client-body">
+    <div class="cpanel on" id="cp-overview">
+      <div class="client-hero">
+        <h2 id="cHeroTitle">Strategic Planning Dashboard</h2>
+        <p id="cHeroSub">Fiscal Year 2025–2026 · Learn New Mexico</p>
+        <div class="hero-stats">
+          <div class="hs"><div class="hs-val" id="cStatForms">0</div><div class="hs-lbl">Forms assigned</div></div>
+          <div class="hs"><div class="hs-val" id="cStatDone">0</div><div class="hs-lbl">Completed</div></div>
+          <div class="hs"><div class="hs-val" id="cStatPct">0%</div><div class="hs-lbl">Progress</div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:14px">Phase Progress</div>
+        <div class="gauge-row" id="cGauges"></div>
+      </div>
+    </div>
+    <div class="cpanel" id="cp-myforms">
+      <div class="page-hdr"><div><h2>My Forms</h2><p>Complete the forms assigned to you</p></div></div>
+      <div id="cFormsList"></div>
+    </div>
+    <div class="cpanel" id="cp-progress">
+      <div class="page-hdr"><div><h2>My Progress</h2><p>Your completion status across all assigned forms</p></div></div>
+      <div id="cProgressList"></div>
+    </div>
+  </div>
+</div>
+
+<!-- MODALS -->
+<div class="modal-overlay" id="m-district">
+  <div class="modal">
+    <button class="mclose" onclick="closeModal('m-district')"><i class="ti ti-x"></i></button>
+    <h3>Add District</h3><div class="msub">Create a new district workspace</div>
+    <div class="ff"><label>District Name</label><input type="text" id="m-dName" placeholder="e.g. Portales Municipal School District"></div>
+    <div class="ff-row">
+      <div class="ff"><label>Short Name</label><input type="text" id="m-dShort" placeholder="e.g. PMSD"></div>
+      <div class="ff"><label>Fiscal Year</label><input type="text" id="m-dFY" value="2025–2026"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('m-district')">Cancel</button>
+      <button class="btn btn-primary" onclick="createDistrict()"><i class="ti ti-check"></i> Create</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="m-client">
+  <div class="modal">
+    <button class="mclose" onclick="closeModal('m-client')"><i class="ti ti-x"></i></button>
+    <h3 id="m-clientTitle">Add Client</h3><div class="msub">Create a client account for this district</div>
+    <div class="ff-row">
+      <div class="ff"><label>Display Name</label><input type="text" id="m-cName" placeholder="Jane Smith"></div>
+      <div class="ff"><label>Username</label><input type="text" id="m-cUser" placeholder="jsmith"></div>
+    </div>
+    <div class="ff"><label>Password</label><input type="password" id="m-cPass" placeholder="Set password"></div>
+    <div class="ff"><label>Assign Forms</label><div id="m-cForms" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:4px;min-height:28px"></div></div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('m-client')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveClient()"><i class="ti ti-check"></i> Save</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"><i class="ti ti-check" id="toastIcon"></i><span id="toastMsg">Saved</span></div>
+
+<script>
+// ════════════════════════════════
+// STATE
+// ════════════════════════════════
+const S = {
+  role: null, user: null, districtId: null,
+  selectedQ: null, editingClientId: null,
+  adminCreds: { u:'admin', p:'lnm2025' },
+  districts: [{id:'pmsd',name:'Portales Municipal School District',short:'PMSD',fy:'2025–2026'}],
+  phases: [
+    {id:'p1',name:'Discovery & Audit',month:'June',order:1},
+    {id:'p2',name:'Stakeholder Engagement',month:'Jul–Aug',order:2},
+    {id:'p3',name:'Plan Development',month:'September',order:3},
+    {id:'p4',name:'Refinement & Adoption',month:'October',order:4},
+    {id:'p5',name:'Implementation',month:'Ongoing',order:5}
+  ],
+  forms: [],
+  clients: [
+    {id:'c1',name:'Client User 1',u:'client1',p:'pmsd2025',district:'pmsd',forms:[]},
+    {id:'c2',name:'Client User 2',u:'client2',p:'pmsd2025',district:'pmsd',forms:[]}
+  ],
+  responses: {},
+  phaseProgress: {},
+  currentFormId: null,
+  loginTab: 'admin'
+};
+const COLORS = ['#27a892','#d4a843','#378add','#7f77dd','#d85a30'];
+
+// ════════════════════════════════
+// INIT
+// ════════════════════════════════
+window.addEventListener('load', async () => {
+  try { await loadBlobs(); } catch(e) { console.warn('Blob load:', e); }
+  setTimeout(() => {
+    document.getElementById('loadingScreen').classList.add('hide');
+    document.getElementById('loginScreen').classList.add('show');
+  }, 1700);
+});
+
+// ════════════════════════════════
+// BLOBS
+// ════════════════════════════════
+async function loadBlobs() {
+  const r = await fetch('/.netlify/functions/load-config');
+  if (!r.ok) return;
+  const d = await r.json();
+  if (d.ok && d.config) {
+    const c = d.config;
+    if (c.adminCreds) S.adminCreds = c.adminCreds;
+    if (c.districts?.length) S.districts = c.districts;
+    if (c.phases?.length) S.phases = c.phases;
+    if (c.forms) S.forms = c.forms;
+    if (c.clients?.length) S.clients = c.clients;
+    if (c.phaseProgress) S.phaseProgress = c.phaseProgress;
+  }
+}
+async function saveBlobs() {
+  try {
+    await fetch('/.netlify/functions/save-config', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({config:{adminCreds:S.adminCreds,districts:S.districts,phases:S.phases,forms:S.forms,clients:S.clients,phaseProgress:S.phaseProgress}})
+    });
+  } catch(e) { console.warn('Save:', e); }
+}
+async function saveResponse(username, formId, answers) {
+  try {
+    await fetch('/.netlify/functions/save-response', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({username, formId, answers, savedAt: new Date().toISOString()})
+    });
+  } catch(e) { console.warn('SaveResp:', e); }
+}
+async function loadMyResponses(username) {
+  try {
+    const r = await fetch(`/.netlify/functions/load-my-responses?username=${encodeURIComponent(username)}`);
+    const d = await r.json();
+    if (d.ok && d.responses) S.responses[username] = d.responses;
+  } catch(e) {}
+}
+async function loadAllResponses() {
+  try {
+    const r = await fetch('/.netlify/functions/load-responses');
+    const d = await r.json();
+    if (d.ok && d.responses) S.responses = d.responses;
+  } catch(e) {}
+}
+
+// ════════════════════════════════
+// LOGIN
+// ════════════════════════════════
+function setLTab(t, el) {
+  S.loginTab = t;
+  document.querySelectorAll('.ltab').forEach(x=>x.classList.remove('on'));
+  el.classList.add('on');
+}
+async function doLogin() {
+  const u = document.getElementById('lUser').value.trim();
+  const p = document.getElementById('lPass').value;
+  const err = document.getElementById('lErr');
+  err.textContent = '';
+  if (!u||!p) { err.textContent='Please enter username and password.'; return; }
+  if (S.loginTab==='admin') {
+    if (u===S.adminCreds.u && p===S.adminCreds.p) {
+      S.role='admin'; S.user='admin';
+      await loadAllResponses();
+      launchAdmin();
+    } else err.textContent = 'Invalid admin credentials.';
+  } else {
+    const c = S.clients.find(x=>x.u===u&&x.p===p);
+    if (c) {
+      S.role='client'; S.user=u; S.districtId=c.district;
+      await loadMyResponses(u);
+      launchClient(c);
+    } else { err.textContent='Invalid credentials.'; document.getElementById('lPass').value=''; }
+  }
+}
+function signOut() {
+  S.role=null; S.user=null; S.districtId=null;
+  ['adminApp','clientApp'].forEach(id=>document.getElementById(id).classList.remove('show'));
+  document.getElementById('loginScreen').classList.add('show');
+  document.getElementById('lUser').value='';
+  document.getElementById('lPass').value='';
+}
+
+// ════════════════════════════════
+// ADMIN LAUNCH
+// ════════════════════════════════
+function launchAdmin() {
+  document.getElementById('loginScreen').classList.remove('show');
+  document.getElementById('adminApp').classList.add('show');
+  showView('home');
+  renderDistrictCards();
+}
+
+function showView(name) {
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('on'));
+  document.getElementById('builderView').classList.remove('on');
+  if (name==='builder') {
+    document.getElementById('builderView').classList.add('on');
+    document.getElementById('builderView').style.display='flex';
+  } else {
+    document.getElementById('builderView').style.display='none';
+    const el = document.getElementById('view-'+name);
+    if (el) el.classList.add('on');
+  }
+  updateBreadcrumb(name);
+}
+
+function updateBreadcrumb(view) {
+  const bc = document.getElementById('breadcrumb');
+  const d = S.districts.find(x=>x.id===S.districtId);
+  if (view==='home') { bc.innerHTML='<span class="crumb">All Districts</span>'; return; }
+  if (view==='district'||view==='builder') {
+    bc.innerHTML=`<span class="crumb link" onclick="goHome()">All Districts</span>
+      <span class="sep">›</span>
+      <span class="crumb">${d?.short||''}</span>
+      ${view==='builder'?`<span class="sep">›</span><span class="crumb">Form Builder</span>`:''}`;
+  }
+}
+
+function goHome() { showView('home'); renderDistrictCards(); }
+
+// ════════════════════════════════
+// DISTRICT CARDS
+// ════════════════════════════════
+function renderDistrictCards() {
+  const grid = document.getElementById('districtsGrid');
+  grid.innerHTML = '';
+  S.districts.forEach(d => {
+    const forms = S.forms.filter(f=>f.district===d.id);
+    const clients = S.clients.filter(c=>c.district===d.id);
+    const prog = S.phaseProgress[d.id]||{};
+    const avgProg = S.phases.length ? Math.round(S.phases.reduce((a,p)=>a+(prog[p.id]||0),0)/S.phases.length) : 0;
+    const card = document.createElement('div');
+    card.className = 'district-card';
+    card.innerHTML = `
+      <div class="dc-header">
+        <div class="dc-icon">${d.short.substring(0,2)}</div>
+        <div style="flex:1"><div class="dc-name">${d.name}</div><div class="dc-short">${d.short} · FY ${d.fy}</div></div>
+        <button class="btn btn-danger btn-sm" onclick="event.stopPropagation();confirmDeleteDistrict('${d.id}')" title="Delete"><i class="ti ti-trash"></i></button>
+      </div>
+      <div class="dc-stats">
+        <div class="dc-stat"><div class="v">${forms.length}</div><div class="l">Forms</div></div>
+        <div class="dc-stat"><div class="v">${clients.length}</div><div class="l">Clients</div></div>
+        <div class="dc-stat"><div class="v">${avgProg}%</div><div class="l">Progress</div></div>
+      </div>
+      <div class="prog-bar"><div class="prog-fill" style="width:${avgProg}%"></div></div>`;
+    card.addEventListener('click', () => openDistrict(d.id));
+    grid.appendChild(card);
+  });
+  // Add district card
+  const add = document.createElement('div');
+  add.className='add-district-card';
+  add.innerHTML='<i class="ti ti-plus"></i><span>Add District</span>';
+  add.onclick = () => openModal('m-district');
+  grid.appendChild(add);
+}
+
+function openDistrict(id) {
+  S.districtId = id;
+  showView('district');
+  dTab('forms', document.querySelector('.dtab'));
+  document.getElementById('dpFormsTitle').textContent = S.districts.find(d=>d.id===id)?.name + ' — Forms';
+  renderFormsGrid();
+  renderClientsGrid();
+  renderResponsesPanel();
+  renderSettingsPanel();
+}
+
+function dTab(name, el) {
+  document.querySelectorAll('.dtab').forEach(t=>t.classList.remove('on'));
+  document.querySelectorAll('.district-panel').forEach(p=>p.classList.remove('on'));
+  if (el) el.classList.add('on'); else document.querySelector('.dtab')?.classList.add('on');
+  document.getElementById('dp-'+name).classList.add('on');
+  if (name==='responses') renderResponses();
+}
+
+// ════════════════════════════════
+// FORMS
+// ════════════════════════════════
+function renderFormsGrid() {
+  const grid = document.getElementById('formsGrid');
+  grid.innerHTML = '';
+  const forms = S.forms.filter(f=>f.district===S.districtId);
+  forms.forEach(f => {
+    const qCount = (f.questions||[]).length;
+    const assigned = S.clients.filter(c=>c.forms?.includes(f.id)).length;
+    const card = document.createElement('div');
+    card.className = 'form-card';
+    card.innerHTML = `
+      <div class="fc-top">
+        <div class="fc-icon"><i class="ti ti-clipboard-list"></i></div>
+        <div class="fc-actions" onclick="event.stopPropagation()">
+          <button class="btn btn-ghost btn-sm" onclick="openBuilder('${f.id}')"><i class="ti ti-pencil"></i></button>
+          <button class="btn btn-danger btn-sm" onclick="deleteForm('${f.id}')"><i class="ti ti-trash"></i></button>
+        </div>
+      </div>
+      <div class="fc-title">${f.title}</div>
+      <div class="fc-meta">${qCount} question${qCount!==1?'s':''} · ${assigned} client${assigned!==1?'s':''} assigned</div>
+      <div style="margin-top:8px;display:flex;gap:5px">
+        <span class="badge ${f.status==='active'?'badge-green':'badge-gray'}">${f.status==='active'?'Active':'Draft'}</span>
+        ${f.phase?`<span class="badge badge-blue">${S.phases.find(p=>p.id===f.phase)?.name||f.phase}</span>`:''}
+      </div>`;
+    card.addEventListener('click', ()=>openBuilder(f.id));
+    grid.appendChild(card);
+  });
+  const add = document.createElement('div');
+  add.className='add-form-card';
+  add.innerHTML='<i class="ti ti-plus"></i><span>New Form</span>';
+  add.onclick = openNewForm;
+  grid.appendChild(add);
+}
+
+function openNewForm() {
+  const id = 'f'+Date.now();
+  S.forms.push({id, title:'Untitled Form', district:S.districtId, phase:'', status:'draft', questions:[], desc:'', createdAt:new Date().toISOString()});
+  saveBlobs();
+  openBuilder(id);
+}
+
+function deleteForm(id) {
+  if (!confirm('Delete this form?')) return;
+  S.forms = S.forms.filter(f=>f.id!==id);
+  S.clients.forEach(c=>{ if(c.forms) c.forms=c.forms.filter(x=>x!==id); });
+  saveBlobs(); renderFormsGrid(); toast('Form deleted','err');
+}
+
+// ════════════════════════════════
+// FORM BUILDER
+// ════════════════════════════════
+function openBuilder(formId) {
+  S.currentFormId = formId;
+  S.selectedQ = null;
+  const f = S.forms.find(x=>x.id===formId);
+  if (!f) return;
+  document.getElementById('builderTitle').value = f.title;
+  document.getElementById('builderStatus').value = f.status||'draft';
+  document.getElementById('canvasTitle').textContent = f.title;
+  document.getElementById('canvasDesc').textContent = f.desc||'Form description...';
+  renderQuestionsList();
+  showEditor(null);
+  showView('builder');
+}
+
+function closeBuilder() {
+  showView('district');
+  renderFormsGrid();
+}
+
+function updateFormTitle(v) {
+  const f = S.forms.find(x=>x.id===S.currentFormId);
+  if (f) { f.title=v; document.getElementById('canvasTitle').textContent=v; }
+}
+function updateFormStatus(v) {
+  const f = S.forms.find(x=>x.id===S.currentFormId);
+  if (f) f.status=v;
+}
+
+function saveBuilder() {
+  saveBlobs();
+  toast('Form saved');
+  closeBuilder();
+}
+
+function renderQuestionsList() {
+  const f = S.forms.find(x=>x.id===S.currentFormId);
+  const qs = f?.questions||[];
+  const list = document.getElementById('questionsList');
+  const empty = document.getElementById('canvasEmpty');
+  list.innerHTML = '';
+  empty.style.display = qs.length ? 'none' : 'block';
+  qs.forEach((q,i) => {
+    const card = buildQCard(q, i);
+    list.appendChild(card);
+  });
+}
+
+function buildQCard(q, idx) {
+  const div = document.createElement('div');
+  div.className = 'qcard' + (S.selectedQ===idx?' selected':'');
+  div.dataset.idx = idx;
+  div.draggable = true;
+  div.onclick = (e) => { e.stopPropagation(); selectQuestion(idx); };
+  div.innerHTML = `<div class="qcard-drag"><i class="ti ti-grip-vertical"></i></div>
+    <div class="qcard-body">
+      ${q.type==='heading' ? `<div style="font-size:17px;font-weight:700;color:var(--text);border-bottom:2px solid var(--bord);padding-bottom:8px">${q.text||'Section Heading'}</div>` :
+        q.type==='divider' ? `<hr style="border:none;border-top:2px dashed var(--bord);margin:4px 0">` :
+        `<div class="qcard-label">${q.text||'<em style="color:var(--text3);font-weight:400">Click to add question text</em>'}${q.required?'<span class="qcard-required">*</span>':''}</div>
+        ${q.helper?`<div class="qcard-helper">${q.helper}</div>`:''}
+        <div class="qcard-preview">${getQPreview(q)}</div>`}
+    </div>
+    <div class="qcard-actions">
+      <button class="qcard-btn" onclick="event.stopPropagation();duplicateQ(${idx})" title="Duplicate"><i class="ti ti-copy"></i></button>
+      <button class="qcard-btn del" onclick="event.stopPropagation();removeQ(${idx})" title="Delete"><i class="ti ti-trash"></i></button>
+    </div>`;
+  setupQCardDrag(div, idx);
+  return div;
+}
+
+function getQPreview(q) {
+  if (q.type==='text') return `<input type="text" placeholder="Short answer..." class="qcard-preview" style="pointer-events:none;width:100%;padding:7px 9px;border-radius:6px;border:1.5px solid var(--bord);background:var(--surf);font-size:12px;color:var(--text3);font-family:inherit">`;
+  if (q.type==='textarea') return `<textarea placeholder="Long answer..." style="pointer-events:none;width:100%;padding:7px 9px;border-radius:6px;border:1.5px solid var(--bord);background:var(--surf);font-size:12px;min-height:52px;font-family:inherit;color:var(--text3);resize:none"></textarea>`;
+  if (q.type==='number') return `<input type="number" placeholder="0" style="pointer-events:none;width:120px;padding:7px 9px;border-radius:6px;border:1.5px solid var(--bord);background:var(--surf);font-size:12px;font-family:inherit;color:var(--text3)">`;
+  if (q.type==='radio'||q.type==='checkbox') return `<div class="mc-preview">${(q.options||['Option 1','Option 2']).map(o=>`<div class="mc-opt-preview"><span style="width:14px;height:14px;border-radius:${q.type==='radio'?'50%':'3px'};border:1.5px solid var(--bord2);display:inline-block;flex-shrink:0"></span>${o}</div>`).join('')}</div>`;
+  if (q.type==='dropdown') return `<select style="pointer-events:none;width:100%;padding:7px 9px;border-radius:6px;border:1.5px solid var(--bord);background:var(--surf);font-size:12px;font-family:inherit;color:var(--text3)"><option>Select an option...</option>${(q.options||[]).map(o=>`<option>${o}</option>`).join('')}</select>`;
+  if (q.type==='rating') return `<div class="star-preview">${[1,2,3,4,5].map(()=>`<span>★</span>`).join('')}</div>`;
+  if (q.type==='scale') return `<div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text3)"><span>${q.min||1}</span><div style="flex:1;height:4px;background:var(--bord2);border-radius:4px"></div><span>${q.max||10}</span></div>`;
+  return '';
+}
+
+function addField(type) {
+  const f = S.forms.find(x=>x.id===S.currentFormId);
+  if (!f) return;
+  const q = {id:'q'+Date.now(), type, text:'', helper:'', required:false, options: (type==='radio'||type==='checkbox'||type==='dropdown')?['Option 1','Option 2']:[], min:1, max:10};
+  f.questions = f.questions||[];
+  f.questions.push(q);
+  renderQuestionsList();
+  selectQuestion(f.questions.length-1);
+}
+
+function selectQuestion(idx) {
+  S.selectedQ = idx;
+  renderQuestionsList();
+  showEditor(idx);
+}
+
+function deselectQuestion(e) {
+  if (e && e.target.id!=='builderCanvas' && e.target.className!=='canvas-inner') return;
+  S.selectedQ = null;
+  renderQuestionsList();
+  showEditor(null);
+}
+
+function showEditor(idx) {
+  const empty = document.getElementById('brightEmpty');
+  const editor = document.getElementById('brightEditor');
+  if (idx===null) { empty.style.display='block'; editor.style.display='none'; return; }
+  const f = S.forms.find(x=>x.id===S.currentFormId);
+  const q = f?.questions?.[idx];
+  if (!q) return;
+  empty.style.display='none'; editor.style.display='block';
+  document.getElementById('eq-text').value = q.text||'';
+  document.getElementById('eq-helper').value = q.helper||'';
+  document.getElementById('eq-required').checked = q.required||false;
+  const hasOpts = ['radio','checkbox','dropdown'].includes(q.type);
+  const isScale = q.type==='scale';
+  document.getElementById('eq-options-section').style.display = hasOpts?'block':'none';
+  document.getElementById('eq-scale-section').style.display = isScale?'block':'none';
+  if (hasOpts) renderOptionsList(q.options||[]);
+  if (isScale) { document.getElementById('eq-min').value=q.min||1; document.getElementById('eq-max').value=q.max||10; }
+  const isSpecial = ['heading','divider'].includes(q.type);
+  document.getElementById('eq-text').closest('.edit-field').style.display = isSpecial&&q.type==='divider'?'none':'block';
+  document.getElementById('eq-required').closest('.toggle-row').style.display = isSpecial?'none':'flex';
+}
+
+function updateSelectedQ(prop, val) {
+  const f = S.forms.find(x=>x.id===S.currentFormId);
+  if (!f||S.selectedQ===null) return;
+  f.questions[S.selectedQ][prop] = val;
+  renderQuestionsList();
+}
+
+function renderOptionsList(opts) {
+  const list = document.getElementById('eq-options-list');
+  list.innerHTML = '';
+  opts.forEach((o,i) => {
+    const row = document.createElement('div');
+    row.className = 'option-row';
+    row.innerHTML = `<input type="text" value="${o}" placeholder="Option ${i+1}" onchange="updateOption(${i},this.value)">
+      <button class="option-del" onclick="removeOption(${i})"><i class="ti ti-x"></i></button>`;
+    list.appendChild(row);
+  });
+}
+function updateOption(i,v){ const f=S.forms.find(x=>x.id===S.currentFormId);if(f&&S.selectedQ!==null){f.questions[S.selectedQ].options[i]=v;renderQuestionsList();} }
+function addOption(){ const f=S.forms.find(x=>x.id===S.currentFormId);if(!f||S.selectedQ===null)return;const q=f.questions[S.selectedQ];q.options=q.options||[];q.options.push('Option '+(q.options.length+1));renderOptionsList(q.options);renderQuestionsList(); }
+function removeOption(i){ const f=S.forms.find(x=>x.id===S.currentFormId);if(!f||S.selectedQ===null)return;f.questions[S.selectedQ].options.splice(i,1);renderOptionsList(f.questions[S.selectedQ].options);renderQuestionsList(); }
+
+function removeQ(idx) {
+  const f = S.forms.find(x=>x.id===S.currentFormId);
+  if (!f) return;
+  f.questions.splice(idx,1);
+  if (S.selectedQ===idx) S.selectedQ=null;
+  else if (S.selectedQ>idx) S.selectedQ--;
+  renderQuestionsList(); showEditor(S.selectedQ);
+}
+function duplicateQ(idx) {
+  const f = S.forms.find(x=>x.id===S.currentFormId);
+  if (!f) return;
+  const copy = JSON.parse(JSON.stringify(f.questions[idx]));
+  copy.id = 'q'+Date.now();
+  f.questions.splice(idx+1,0,copy);
+  renderQuestionsList();
+  selectQuestion(idx+1);
+}
+
+function setupQCardDrag(el, idx) {
+  el.addEventListener('dragstart', e=>{ e.dataTransfer.setData('qidx',''+idx); el.classList.add('dragging'); });
+  el.addEventListener('dragend', ()=>el.classList.remove('dragging'));
+  el.addEventListener('dragover', e=>{ e.preventDefault(); el.classList.add('drag-over'); });
+  el.addEventListener('dragleave', ()=>el.classList.remove('drag-over'));
+  el.addEventListener('drop', e=>{
+    e.preventDefault(); el.classList.remove('drag-over');
+    const from=+e.dataTransfer.getData('qidx'), to=idx;
+    if(from===to) return;
+    const f=S.forms.find(x=>x.id===S.currentFormId);
+    const [q]=f.questions.splice(from,1);
+    f.questions.splice(to,0,q);
+    renderQuestionsList(); showEditor(null); S.selectedQ=null;
+  });
+}
+
+// ════════════════════════════════
+// CLIENTS
+// ════════════════════════════════
+function renderClientsGrid() {
+  const grid = document.getElementById('clientsGrid');
+  grid.innerHTML = '';
+  const clients = S.clients.filter(c=>c.district===S.districtId);
+  if (!clients.length) { grid.innerHTML='<div style="text-align:center;padding:32px;color:var(--text3)"><i class="ti ti-users" style="font-size:28px;display:block;margin-bottom:8px;opacity:.4"></i><p style="font-size:13px">No clients yet. Add your first client.</p></div>'; return; }
+  clients.forEach(c => {
+    const assigned = c.forms||[];
+    const done = assigned.filter(fid=>S.responses[c.u]?.[fid]).length;
+    const pct = assigned.length ? Math.round((done/assigned.length)*100) : 0;
+    const card = document.createElement('div');
+    card.className = 'client-card';
+    card.innerHTML = `
+      <div class="client-av">${c.name.charAt(0)}</div>
+      <div class="client-info">
+        <div class="client-name">${c.name}</div>
+        <div class="client-meta"><code style="background:var(--surf);padding:1px 5px;border-radius:4px;border:1px solid var(--bord);font-size:10px">${c.u}</code> · ${assigned.length} form${assigned.length!==1?'s':''} · ${pct}% complete</div>
+        <div class="prog-bar" style="width:160px;margin-top:5px"><div class="prog-fill" style="width:${pct}%"></div></div>
+      </div>
+      <div class="client-actions">
+        <button class="btn btn-ghost btn-sm" onclick="openEditClient('${c.id}')"><i class="ti ti-pencil"></i> Edit</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteClient('${c.id}')"><i class="ti ti-trash"></i></button>
+      </div>`;
+    grid.appendChild(card);
+  });
+}
+
+function openEditClient(id) {
+  S.editingClientId = id;
+  const c = S.clients.find(x=>x.id===id);
+  if (!c) return;
+  document.getElementById('m-clientTitle').textContent = 'Edit Client';
+  document.getElementById('m-cName').value = c.name;
+  document.getElementById('m-cUser').value = c.u;
+  document.getElementById('m-cPass').value = '';
+  renderClientFormAssign(c);
+  openModal('m-client');
+}
+
+function openNewClientModal() {
+  S.editingClientId = null;
+  document.getElementById('m-clientTitle').textContent = 'Add Client';
+  ['m-cName','m-cUser','m-cPass'].forEach(id=>document.getElementById(id).value='');
+  renderClientFormAssign(null);
+  openModal('m-client');
+}
+
+function renderClientFormAssign(client) {
+  const wrap = document.getElementById('m-cForms');
+  wrap.innerHTML = '';
+  const distForms = S.forms.filter(f=>f.district===S.districtId&&f.status==='active');
+  if (!distForms.length) { wrap.innerHTML='<span style="font-size:12px;color:var(--text3)">No active forms in this district yet</span>'; return; }
+  distForms.forEach(f => {
+    const checked = client?.forms?.includes(f.id);
+    const lbl = document.createElement('label');
+    lbl.style.cssText='display:flex;align-items:center;gap:6px;padding:6px 10px;border-radius:7px;border:1.5px solid var(--bord);background:var(--surf);font-size:12px;cursor:pointer;transition:all .18s';
+    lbl.innerHTML=`<input type="checkbox" value="${f.id}" ${checked?'checked':''} style="accent-color:var(--navy)"> ${f.title}`;
+    if (checked) { lbl.style.borderColor='var(--navy)'; lbl.style.background='#eef2f8'; }
+    lbl.querySelector('input').addEventListener('change',function(){lbl.style.borderColor=this.checked?'var(-
