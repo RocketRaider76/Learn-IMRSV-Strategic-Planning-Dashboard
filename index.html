@@ -1104,4 +1104,317 @@ function renderClientFormAssign(client) {
     lbl.style.cssText='display:flex;align-items:center;gap:6px;padding:6px 10px;border-radius:7px;border:1.5px solid var(--bord);background:var(--surf);font-size:12px;cursor:pointer;transition:all .18s';
     lbl.innerHTML=`<input type="checkbox" value="${f.id}" ${checked?'checked':''} style="accent-color:var(--navy)"> ${f.title}`;
     if (checked) { lbl.style.borderColor='var(--navy)'; lbl.style.background='#eef2f8'; }
-    lbl.querySelector('input').addEventListener('change',function(){lbl.style.borderColor=this.checked?'var(-
+    lbl.querySelector('input').addEventListener('change',function(){lbl.style.borderColor=this.checked?'var(--navy)':'var(--bord)';lbl.style.background=this.checked?'#eef2f8':'var(--surf)';});
+    wrap.appendChild(lbl);
+  });
+}
+
+function saveClient() {
+  const name = document.getElementById('m-cName').value.trim();
+  const u = document.getElementById('m-cUser').value.trim();
+  const p = document.getElementById('m-cPass').value;
+  if (!name||!u) { toast('Name and username required','err'); return; }
+  const forms = [...document.querySelectorAll('#m-cForms input:checked')].map(i=>i.value);
+  if (S.editingClientId) {
+    const c = S.clients.find(x=>x.id===S.editingClientId);
+    if (c) { c.name=name; c.u=u; if(p)c.p=p; c.forms=forms; }
+  } else {
+    if (!p) { toast('Password required','err'); return; }
+    if (S.clients.find(x=>x.u===u)) { toast('Username taken','err'); return; }
+    S.clients.push({id:'c'+Date.now(),name,u,p,district:S.districtId,forms});
+  }
+  saveBlobs(); closeModal('m-client'); renderClientsGrid(); toast('Client saved');
+}
+function deleteClient(id) {
+  if (!confirm('Delete client?')) return;
+  S.clients = S.clients.filter(c=>c.id!==id);
+  saveBlobs(); renderClientsGrid(); toast('Client removed','err');
+}
+
+// ════════════════════════════════
+// RESPONSES
+// ════════════════════════════════
+function renderResponsesPanel() {
+  const sel = document.getElementById('respFormSelect');
+  const forms = S.forms.filter(f=>f.district===S.districtId);
+  sel.innerHTML = forms.length ? forms.map(f=>`<option value="${f.id}">${f.title}</option>`).join('') : '<option value="">No forms</option>';
+}
+function renderResponses() {
+  const formId = document.getElementById('respFormSelect').value;
+  const grid = document.getElementById('responsesGrid');
+  grid.innerHTML = '';
+  if (!formId) return;
+  const form = S.forms.find(f=>f.id===formId);
+  const clients = S.clients.filter(c=>c.district===S.districtId&&c.forms?.includes(formId));
+  if (!clients.length) { grid.innerHTML='<div style="text-align:center;padding:24px;color:var(--text3);font-size:13px">No clients assigned to this form</div>'; return; }
+  clients.forEach(c => {
+    const resp = S.responses[c.u]?.[formId];
+    const card = document.createElement('div');
+    card.className = 'response-card';
+    card.innerHTML=`<div class="rc-header">
+      <div class="rc-client"><span class="client-av" style="width:28px;height:28px;font-size:11px;margin-right:6px">${c.name.charAt(0)}</span>${c.name}</div>
+      <span class="badge ${resp?'badge-green':'badge-gray'}">${resp?'Submitted':'Not started'}</span>
+    </div>
+    ${resp ? `<div class="rc-answers">${(form.questions||[]).map(q=>`<div class="rc-answer"><div class="rc-q">${q.text||q.type}</div><div class="rc-a">${Array.isArray(resp[q.id])?resp[q.id].join(', '):(resp[q.id]||'<em style="color:var(--text3)">No response</em>')}</div></div>`).join('')}</div>` : '<div style="font-size:12px;color:var(--text3)">No responses submitted yet</div>'}`;
+    grid.appendChild(card);
+  });
+}
+function exportCSV() {
+  const formId = document.getElementById('respFormSelect').value;
+  if (!formId) { toast('Select a form first','err'); return; }
+  const form = S.forms.find(f=>f.id===formId);
+  const clients = S.clients.filter(c=>c.district===S.districtId&&c.forms?.includes(formId));
+  const qs = form.questions||[];
+  const rows = [['Client','Username',...qs.map(q=>q.text||q.id),'Submitted'],...clients.map(c=>{
+    const r=S.responses[c.u]?.[formId];
+    return [c.name,c.u,...qs.map(q=>r?String(Array.isArray(r[q.id])?r[q.id].join('|'):r[q.id]||''):''),r?r._savedAt||'Yes':'No'];
+  })];
+  const csv = rows.map(r=>r.map(x=>`"${String(x).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download=form.title.replace(/\s+/g,'_')+'.csv';a.click();
+  toast('CSV exported');
+}
+
+// ════════════════════════════════
+// SETTINGS
+// ════════════════════════════════
+function renderSettingsPanel() {
+  const d = S.districts.find(x=>x.id===S.districtId);
+  if (!d) return;
+  document.getElementById('ds-name').value = d.name;
+  document.getElementById('ds-short').value = d.short;
+  document.getElementById('ds-fy').value = d.fy;
+  renderSettingsGauges();
+}
+function saveDistrictSettings() {
+  const d = S.districts.find(x=>x.id===S.districtId);
+  if (!d) return;
+  d.name = document.getElementById('ds-name').value.trim()||d.name;
+  d.short = document.getElementById('ds-short').value.trim()||d.short;
+  d.fy = document.getElementById('ds-fy').value.trim()||d.fy;
+  saveBlobs(); renderDistrictCards(); toast('District settings saved');
+}
+function confirmDeleteDistrict(id) {
+  if (!confirm('Delete this district and all its data?')) return;
+  S.districts=S.districts.filter(d=>d.id!==id);
+  S.forms=S.forms.filter(f=>f.district!==id);
+  S.clients=S.clients.filter(c=>c.district!==id);
+  saveBlobs(); goHome(); renderDistrictCards(); toast('District deleted','err');
+}
+function deleteDistrict() { confirmDeleteDistrict(S.districtId); }
+
+// ════════════════════════════════
+// GAUGES
+// ════════════════════════════════
+function gaugeArc(pct,color,sz){
+  const r=sz/2-5,cx=sz/2,cy=sz/2,start=-210,sweep=240;
+  const a1=start*Math.PI/180,a2=(start+sweep*(pct/100))*Math.PI/180;
+  const x1=cx+r*Math.cos(a1),y1=cy+r*Math.sin(a1);
+  const x2=cx+r*Math.cos(a2),y2=cy+r*Math.sin(a2);
+  const la=sweep*(pct/100)>180?1:0;
+  const ax=(start+sweep)*Math.PI/180;
+  const xf=cx+r*Math.cos(ax),yf=cy+r*Math.sin(ax);
+  const x1f=cx+r*Math.cos(start*Math.PI/180),y1f=cy+r*Math.sin(start*Math.PI/180);
+  return `<svg width="${sz}" height="${sz}" viewBox="0 0 ${sz} ${sz}">
+    <path d="M${x1f} ${y1f} A${r} ${r} 0 1 1 ${xf} ${yf}" fill="none" stroke="#d0dbe8" stroke-width="4" stroke-linecap="round"/>
+    ${pct>0?`<path d="M${x1} ${y1} A${r} ${r} 0 ${la} 1 ${x2} ${y2}" fill="none" stroke="${color}" stroke-width="4" stroke-linecap="round"/>`:''}
+  </svg>`;
+}
+function renderSettingsGauges() {
+  const wrap = document.getElementById('settingsGauges');
+  if (!wrap) return;
+  wrap.innerHTML = '';
+  const prog = S.phaseProgress[S.districtId]||{};
+  S.phases.forEach((ph,i) => {
+    const pct = prog[ph.id]||0;
+    const color = COLORS[i%COLORS.length];
+    const cell = document.createElement('div');
+    cell.className='gcell';
+    cell.id=`sg-${S.districtId}-${ph.id}`;
+    cell.innerHTML=`${gaugeArc(pct,color,68)}<div class="gpct" style="color:${color}" id="sgpct-${S.districtId}-${ph.id}">${pct}%</div><div class="glbl">${ph.name}</div><div class="gsub">${pct>=100?'Complete':pct>0?'In progress':'Upcoming'}</div><input type="range" min="0" max="100" step="1" value="${pct}" oninput="updateGauge('${S.districtId}','${ph.id}',+this.value,this)">`;
+    wrap.appendChild(cell);
+  });
+}
+function updateGauge(did,pid,val,slider){
+  if(!S.phaseProgress[did]) S.phaseProgress[did]={};
+  S.phaseProgress[did][pid]=val;
+  const cell=document.getElementById(`sg-${did}-${pid}`);
+  if(cell){
+    const i=S.phases.findIndex(p=>p.id===pid);
+    const color=COLORS[i%COLORS.length];
+    const old=cell.querySelector('svg');
+    if(old){const t=document.createElement('div');t.innerHTML=gaugeArc(val,color,68);cell.replaceChild(t.firstChild,old);}
+    const pctEl=document.getElementById(`sgpct-${did}-${pid}`);
+    if(pctEl) pctEl.textContent=val+'%';
+    cell.querySelector('.gsub').textContent=val>=100?'Complete':val>0?'In progress':'Upcoming';
+  }
+  saveBlobs();
+  renderClientGauges();
+}
+
+// ════════════════════════════════
+// CLIENT APP
+// ════════════════════════════════
+function launchClient(client) {
+  document.getElementById('loginScreen').classList.remove('show');
+  document.getElementById('loginScreen').style.display='none';
+  document.getElementById('clientApp').classList.add('show');
+  const d = S.districts.find(x=>x.id===client.district);
+  const brandEl = document.getElementById('ctbBrand');
+  brandEl.childNodes[0].textContent = d?.short||'District';
+  document.getElementById('ctbSub').textContent = 'Strategic Planning';
+  document.getElementById('ctbUser').textContent = client.name;
+  document.getElementById('cHeroTitle').textContent = d?.name||'Strategic Planning Dashboard';
+  document.getElementById('cHeroSub').textContent = `Fiscal Year ${d?.fy||'2025-2026'} · Learn New Mexico`;
+  renderClientStats(client);
+  renderClientGauges();
+  renderClientForms(client);
+  renderClientProgress(client);
+}
+function cTab(name,el){
+  document.querySelectorAll('.ctab').forEach(t=>t.classList.remove('on'));
+  document.querySelectorAll('.cpanel').forEach(p=>p.classList.remove('on'));
+  el.classList.add('on');
+  document.getElementById('cp-'+name).classList.add('on');
+}
+function renderClientStats(client) {
+  const assigned = client.forms||[];
+  const done = assigned.filter(fid=>S.responses[client.u]?.[fid]).length;
+  const pct = assigned.length?Math.round((done/assigned.length)*100):0;
+  document.getElementById('cStatForms').textContent = assigned.length;
+  document.getElementById('cStatDone').textContent = done;
+  document.getElementById('cStatPct').textContent = pct+'%';
+}
+function renderClientGauges() {
+  const client = S.clients.find(c=>c.u===S.user);
+  if (!client) return;
+  const wrap = document.getElementById('cGauges');
+  if (!wrap) return;
+  wrap.innerHTML='';
+  const prog = S.phaseProgress[client.district]||{};
+  S.phases.forEach((ph,i)=>{
+    const pct=prog[ph.id]||0;
+    const color=COLORS[i%COLORS.length];
+    const cell=document.createElement('div');
+    cell.className='gcell';
+    cell.innerHTML=`${gaugeArc(pct,color,64)}<div class="gpct" style="color:${color}">${pct}%</div><div class="glbl">${ph.name}</div><div class="gsub">${pct>=100?'Complete':pct>0?'In progress':'Upcoming'}</div>`;
+    wrap.appendChild(cell);
+  });
+}
+function renderClientForms(client) {
+  const wrap = document.getElementById('cFormsList');
+  wrap.innerHTML='';
+  const assigned = client.forms||[];
+  if (!assigned.length){
+    wrap.innerHTML='<div style="text-align:center;padding:40px;color:var(--text3)"><i class="ti ti-forms" style="font-size:32px;display:block;margin-bottom:10px;opacity:.4"></i><p style="font-size:13px">No forms assigned yet.</p></div>';
+    return;
+  }
+  assigned.forEach(fid=>{
+    const form=S.forms.find(f=>f.id===fid);
+    if(!form) return;
+    const resp=S.responses[client.u]?.[fid];
+    const qs=form.questions||[];
+    const answered=resp?qs.filter(q=>resp[q.id]!==undefined&&String(resp[q.id]).trim()!=='').length:0;
+    const pct=qs.length?Math.round((answered/qs.length)*100):0;
+    const wrap2=document.createElement('div');
+    wrap2.className='client-form-wrap';
+    wrap2.innerHTML=`<div class="cfw-header">
+      <div><div class="cfw-title">${form.title}</div><div class="cfw-meta">${qs.length} question${qs.length!==1?'s':''}</div></div>
+      <span class="badge ${pct===100?'badge-green':pct>0?'badge-gold':'badge-gray'}">${answered}/${qs.length} answered</span>
+    </div>
+    <div class="prog-bar" style="margin-bottom:18px"><div class="prog-fill" style="width:${pct}%;background:${pct===100?'var(--teal)':'var(--gold)'}"></div></div>
+    <div id="cqwrap-${fid}"></div>
+    <div class="save-bar">
+      <div class="save-status" id="css-${fid}"><i class="ti ti-clock"></i> Unsaved</div>
+      <button class="btn btn-teal" onclick="submitForm('${fid}','${client.u}')"><i class="ti ti-device-floppy"></i> Save responses</button>
+    </div>`;
+    wrap.appendChild(wrap2);
+    renderClientQuestions(fid, client.u, qs, resp);
+  });
+}
+function renderClientQuestions(formId,username,questions,resp){
+  const wrap=document.getElementById('cqwrap-'+formId);
+  if(!wrap) return;
+  wrap.innerHTML='';
+  questions.forEach((q,i)=>{
+    if(q.type==='divider'){const hr=document.createElement('hr');hr.style.cssText='border:none;border-top:1px solid var(--bord);margin:16px 0';wrap.appendChild(hr);return;}
+    if(q.type==='heading'){const hd=document.createElement('div');hd.style.cssText='font-size:16px;font-weight:700;color:var(--text);margin:18px 0 10px;padding-bottom:8px;border-bottom:2px solid var(--bord)';hd.textContent=q.text||'Section';wrap.appendChild(hd);return;}
+    const val=resp?.[q.id];
+    const div=document.createElement('div');div.className='cq';
+    let input='';
+    if(q.type==='text') input=`<input type="text" class="ci" id="ci-${formId}-${q.id}" value="${val?String(val).replace(/"/g,'&quot;'):''}" placeholder="Your answer...">`;
+    else if(q.type==='textarea') input=`<textarea class="ci-ta" id="ci-${formId}-${q.id}" placeholder="Your answer...">${val||''}</textarea>`;
+    else if(q.type==='number') input=`<input type="number" class="ci" id="ci-${formId}-${q.id}" value="${val||''}" placeholder="0" style="max-width:140px">`;
+    else if(q.type==='rating'){const cv=parseInt(val)||0;input=`<div class="star-rate" id="ci-${formId}-${q.id}" data-val="${cv}">${[1,2,3,4,5].map(n=>`<button class="star-btn${n<=cv?' on':''}" onclick="setStarC('${formId}','${q.id}',${n})" type="button">★</button>`).join('')}</div>`;}
+    else if(q.type==='radio') input=`<div>${(q.options||[]).map(o=>`<label class="mc-opt${val===o?' sel':''}"><input type="radio" name="rci-${formId}-${q.id}" value="${o}" ${val===o?'checked':''} onchange="this.closest('.mc-opt').classList.add('sel');this.closest('div').querySelectorAll('.mc-opt').forEach(x=>{if(x!==this.closest('.mc-opt'))x.classList.remove('sel')})"> ${o}</label>`).join('')}</div>`;
+    else if(q.type==='checkbox'){const vals=val?(Array.isArray(val)?val:[val]):[];input=`<div id="ci-${formId}-${q.id}">${(q.options||[]).map(o=>`<label class="mc-opt${vals.includes(o)?' sel':''}"><input type="checkbox" value="${o}" ${vals.includes(o)?'checked':''} onchange="this.closest('.mc-opt').classList.toggle('sel',this.checked)"> ${o}</label>`).join('')}</div>`;}
+    else if(q.type==='dropdown') input=`<select class="ci" id="ci-${formId}-${q.id}"><option value="">Select...</option>${(q.options||[]).map(o=>`<option value="${o}" ${val===o?'selected':''}>${o}</option>`).join('')}</select>`;
+    else if(q.type==='scale') input=`<div style="display:flex;align-items:center;gap:12px"><span style="font-size:12px;color:var(--text3)">${q.min||1}</span><input type="range" class="ci" id="ci-${formId}-${q.id}" min="${q.min||1}" max="${q.max||10}" value="${parseInt(val)||(q.min||1)}" style="flex:1;padding:0;border:none;background:transparent" oninput="document.getElementById('sv-${formId}-${q.id}').textContent=this.value"><span style="font-size:12px;color:var(--text3)">${q.max||10}</span><span style="font-size:14px;font-weight:700;color:var(--navy);min-width:24px" id="sv-${formId}-${q.id}">${parseInt(val)||(q.min||1)}</span></div>`;
+    div.innerHTML=`<div class="cq-text">${i+1}. ${q.text||'Question'}${q.required?'<span class="cq-req">*</span>':''}</div>${q.helper?`<div style="font-size:12px;color:var(--text3);margin-bottom:7px">${q.helper}</div>`:''}${input}`;
+    wrap.appendChild(div);
+  });
+}
+function setStarC(formId,qid,val){const row=document.getElementById('ci-'+formId+'-'+qid);if(!row)return;row.dataset.val=val;row.querySelectorAll('.star-btn').forEach((b,i)=>b.classList.toggle('on',i+1<=val));}
+async function submitForm(formId,username){
+  const form=S.forms.find(f=>f.id===formId);if(!form)return;
+  const answers={_savedAt:new Date().toISOString()};
+  (form.questions||[]).forEach(q=>{
+    const el=document.getElementById('ci-'+formId+'-'+q.id);if(!el)return;
+    if(q.type==='radio'){const ch=document.querySelector('input[name="rci-'+formId+'-'+q.id+'"]:checked');answers[q.id]=ch?ch.value:'';}
+    else if(q.type==='checkbox'){answers[q.id]=[...document.querySelectorAll('#ci-'+formId+'-'+q.id+' input:checked')].map(i=>i.value);}
+    else if(q.type==='rating')answers[q.id]=parseInt(el.dataset.val)||0;
+    else answers[q.id]=el.value||'';
+  });
+  if(!S.responses[username])S.responses[username]={};
+  S.responses[username][formId]=answers;
+  await saveResponse(username,formId,answers);
+  const ss=document.getElementById('css-'+formId);
+  if(ss){ss.className='save-status ok';ss.innerHTML='<i class="ti ti-check"></i> Saved';}
+  toast('Responses saved');
+  const client=S.clients.find(c=>c.u===username);
+  if(client){renderClientStats(client);renderClientProgress(client);}
+}
+function renderClientProgress(client){
+  const wrap=document.getElementById('cProgressList');wrap.innerHTML='';
+  const assigned=client.forms||[];
+  if(!assigned.length){wrap.innerHTML='<div style="text-align:center;padding:32px;color:var(--text3);font-size:13px">No forms assigned yet</div>';return;}
+  const card=document.createElement('div');card.className='card';
+  assigned.forEach(fid=>{
+    const form=S.forms.find(f=>f.id===fid);if(!form)return;
+    const resp=S.responses[client.u]?.[fid];
+    const qs=form.questions||[];
+    const answered=resp?qs.filter(q=>resp[q.id]!==undefined&&String(resp[q.id]).trim()!=='').length:0;
+    const pct=qs.length?Math.round((answered/qs.length)*100):0;
+    card.innerHTML+=`<div style="margin-bottom:16px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px">
+        <span style="font-size:13px;font-weight:700;color:var(--text)">${form.title}</span>
+        <span class="badge ${pct===100?'badge-green':pct>0?'badge-gold':'badge-gray'}">${pct===100?'Complete':pct>0?'In progress':'Not started'}</span>
+      </div>
+      <div class="prog-bar"><div class="prog-fill" style="width:${pct}%;background:${pct===100?'var(--teal)':'var(--gold)'}"></div></div>
+      <div style="font-size:11px;color:var(--text3);margin-top:3px">${answered} of ${qs.length} questions answered</div>
+    </div>`;
+  });
+  wrap.appendChild(card);
+}
+
+// ════════════════════════════════
+// UTILS
+// ════════════════════════════════
+function openModal(id){
+  document.getElementById(id).classList.add('open');
+  if(id==='m-client') renderClientFormAssign(S.editingClientId?S.clients.find(x=>x.id===S.editingClientId):null);
+}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+document.addEventListener('click',e=>{if(e.target.classList.contains('modal-overlay'))e.target.classList.remove('open');});
+let toastT;
+function toast(msg,type='ok'){
+  const t=document.getElementById('toast');
+  t.className=type==='err'?'err':'ok';
+  document.getElementById('toastIcon').className=type==='err'?'ti ti-alert-triangle':'ti ti-check';
+  document.getElementById('toastMsg').textContent=msg;
+  t.classList.add('show');
+  clearTimeout(toastT);
+  toastT=setTimeout(()=>t.classList.remove('show'),3000);
+}
+</script>
+</body>
+</html>
