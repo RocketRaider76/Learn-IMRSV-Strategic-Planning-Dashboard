@@ -624,12 +624,18 @@ const COLORS = ['#27a892','#d4a843','#378add','#7f77dd','#d85a30'];
 // ════════════════════════════════
 // INIT
 // ════════════════════════════════
-window.addEventListener('load', async () => {
-  try { await loadBlobs(); } catch(e) { console.warn('Blob load:', e); }
-  setTimeout(() => {
+window.addEventListener('load', () => {
+  // Always show login after 2s max — never get stuck on loading screen
+  const showLogin = () => {
     document.getElementById('loadingScreen').classList.add('hide');
     document.getElementById('loginScreen').classList.add('show');
-  }, 1700);
+  };
+  // Hard deadline — no matter what happens with blobs
+  const deadline = setTimeout(showLogin, 2000);
+  // Try to load blobs, then show login early if it succeeds
+  loadBlobs()
+    .then(() => { clearTimeout(deadline); setTimeout(showLogin, 200); })
+    .catch(e => { console.warn('Blob load failed, continuing:', e); clearTimeout(deadline); showLogin(); });
 });
 
 // ════════════════════════════════
