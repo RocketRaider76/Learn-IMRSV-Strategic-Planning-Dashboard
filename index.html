@@ -22,8 +22,8 @@ button{font-family:'DM Sans',sans-serif;cursor:pointer}
 input,textarea,select{font-family:'DM Sans',sans-serif}
 
 /* ── LOADING ── */
-#loadingScreen{position:fixed;inset:0;background:var(--navy);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;transition:opacity .5s}
-#loadingScreen.hide{opacity:0;pointer-events:none}
+#loadingScreen{position:fixed;inset:0;background:var(--navy);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999}
+#loadingScreen.hide{opacity:0;pointer-events:none;visibility:hidden;display:none}
 .ld-title{font-family:'DM Serif Display',serif;font-size:30px;color:#fff;margin-bottom:6px}
 .ld-sub{font-size:13px;color:rgba(255,255,255,.45);margin-bottom:36px}
 .ld-bar{width:180px;height:3px;background:rgba(255,255,255,.12);border-radius:10px;overflow:hidden}
@@ -626,8 +626,10 @@ const COLORS = ['#27a892','#d4a843','#378add','#7f77dd','#d85a30'];
 // ════════════════════════════════
 // Show login immediately — load data in background after login
 window.addEventListener('load', () => {
-  document.getElementById('loadingScreen').classList.add('hide');
-  document.getElementById('loginScreen').classList.add('show');
+  const ls = document.getElementById('loadingScreen');
+  const login = document.getElementById('loginScreen');
+  if (ls) ls.style.display = 'none';
+  if (login) { login.style.display = 'flex'; login.classList.add('show'); }
 });
 
 // ════════════════════════════════
