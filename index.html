@@ -624,18 +624,10 @@ const COLORS = ['#27a892','#d4a843','#378add','#7f77dd','#d85a30'];
 // ════════════════════════════════
 // INIT
 // ════════════════════════════════
+// Show login immediately — load data in background after login
 window.addEventListener('load', () => {
-  // Always show login after 2s max — never get stuck on loading screen
-  const showLogin = () => {
-    document.getElementById('loadingScreen').classList.add('hide');
-    document.getElementById('loginScreen').classList.add('show');
-  };
-  // Hard deadline — no matter what happens with blobs
-  const deadline = setTimeout(showLogin, 2000);
-  // Try to load blobs, then show login early if it succeeds
-  loadBlobs()
-    .then(() => { clearTimeout(deadline); setTimeout(showLogin, 200); })
-    .catch(e => { console.warn('Blob load failed, continuing:', e); clearTimeout(deadline); showLogin(); });
+  document.getElementById('loadingScreen').classList.add('hide');
+  document.getElementById('loginScreen').classList.add('show');
 });
 
 // ════════════════════════════════
@@ -703,15 +695,15 @@ async function doLogin() {
   if (S.loginTab==='admin') {
     if (u===S.adminCreds.u && p===S.adminCreds.p) {
       S.role='admin'; S.user='admin';
-      await loadAllResponses();
       launchAdmin();
+      loadBlobs().then(() => { renderDistrictCards(); loadAllResponses(); }).catch(()=>{});
     } else err.textContent = 'Invalid admin credentials.';
   } else {
     const c = S.clients.find(x=>x.u===u&&x.p===p);
     if (c) {
       S.role='client'; S.user=u; S.districtId=c.district;
-      await loadMyResponses(u);
       launchClient(c);
+      loadMyResponses(u).then(()=>{ renderClientForms(c); renderClientProgress(c); }).catch(()=>{});
     } else { err.textContent='Invalid credentials.'; document.getElementById('lPass').value=''; }
   }
 }
