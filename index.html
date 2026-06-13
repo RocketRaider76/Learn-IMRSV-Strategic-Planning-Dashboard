@@ -429,6 +429,9 @@ input,textarea,select{font-family:'DM Sans',sans-serif}
         <div style="width:1px;height:24px;background:var(--bord);margin:0 6px"></div>
         <div class="btb-title"><input type="text" id="builderTitle" placeholder="Form title..." onchange="updateFormTitle(this.value)"></div>
         <div class="btb-actions">
+          <select id="builderPhase" style="padding:7px 10px;border-radius:7px;border:1.5px solid var(--bord);font-size:12px;font-family:inherit;background:var(--surf);outline:none;max-width:160px" onchange="updateFormPhase(this.value)">
+            <option value="">No phase</option>
+          </select>
           <select id="builderStatus" style="padding:7px 10px;border-radius:7px;border:1.5px solid var(--bord);font-size:12px;font-family:inherit;background:var(--surf);outline:none" onchange="updateFormStatus(this.value)">
             <option value="draft">Draft</option>
             <option value="active">Active</option>
@@ -1017,6 +1020,10 @@ function openBuilder(formId) {
   if (!f) return;
   document.getElementById('builderTitle').value = f.title;
   document.getElementById('builderStatus').value = f.status||'draft';
+  // Populate phase select
+  const phaseSel = document.getElementById('builderPhase');
+  phaseSel.innerHTML = '<option value="">No phase</option>' +
+    S.phases.map(p=>`<option value="${p.id}" ${f.phase===p.id?'selected':''}>${p.name}</option>`).join('');
   document.getElementById('canvasTitle').textContent = f.title;
   document.getElementById('canvasDesc').textContent = f.desc||'Form description...';
   renderQuestionsList();
@@ -1042,6 +1049,10 @@ function updateFormField(field, val) {
 function updateFormStatus(v) {
   const f = S.forms.find(x=>x.id===S.currentFormId);
   if (f) f.status=v;
+}
+function updateFormPhase(v) {
+  const f = S.forms.find(x=>x.id===S.currentFormId);
+  if (f) f.phase=v;
 }
 
 function saveBuilder() {
