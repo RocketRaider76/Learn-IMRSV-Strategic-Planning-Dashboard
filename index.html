@@ -723,15 +723,23 @@ async function loadMyResponses(username) {
   try {
     const r = await fetch(`/.netlify/functions/load-my-responses?username=${encodeURIComponent(username)}`);
     const d = await r.json();
-    if (d.ok && d.responses) S.responses[username] = d.responses;
-  } catch(e) {}
+    console.log('loadMyResponses for', username, '— ok:', d.ok, 'forms:', d.responses ? Object.keys(d.responses) : 'none');
+    if (d.ok && d.responses) {
+      S.responses[username] = d.responses;
+      console.log('My responses:', Object.entries(d.responses).map(([fid,r])=>fid+': answered='+(Object.keys(r).filter(k=>!k.startsWith('_')).length)));
+    }
+  } catch(e) { console.warn('loadMyResponses error:', e); }
 }
 async function loadAllResponses() {
   try {
     const r = await fetch('/.netlify/functions/load-responses');
     const d = await r.json();
-    if (d.ok && d.responses) S.responses = d.responses;
-  } catch(e) {}
+    console.log('loadAllResponses — ok:', d.ok, 'users:', d.responses ? Object.keys(d.responses) : 'none');
+    if (d.ok && d.responses) {
+      S.responses = d.responses;
+      console.log('S.responses loaded:', Object.entries(S.responses).map(([u,forms])=>u+': '+Object.keys(forms).length+' forms'));
+    }
+  } catch(e) { console.warn('loadAllResponses error:', e); }
 }
 
 // ════════════════════════════════
@@ -895,33 +903,38 @@ function renderDistrictCards() {
 }
 
 function calcPhaseProgress(districtId, phaseId) {
-  // Find forms assigned to this phase for this district
   const phaseForms = S.forms.filter(f=>f.district===districtId&&f.phase===phaseId&&f.status==='active');
+  console.log(`[Phase ${phaseId}] forms matching:`, phaseForms.length, phaseForms.map(f=>({id:f.id,title:f.title,phase:f.phase,status:f.status})));
   if (!phaseForms.length) return S.phaseProgress[districtId]?.[phaseId] || 0;
 
-  // Get all clients in this district
   const distClients = S.clients.filter(c=>c.district===districtId);
+  console.log(`[Phase ${phaseId}] district clients:`, distClients.length);
   if (!distClients.length) return S.phaseProgress[districtId]?.[phaseId] || 0;
 
   let totalPct = 0, count = 0;
   phaseForms.forEach(form => {
     const assignedClients = distClients.filter(c=>c.forms?.includes(form.id));
+    console.log(`[Phase ${phaseId}] form "${form.title}" assigned to:`, assignedClients.map(c=>c.u));
     if (!assignedClients.length) return;
     const qs = (form.questions||[]).filter(q=>q.type!=='heading'&&q.type!=='divider');
+    console.log(`[Phase ${phaseId}] real questions:`, qs.length);
     if (!qs.length) return;
     assignedClients.forEach(c => {
       const resp = S.responses[c.u]?.[form.id];
+      console.log(`[Phase ${phaseId}] responses for ${c.u}:`, resp ? Object.keys(resp).length+' keys' : 'NONE');
+      console.log(`[Phase ${phaseId}] S.responses keys:`, Object.keys(S.responses));
       const answered = resp ? qs.filter(q=>resp[q.id]!==undefined&&String(resp[q.id]).trim()!=='').length : 0;
+      console.log(`[Phase ${phaseId}] answered:`, answered, '/', qs.length);
       totalPct += answered/qs.length;
       count++;
     });
   });
 
-  // Form completion = 60% weight
   const autoProgress = count > 0 ? Math.round((totalPct/count)*60) : 0;
-  // Admin override = up to 40% on top
   const adminOverride = S.phaseProgress[districtId]?.[phaseId+'_override'] || 0;
-  return Math.min(100, autoProgress + adminOverride);
+  const total = Math.min(100, autoProgress + adminOverride);
+  console.log(`[Phase ${phaseId}] RESULT: auto=${autoProgress} override=${adminOverride} total=${total}`);
+  return total;
 }
 
 function getPhaseAutoProgress(districtId, phaseId) {
