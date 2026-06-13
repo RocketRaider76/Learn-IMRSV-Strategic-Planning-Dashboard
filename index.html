@@ -790,7 +790,7 @@ function launchAdminSilent() {
   loadAllResponses().then(()=>renderDistrictCards()).catch(()=>{});
 }
 
-function launchClientSilent(client) {
+async function launchClientSilent(client) {
   const lsc = document.getElementById('loginScreen');
   if(lsc){lsc.classList.remove('show');lsc.style.display='none';}
   document.getElementById('clientApp').classList.add('show');
@@ -805,6 +805,8 @@ function launchClientSilent(client) {
   if(heroTitle) heroTitle.textContent = d?.name||'Strategic Planning Dashboard';
   const heroSub = document.getElementById('cHeroSub');
   if(heroSub) heroSub.textContent = 'Fiscal Year '+(d?.fy||'2025-2026')+' · Learn New Mexico';
+  // Load responses first
+  try { await loadMyResponses(client.u); } catch(e) {}
   renderClientOverview(client);
   renderClientForms(client);
   renderClientProgress(client);
@@ -970,7 +972,11 @@ function openDistrict(id) {
   // Reload all responses to ensure phase progress is current
   loadAllResponses().then(()=>{
     renderDistrictCards();
-    if(S.districtId===id) renderSettingsPanel();
+    if(S.districtId===id) {
+      renderSettingsPanel();
+      // Force re-render gauges with fresh data
+      renderSettingsGauges();
+    }
   }).catch(()=>{});
 }
 
@@ -1443,48 +1449,56 @@ function renderSettingsGauges() {
   if (!wrap) return;
   wrap.innerHTML = '';
   S.phases.forEach((ph,i) => {
-    const autoPct = getPhaseAutoProgress(S.districtId, ph.id);
     const overridePct = S.phaseProgress[S.districtId]?.[ph.id+'_override'] || 0;
-    const totalPct = Math.min(100, autoPct + overridePct);
     const color = COLORS[i%COLORS.length];
     const cell = document.createElement('div');
     cell.className='gcell';
     cell.id=`sg-${S.districtId}-${ph.id}`;
-    cell.innerHTML=`${gaugeArc(totalPct,color,68)}
-      <div class="gpct" style="color:${color}" id="sgpct-${S.districtId}-${ph.id}">${totalPct}%</div>
+    // Start with 0 — will be updated after responses load
+    cell.innerHTML=`${gaugeArc(0,color,68)}
+      <div class="gpct" style="color:${color}" id="sgpct-${S.districtId}-${ph.id}">0%</div>
       <div class="glbl">${ph.name}</div>
-      <div class="gsub" style="margin-bottom:4px">${autoPct}% auto · ${overridePct}% override</div>
+      <div class="gsub" style="margin-bottom:4px" id="sgsub-${S.districtId}-${ph.id}">loading...</div>
       <div style="font-size:10px;color:var(--text3);margin-bottom:3px">Admin override (0–40%)</div>
       <input type="range" min="0" max="40" step="1" value="${overridePct}" oninput="updateGaugeOverride('${S.districtId}','${ph.id}',+this.value)">`;
     wrap.appendChild(cell);
+  });
+  // Refresh with real data after ensuring responses are loaded
+  loadAllResponses().then(()=>{
+    S.phases.forEach(ph => refreshGaugeCell(S.districtId, ph.id));
+  }).catch(()=>{
+    S.phases.forEach(ph => refreshGaugeCell(S.districtId, ph.id));
   });
 }
 function updateGaugeOverride(did,pid,val){
   if(!S.phaseProgress[did]) S.phaseProgress[did]={};
   S.phaseProgress[did][pid+'_override'] = val;
-  const autoPct = getPhaseAutoProgress(did, pid);
-  const totalPct = Math.min(100, autoPct + val);
-  S.phaseProgress[did][pid] = totalPct;
-  const cell=document.getElementById(`sg-${did}-${pid}`);
-  if(cell){
-    const i=S.phases.findIndex(p=>p.id===pid);
-    const color=COLORS[i%COLORS.length];
-    const old=cell.querySelector('svg');
-    if(old){const t=document.createElement('div');t.innerHTML=gaugeArc(totalPct,color,68);cell.replaceChild(t.firstChild,old);}
-    const pctEl=document.getElementById(`sgpct-${did}-${pid}`);
-    if(pctEl) pctEl.textContent=totalPct+'%';
-    const sub=cell.querySelector('.gsub');
-    if(sub) sub.textContent=autoPct+'% auto · '+val+'% override';
-  }
+  refreshGaugeCell(did, pid);
   saveBlobs();
   renderClientGauges();
+}
+
+function refreshGaugeCell(did, pid) {
+  const autoPct = calcPhaseProgress(did, pid);
+  const overridePct = S.phaseProgress[did]?.[pid+'_override'] || 0;
+  const totalPct = Math.min(100, autoPct + overridePct);
+  const cell = document.getElementById(`sg-${did}-${pid}`);
+  if (!cell) return;
+  const i = S.phases.findIndex(p=>p.id===pid);
+  const color = COLORS[i%COLORS.length];
+  const old = cell.querySelector('svg');
+  if (old) { const t=document.createElement('div'); t.innerHTML=gaugeArc(totalPct,color,68); cell.replaceChild(t.firstChild,old); }
+  const pctEl = document.getElementById(`sgpct-${did}-${pid}`);
+  if (pctEl) pctEl.textContent = totalPct+'%';
+  const sub = cell.querySelector('.gsub');
+  if (sub) sub.textContent = autoPct+'% auto · '+overridePct+'% override';
 }
 function updateGauge(did,pid,val,slider){ updateGaugeOverride(did,pid,val); }
 
 // ════════════════════════════════
 // CLIENT APP
 // ════════════════════════════════
-function launchClient(client) {
+async function launchClient(client) {
   const lsc = document.getElementById('loginScreen');
   lsc.classList.remove('show');
   lsc.style.display = 'none';
