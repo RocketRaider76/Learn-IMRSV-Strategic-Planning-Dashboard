@@ -466,9 +466,10 @@ input,textarea,select{font-family:'DM Sans',sans-serif}
         <!-- CENTER: canvas -->
         <div class="builder-canvas" id="builderCanvas" onclick="deselectQuestion($event)">
           <div class="canvas-inner">
-            <div class="canvas-form-header">
-              <div class="canvas-form-title" id="canvasTitle">Form Title</div>
-              <div class="canvas-form-desc" id="canvasDesc">Add a description for this form...</div>
+            <div class="canvas-form-header" style="position:relative">
+              <div style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;display:flex;align-items:center;gap:6px"><i class="ti ti-pencil" style="font-size:12px"></i> Click to edit form header</div>
+              <div class="canvas-form-title" id="canvasTitle" contenteditable="true" style="outline:none;border-bottom:2px solid transparent;transition:border-color .2s;padding:2px 4px;margin:-2px -4px;border-radius:4px" onblur="updateFormField('title',this.innerText)" onfocus="this.style.borderBottomColor='var(--gold)'" onblur2="this.style.borderBottomColor='transparent'">Form Title</div>
+              <div class="canvas-form-desc" id="canvasDesc" contenteditable="true" style="outline:none;border-bottom:2px solid transparent;transition:border-color .2s;padding:2px 4px;margin:-2px -4px;margin-top:4px;border-radius:4px;font-size:13px;color:var(--text3)" onblur="updateFormField('desc',this.innerText)" onfocus="this.style.borderBottomColor='var(--gold)'">Click to add a description for this form...</div>
             </div>
             <div id="questionsList"></div>
             <div class="canvas-empty" id="canvasEmpty">
@@ -795,6 +796,57 @@ function renderDistrictCards() {
   grid.appendChild(add);
 }
 
+function calcPhaseProgress(districtId, phaseId) {
+  // Find forms assigned to this phase for this district
+  const phaseForms = S.forms.filter(f=>f.district===districtId&&f.phase===phaseId&&f.status==='active');
+  if (!phaseForms.length) return S.phaseProgress[districtId]?.[phaseId] || 0;
+
+  // Get all clients in this district
+  const distClients = S.clients.filter(c=>c.district===districtId);
+  if (!distClients.length) return S.phaseProgress[districtId]?.[phaseId] || 0;
+
+  let totalPct = 0, count = 0;
+  phaseForms.forEach(form => {
+    const assignedClients = distClients.filter(c=>c.forms?.includes(form.id));
+    if (!assignedClients.length) return;
+    const qs = form.questions||[];
+    if (!qs.length) return;
+    assignedClients.forEach(c => {
+      const resp = S.responses[c.u]?.[form.id];
+      const answered = resp ? qs.filter(q=>resp[q.id]!==undefined&&String(resp[q.id]).trim()!=='').length : 0;
+      totalPct += answered/qs.length;
+      count++;
+    });
+  });
+
+  // Form completion = 60% weight
+  const autoProgress = count > 0 ? Math.round((totalPct/count)*60) : 0;
+  // Admin override = up to 40% on top
+  const adminOverride = S.phaseProgress[districtId]?.[phaseId+'_override'] || 0;
+  return Math.min(100, autoProgress + adminOverride);
+}
+
+function getPhaseAutoProgress(districtId, phaseId) {
+  const phaseForms = S.forms.filter(f=>f.district===districtId&&f.phase===phaseId&&f.status==='active');
+  if (!phaseForms.length) return 0;
+  const distClients = S.clients.filter(c=>c.district===districtId);
+  if (!distClients.length) return 0;
+  let totalPct = 0, count = 0;
+  phaseForms.forEach(form => {
+    const assignedClients = distClients.filter(c=>c.forms?.includes(form.id));
+    if (!assignedClients.length) return;
+    const qs = form.questions||[];
+    if (!qs.length) return;
+    assignedClients.forEach(c => {
+      const resp = S.responses[c.u]?.[form.id];
+      const answered = resp ? qs.filter(q=>resp[q.id]!==undefined&&String(resp[q.id]).trim()!=='').length : 0;
+      totalPct += answered/qs.length;
+      count++;
+    });
+  });
+  return count > 0 ? Math.round((totalPct/count)*60) : 0;
+}
+
 function openDistrict(id) {
   S.districtId = id;
   showView('district');
@@ -888,7 +940,13 @@ function closeBuilder() {
 
 function updateFormTitle(v) {
   const f = S.forms.find(x=>x.id===S.currentFormId);
-  if (f) { f.title=v; document.getElementById('canvasTitle').textContent=v; }
+  if (f) { f.title=v; const t=document.getElementById('canvasTitle'); if(t)t.innerText=v; const bt=document.getElementById('builderTitle'); if(bt)bt.value=v; }
+}
+function updateFormField(field, val) {
+  const f = S.forms.find(x=>x.id===S.currentFormId);
+  if (!f) return;
+  if (field==='title') { f.title=val.trim(); document.getElementById('builderTitle').value=val.trim(); }
+  if (field==='desc') { f.desc=val.trim(); }
 }
 function updateFormStatus(v) {
   const f = S.forms.find(x=>x.id===S.currentFormId);
@@ -925,7 +983,7 @@ function buildQCard(q, idx) {
       ${q.type==='heading' ? `<div style="font-size:17px;font-weight:700;color:var(--text);border-bottom:2px solid var(--bord);padding-bottom:8px">${q.text||'Section Heading'}</div>` :
         q.type==='divider' ? `<hr style="border:none;border-top:2px dashed var(--bord);margin:4px 0">` :
         `<div class="qcard-label">${q.text||'<em style="color:var(--text3);font-weight:400">Click to add question text</em>'}${q.required?'<span class="qcard-required">*</span>':''}</div>
-        ${q.helper?`<div class="qcard-helper">${q.helper}</div>`:''}
+        ${q.helper?`<div class="qcard-helper" style="font-size:12px;color:var(--text3);margin-bottom:8px;font-style:italic">${q.helper}</div>`:''}
         <div class="qcard-preview">${getQPreview(q)}</div>`}
     </div>
     <div class="qcard-actions">
@@ -988,7 +1046,16 @@ function showEditor(idx) {
   if (hasOpts) renderOptionsList(q.options||[]);
   if (isScale) { document.getElementById('eq-min').value=q.min||1; document.getElementById('eq-max').value=q.max||10; }
   const isSpecial = ['heading','divider'].includes(q.type);
+  // Update label based on field type
+  const textLabel = document.querySelector('#brightEditor .edit-field label');
+  if (textLabel) textLabel.textContent = q.type==='heading' ? 'Heading Text' : q.type==='divider' ? 'Divider' : 'Question Text';
+  const helperLabel = document.querySelectorAll('#brightEditor .edit-field label')[1];
+  if (helperLabel) helperLabel.textContent = q.type==='heading' ? 'Subheading / Description' : 'Helper Text';
+  // Update section title in editor panel
+  const sectionTitle = document.querySelector('#brightEditor .bright-section h4');
+  if (sectionTitle) sectionTitle.textContent = q.type==='heading' ? 'Title / Header Settings' : q.type==='divider' ? 'Divider' : 'Question Settings';
   document.getElementById('eq-text').closest('.edit-field').style.display = isSpecial&&q.type==='divider'?'none':'block';
+  document.getElementById('eq-helper').closest('.edit-field').style.display = q.type==='divider'?'none':'block';
   document.getElementById('eq-required').closest('.toggle-row').style.display = isSpecial?'none':'flex';
 }
 
@@ -1116,18 +1183,25 @@ function renderClientFormAssign(client) {
 function saveClient() {
   const name = document.getElementById('m-cName').value.trim();
   const u = document.getElementById('m-cUser').value.trim();
-  const p = document.getElementById('m-cPass').value;
+  const p = document.getElementById('m-cPass').value.trim();
   if (!name||!u) { toast('Name and username required','err'); return; }
   const forms = [...document.querySelectorAll('#m-cForms input:checked')].map(i=>i.value);
   if (S.editingClientId) {
     const c = S.clients.find(x=>x.id===S.editingClientId);
-    if (c) { c.name=name; c.u=u; if(p)c.p=p; c.forms=forms; }
+    if (c) {
+      c.name=name; c.u=u; c.forms=forms;
+      if(p) c.p=p;
+    }
   } else {
-    if (!p) { toast('Password required','err'); return; }
-    if (S.clients.find(x=>x.u===u)) { toast('Username taken','err'); return; }
+    if (!p) { toast('Password required for new client','err'); return; }
+    if (S.clients.find(x=>x.u===u&&x.id!==S.editingClientId)) { toast('Username already taken','err'); return; }
     S.clients.push({id:'c'+Date.now(),name,u,p,district:S.districtId,forms});
   }
-  saveBlobs(); closeModal('m-client'); renderClientsGrid(); toast('Client saved');
+  saveBlobs();
+  closeModal('m-client');
+  renderClientsGrid();
+  toast(S.editingClientId?'Client updated':'Client added');
+  S.editingClientId = null;
 }
 function deleteClient(id) {
   if (!confirm('Delete client?')) return;
@@ -1227,33 +1301,44 @@ function renderSettingsGauges() {
   const wrap = document.getElementById('settingsGauges');
   if (!wrap) return;
   wrap.innerHTML = '';
-  const prog = S.phaseProgress[S.districtId]||{};
   S.phases.forEach((ph,i) => {
-    const pct = prog[ph.id]||0;
+    const autoPct = getPhaseAutoProgress(S.districtId, ph.id);
+    const overridePct = S.phaseProgress[S.districtId]?.[ph.id+'_override'] || 0;
+    const totalPct = Math.min(100, autoPct + overridePct);
     const color = COLORS[i%COLORS.length];
     const cell = document.createElement('div');
     cell.className='gcell';
     cell.id=`sg-${S.districtId}-${ph.id}`;
-    cell.innerHTML=`${gaugeArc(pct,color,68)}<div class="gpct" style="color:${color}" id="sgpct-${S.districtId}-${ph.id}">${pct}%</div><div class="glbl">${ph.name}</div><div class="gsub">${pct>=100?'Complete':pct>0?'In progress':'Upcoming'}</div><input type="range" min="0" max="100" step="1" value="${pct}" oninput="updateGauge('${S.districtId}','${ph.id}',+this.value,this)">`;
+    cell.innerHTML=`${gaugeArc(totalPct,color,68)}
+      <div class="gpct" style="color:${color}" id="sgpct-${S.districtId}-${ph.id}">${totalPct}%</div>
+      <div class="glbl">${ph.name}</div>
+      <div class="gsub" style="margin-bottom:4px">${autoPct}% auto · ${overridePct}% override</div>
+      <div style="font-size:10px;color:var(--text3);margin-bottom:3px">Admin override (0–40%)</div>
+      <input type="range" min="0" max="40" step="1" value="${overridePct}" oninput="updateGaugeOverride('${S.districtId}','${ph.id}',+this.value)">`;
     wrap.appendChild(cell);
   });
 }
-function updateGauge(did,pid,val,slider){
+function updateGaugeOverride(did,pid,val){
   if(!S.phaseProgress[did]) S.phaseProgress[did]={};
-  S.phaseProgress[did][pid]=val;
+  S.phaseProgress[did][pid+'_override'] = val;
+  const autoPct = getPhaseAutoProgress(did, pid);
+  const totalPct = Math.min(100, autoPct + val);
+  S.phaseProgress[did][pid] = totalPct;
   const cell=document.getElementById(`sg-${did}-${pid}`);
   if(cell){
     const i=S.phases.findIndex(p=>p.id===pid);
     const color=COLORS[i%COLORS.length];
     const old=cell.querySelector('svg');
-    if(old){const t=document.createElement('div');t.innerHTML=gaugeArc(val,color,68);cell.replaceChild(t.firstChild,old);}
+    if(old){const t=document.createElement('div');t.innerHTML=gaugeArc(totalPct,color,68);cell.replaceChild(t.firstChild,old);}
     const pctEl=document.getElementById(`sgpct-${did}-${pid}`);
-    if(pctEl) pctEl.textContent=val+'%';
-    cell.querySelector('.gsub').textContent=val>=100?'Complete':val>0?'In progress':'Upcoming';
+    if(pctEl) pctEl.textContent=totalPct+'%';
+    const sub=cell.querySelector('.gsub');
+    if(sub) sub.textContent=autoPct+'% auto · '+val+'% override';
   }
   saveBlobs();
   renderClientGauges();
 }
+function updateGauge(did,pid,val,slider){ updateGaugeOverride(did,pid,val); }
 
 // ════════════════════════════════
 // CLIENT APP
@@ -1292,18 +1377,7 @@ function renderClientStats(client) {
 function renderClientGauges() {
   const client = S.clients.find(c=>c.u===S.user);
   if (!client) return;
-  const wrap = document.getElementById('cGauges');
-  if (!wrap) return;
-  wrap.innerHTML='';
-  const prog = S.phaseProgress[client.district]||{};
-  S.phases.forEach((ph,i)=>{
-    const pct=prog[ph.id]||0;
-    const color=COLORS[i%COLORS.length];
-    const cell=document.createElement('div');
-    cell.className='gcell';
-    cell.innerHTML=`${gaugeArc(pct,color,64)}<div class="gpct" style="color:${color}">${pct}%</div><div class="glbl">${ph.name}</div><div class="gsub">${pct>=100?'Complete':pct>0?'In progress':'Upcoming'}</div>`;
-    wrap.appendChild(cell);
-  });
+  renderClientOverview(client);
 }
 function renderClientForms(client) {
   const wrap = document.getElementById('cFormsList');
