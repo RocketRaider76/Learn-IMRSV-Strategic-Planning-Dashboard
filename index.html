@@ -778,6 +778,8 @@ function launchAdminSilent() {
   document.getElementById('adminApp').classList.add('show');
   showView('home');
   renderDistrictCards();
+  // Load all responses so phase progress calculates correctly
+  loadAllResponses().then(()=>renderDistrictCards()).catch(()=>{});
 }
 
 function launchClientSilent(client) {
@@ -824,6 +826,8 @@ function launchAdmin() {
   localStorage.setItem('lnm_session', JSON.stringify({role:'admin',user:'admin',exp}));
   showView('home');
   renderDistrictCards();
+  // Load all responses then re-render so phase gauges are accurate
+  loadAllResponses().then(()=>renderDistrictCards()).catch(()=>{});
 }
 
 function showView(name) {
@@ -950,6 +954,11 @@ function openDistrict(id) {
   renderClientsGrid();
   renderResponsesPanel();
   renderSettingsPanel();
+  // Reload all responses to ensure phase progress is current
+  loadAllResponses().then(()=>{
+    renderDistrictCards();
+    if(S.districtId===id) renderSettingsPanel();
+  }).catch(()=>{});
 }
 
 function dTab(name, el) {
@@ -1621,11 +1630,27 @@ async function submitForm(formId,username,complete=false){
   const form=S.forms.find(f=>f.id===formId);if(!form)return;
   const answers={_savedAt:new Date().toISOString(),_complete:complete};
   (form.questions||[]).forEach(q=>{
-    const el=document.getElementById('ci-'+formId+'-'+q.id);if(!el)return;
-    if(q.type==='radio'){const radioId='radio-'+formId+'-'+q.id;const ch=document.querySelector('#'+radioId+' input[type=radio]:checked');if(ch&&ch.value==='__other__'){const otherEl=document.getElementById('other-'+formId+'-'+q.id);answers[q.id]=otherEl?otherEl.value:'';}else{answers[q.id]=ch?ch.value:'';}}
-    else if(q.type==='checkbox'){const checked=[...document.querySelectorAll('#ci-'+formId+'-'+q.id+' input[type=checkbox]:checked')].map(i=>i.value);const otherIdx=checked.indexOf('__other__');if(otherIdx!==-1){const otherEl=document.getElementById('other-cb-'+formId+'-'+q.id);checked[otherIdx]=otherEl?otherEl.value:'Other';}answers[q.id]=checked;}
-    else if(q.type==='rating')answers[q.id]=parseInt(el.dataset.val)||0;
-    else answers[q.id]=el.value||'';
+    if(q.type==='heading'||q.type==='divider') return;
+    if(q.type==='radio'){
+      const radioId='radio-'+formId+'-'+q.id;
+      const ch=document.querySelector('#'+radioId+' input[type=radio]:checked');
+      if(ch&&ch.value==='__other__'){const otherEl=document.getElementById('other-'+formId+'-'+q.id);answers[q.id]=otherEl?otherEl.value:'';}
+      else{answers[q.id]=ch?ch.value:'';}
+    }
+    else if(q.type==='checkbox'){
+      const checked=[...document.querySelectorAll('#ci-'+formId+'-'+q.id+' input[type=checkbox]:checked')].map(i=>i.value);
+      const otherIdx=checked.indexOf('__other__');
+      if(otherIdx!==-1){const otherEl=document.getElementById('other-cb-'+formId+'-'+q.id);checked[otherIdx]=otherEl?otherEl.value:'Other';}
+      answers[q.id]=checked;
+    }
+    else if(q.type==='rating'){
+      const ratingEl=document.getElementById('ci-'+formId+'-'+q.id);
+      answers[q.id]=ratingEl?parseInt(ratingEl.dataset.val)||0:0;
+    }
+    else{
+      const el=document.getElementById('ci-'+formId+'-'+q.id);
+      if(el) answers[q.id]=el.value||'';
+    }
   });
   if(!S.responses[username])S.responses[username]={};
   S.responses[username][formId]=answers;
@@ -1652,7 +1677,14 @@ async function submitForm(formId,username,complete=false){
     if(ss){ss.className='save-status ok';ss.innerHTML='<i class="ti ti-check"></i> Saved';}
     toast('Responses saved');
   }
-  if(client){renderClientStats(client);renderClientProgress(client);}
+  if(client){
+    renderClientStats(client);
+    renderClientProgress(client);
+    // Reload responses so phase gauges update
+    loadMyResponses(username).then(()=>{
+      renderClientOverview(client);
+    }).catch(()=>{});
+  }
 }
 
 function reopenForm(formId,username){
