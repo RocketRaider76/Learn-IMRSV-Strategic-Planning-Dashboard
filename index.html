@@ -494,7 +494,11 @@ input,textarea,select{font-family:'DM Sans',sans-serif}
             <div id="eq-options-section" style="display:none" class="bright-section">
               <h4>Options</h4>
               <div id="eq-options-list"></div>
-              <button class="btn btn-ghost btn-sm" onclick="addOption()" style="margin-top:4px;width:100%"><i class="ti ti-plus"></i> Add option</button>
+              <button class="btn btn-ghost btn-sm" onclick="addOption()" style="margin-top:4px;width:100%;margin-bottom:8px"><i class="ti ti-plus"></i> Add option</button>
+              <div class="toggle-row">
+                <label>Include "Other" with text field</label>
+                <label class="toggle"><input type="checkbox" id="eq-allowOther" onchange="updateSelectedQ('allowOther',this.checked)"><span class="toggle-slider"></span></label>
+              </div>
             </div>
             <div id="eq-scale-section" style="display:none" class="bright-section">
               <h4>Scale Settings</h4>
@@ -691,23 +695,32 @@ function setLTab(t, el) {
 }
 async function doLogin() {
   const u = document.getElementById('lUser').value.trim();
-  const p = document.getElementById('lPass').value;
+  const p = document.getElementById('lPass').value.trim();
   const err = document.getElementById('lErr');
   err.textContent = '';
-  if (!u||!p) { err.textContent='Please enter username and password.'; return; }
-  if (S.loginTab==='admin') {
+  if (!u||!p) { err.textContent='Please enter your username and password.'; return; }
+
+  const tab = S.loginTab;
+
+  if (tab==='admin') {
     if (u===S.adminCreds.u && p===S.adminCreds.p) {
       S.role='admin'; S.user='admin';
       launchAdmin();
-      loadBlobs().then(() => { renderDistrictCards(); loadAllResponses(); }).catch(()=>{});
-    } else err.textContent = 'Invalid admin credentials.';
+      loadBlobs().then(() => { renderDistrictCards(); loadAllResponses(); }).catch(e=>console.warn('Blob load:',e));
+    } else {
+      err.textContent = 'Invalid admin credentials.';
+    }
   } else {
-    const c = S.clients.find(x=>x.u===u&&x.p===p);
+    // Client login — search all clients
+    const c = S.clients.find(x => x.u === u && x.p === p);
     if (c) {
       S.role='client'; S.user=u; S.districtId=c.district;
       launchClient(c);
       loadMyResponses(u).then(()=>{ renderClientForms(c); renderClientProgress(c); }).catch(()=>{});
-    } else { err.textContent='Invalid credentials.'; document.getElementById('lPass').value=''; }
+    } else {
+      err.textContent = 'Invalid client credentials. Check username and password.';
+      document.getElementById('lPass').value='';
+    }
   }
 }
 function signOut() {
@@ -980,7 +993,7 @@ function buildQCard(q, idx) {
   div.onclick = (e) => { e.stopPropagation(); selectQuestion(idx); };
   div.innerHTML = `<div class="qcard-drag"><i class="ti ti-grip-vertical"></i></div>
     <div class="qcard-body">
-      ${q.type==='heading' ? `<div style="font-size:17px;font-weight:700;color:var(--text);border-bottom:2px solid var(--bord);padding-bottom:8px">${q.text||'Section Heading'}</div>` :
+      ${q.type==='heading' ? `<div style="margin-bottom:2px"><div style="font-size:17px;font-weight:700;color:var(--text);border-bottom:2px solid var(--bord);padding-bottom:6px;margin-bottom:5px">${q.text||'Section Heading'}</div>${q.helper?`<div style="font-size:13px;color:var(--text3);margin-top:4px">${q.helper}</div>`:''}</div>` :
         q.type==='divider' ? `<hr style="border:none;border-top:2px dashed var(--bord);margin:4px 0">` :
         `<div class="qcard-label">${q.text||'<em style="color:var(--text3);font-weight:400">Click to add question text</em>'}${q.required?'<span class="qcard-required">*</span>':''}</div>
         ${q.helper?`<div class="qcard-helper" style="font-size:12px;color:var(--text3);margin-bottom:8px;font-style:italic">${q.helper}</div>`:''}
@@ -1045,6 +1058,8 @@ function showEditor(idx) {
   document.getElementById('eq-scale-section').style.display = isScale?'block':'none';
   if (hasOpts) renderOptionsList(q.options||[]);
   if (isScale) { document.getElementById('eq-min').value=q.min||1; document.getElementById('eq-max').value=q.max||10; }
+  const allowOtherEl = document.getElementById('eq-allowOther');
+  if (allowOtherEl) allowOtherEl.checked = q.allowOther !== false && ['radio','checkbox'].includes(q.type);
   const isSpecial = ['heading','divider'].includes(q.type);
   // Update label based on field type
   const textLabel = document.querySelector('#brightEditor .edit-field label');
@@ -1424,8 +1439,21 @@ function renderClientQuestions(formId,username,questions,resp){
     else if(q.type==='textarea') input=`<textarea class="ci-ta" id="ci-${formId}-${q.id}" placeholder="Your answer...">${val||''}</textarea>`;
     else if(q.type==='number') input=`<input type="number" class="ci" id="ci-${formId}-${q.id}" value="${val||''}" placeholder="0" style="max-width:140px">`;
     else if(q.type==='rating'){const cv=parseInt(val)||0;input=`<div class="star-rate" id="ci-${formId}-${q.id}" data-val="${cv}">${[1,2,3,4,5].map(n=>`<button class="star-btn${n<=cv?' on':''}" onclick="setStarC('${formId}','${q.id}',${n})" type="button">★</button>`).join('')}</div>`;}
-    else if(q.type==='radio') input=`<div>${(q.options||[]).map(o=>`<label class="mc-opt${val===o?' sel':''}"><input type="radio" name="rci-${formId}-${q.id}" value="${o}" ${val===o?'checked':''} onchange="this.closest('.mc-opt').classList.add('sel');this.closest('div').querySelectorAll('.mc-opt').forEach(x=>{if(x!==this.closest('.mc-opt'))x.classList.remove('sel')})"> ${o}</label>`).join('')}</div>`;
-    else if(q.type==='checkbox'){const vals=val?(Array.isArray(val)?val:[val]):[];input=`<div id="ci-${formId}-${q.id}">${(q.options||[]).map(o=>`<label class="mc-opt${vals.includes(o)?' sel':''}"><input type="checkbox" value="${o}" ${vals.includes(o)?'checked':''} onchange="this.closest('.mc-opt').classList.toggle('sel',this.checked)"> ${o}</label>`).join('')}</div>`;}
+    else if(q.type==='radio'){
+      const hasOther = q.allowOther !== false;
+      const isOtherSel = val && !(q.options||[]).includes(val);
+      input=`<div>${(q.options||[]).map(o=>`<label class="mc-opt${val===o?' sel':''}"><input type="radio" name="rci-${formId}-${q.id}" value="${o}" ${val===o?'checked':''} onchange="this.closest('.mc-opt').classList.add('sel');this.closest('div').querySelectorAll('.mc-opt').forEach(x=>{if(x!==this.closest('.mc-opt'))x.classList.remove('sel')});document.getElementById('other-${formId}-${q.id}')?.style.setProperty('display','none')"> ${o}</label>`).join('')}
+        ${hasOther?`<label class="mc-opt${isOtherSel?' sel':''}" style="flex-direction:column;align-items:flex-start;gap:6px"><span style="display:flex;align-items:center;gap:8px;width:100%"><input type="radio" name="rci-${formId}-${q.id}" value="__other__" ${isOtherSel?'checked':''} onchange="this.closest('.mc-opt').classList.add('sel');this.closest('div').querySelectorAll('.mc-opt').forEach(x=>{if(x!==this.closest('.mc-opt'))x.classList.remove('sel')});document.getElementById('other-${formId}-${q.id}').style.display='block'"> Other</span><input type="text" id="other-${formId}-${q.id}" placeholder="Please specify..." class="ci" style="display:${isOtherSel?'block':'none'};margin-top:4px;width:100%" value="${isOtherSel?val:''}"></label>`:''}
+      </div>`;
+    }
+    else if(q.type==='checkbox'){
+      const vals=val?(Array.isArray(val)?val:[val]):[];
+      const hasOtherVal = vals.find(v=>!((q.options||[]).includes(v)));
+      const hasOther = q.allowOther !== false;
+      input=`<div id="ci-${formId}-${q.id}">${(q.options||[]).map(o=>`<label class="mc-opt${vals.includes(o)?' sel':''}"><input type="checkbox" value="${o}" ${vals.includes(o)?'checked':''} onchange="this.closest('.mc-opt').classList.toggle('sel',this.checked)"> ${o}</label>`).join('')}
+        ${hasOther?`<label class="mc-opt${hasOtherVal?' sel':''}" style="flex-direction:column;align-items:flex-start;gap:6px"><span style="display:flex;align-items:center;gap:8px;width:100%"><input type="checkbox" value="__other__" ${hasOtherVal?'checked':''} onchange="this.closest('.mc-opt').classList.toggle('sel',this.checked);document.getElementById('other-cb-${formId}-${q.id}').style.display=this.checked?'block':'none'"> Other</span><input type="text" id="other-cb-${formId}-${q.id}" placeholder="Please specify..." class="ci" style="display:${hasOtherVal?'block':'none'};margin-top:4px;width:100%" value="${hasOtherVal||''}"></label>`:''}
+      </div>`;
+    }
     else if(q.type==='dropdown') input=`<select class="ci" id="ci-${formId}-${q.id}"><option value="">Select...</option>${(q.options||[]).map(o=>`<option value="${o}" ${val===o?'selected':''}>${o}</option>`).join('')}</select>`;
     else if(q.type==='scale') input=`<div style="display:flex;align-items:center;gap:12px"><span style="font-size:12px;color:var(--text3)">${q.min||1}</span><input type="range" class="ci" id="ci-${formId}-${q.id}" min="${q.min||1}" max="${q.max||10}" value="${parseInt(val)||(q.min||1)}" style="flex:1;padding:0;border:none;background:transparent" oninput="document.getElementById('sv-${formId}-${q.id}').textContent=this.value"><span style="font-size:12px;color:var(--text3)">${q.max||10}</span><span style="font-size:14px;font-weight:700;color:var(--navy);min-width:24px" id="sv-${formId}-${q.id}">${parseInt(val)||(q.min||1)}</span></div>`;
     div.innerHTML=`<div class="cq-text">${i+1}. ${q.text||'Question'}${q.required?'<span class="cq-req">*</span>':''}</div>${q.helper?`<div style="font-size:12px;color:var(--text3);margin-bottom:7px">${q.helper}</div>`:''}${input}`;
@@ -1438,8 +1466,8 @@ async function submitForm(formId,username){
   const answers={_savedAt:new Date().toISOString()};
   (form.questions||[]).forEach(q=>{
     const el=document.getElementById('ci-'+formId+'-'+q.id);if(!el)return;
-    if(q.type==='radio'){const ch=document.querySelector('input[name="rci-'+formId+'-'+q.id+'"]:checked');answers[q.id]=ch?ch.value:'';}
-    else if(q.type==='checkbox'){answers[q.id]=[...document.querySelectorAll('#ci-'+formId+'-'+q.id+' input:checked')].map(i=>i.value);}
+    if(q.type==='radio'){const ch=document.querySelector('input[name="rci-'+formId+'-'+q.id+'"]:checked');if(ch&&ch.value==='__other__'){const otherEl=document.getElementById('other-'+formId+'-'+q.id);answers[q.id]=otherEl?otherEl.value:'';}else{answers[q.id]=ch?ch.value:'';}}
+    else if(q.type==='checkbox'){const checked=[...document.querySelectorAll('#ci-'+formId+'-'+q.id+' input[type=checkbox]:checked')].map(i=>i.value);const otherIdx=checked.indexOf('__other__');if(otherIdx!==-1){const otherEl=document.getElementById('other-cb-'+formId+'-'+q.id);checked[otherIdx]=otherEl?otherEl.value:'Other';}answers[q.id]=checked;}
     else if(q.type==='rating')answers[q.id]=parseInt(el.dataset.val)||0;
     else answers[q.id]=el.value||'';
   });
