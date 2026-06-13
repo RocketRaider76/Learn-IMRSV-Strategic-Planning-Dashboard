@@ -381,7 +381,7 @@ input,textarea,select{font-family:'DM Sans',sans-serif}
       <div class="district-panel" id="dp-clients">
         <div class="clients-header">
           <div><h2>Clients</h2><p style="font-size:12px;color:var(--text3);margin-top:2px">Manage client accounts for this district</p></div>
-          <button class="btn btn-primary" onclick="openModal('m-client')"><i class="ti ti-user-plus"></i> Add Client</button>
+          <button class="btn btn-primary" onclick="openNewClientModal()"><i class="ti ti-user-plus"></i> Add Client</button>
         </div>
         <div id="clientsGrid"></div>
       </div>
@@ -642,25 +642,35 @@ window.addEventListener('load', () => {
 // ════════════════════════════════
 async function loadBlobs() {
   const r = await fetch('/.netlify/functions/load-config');
-  if (!r.ok) return;
+  if (!r.ok) { console.warn('load-config returned', r.status); return; }
   const d = await r.json();
+  console.log('Loaded config — ok:', d.ok, 'has config:', !!d.config);
   if (d.ok && d.config) {
     const c = d.config;
     if (c.adminCreds) S.adminCreds = c.adminCreds;
     if (c.districts?.length) S.districts = c.districts;
     if (c.phases?.length) S.phases = c.phases;
     if (c.forms) S.forms = c.forms;
-    if (c.clients?.length) S.clients = c.clients;
+    if (c.clients?.length) {
+      S.clients = c.clients;
+      console.log('Clients loaded from blobs:', S.clients.map(x=>({u:x.u,name:x.name})));
+    }
     if (c.phaseProgress) S.phaseProgress = c.phaseProgress;
+  } else {
+    console.log('No config in blobs — using defaults');
   }
 }
 async function saveBlobs() {
-  try {
-    await fetch('/.netlify/functions/save-config', {
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({config:{adminCreds:S.adminCreds,districts:S.districts,phases:S.phases,forms:S.forms,clients:S.clients,phaseProgress:S.phaseProgress}})
-    });
-  } catch(e) { console.warn('Save:', e); }
+  const payload = {config:{adminCreds:S.adminCreds,districts:S.districts,phases:S.phases,forms:S.forms,clients:S.clients,phaseProgress:S.phaseProgress}};
+  console.log('Saving blobs — clients count:', S.clients.length);
+  const res = await fetch('/.netlify/functions/save-config', {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify(payload)
+  });
+  const data = await res.json();
+  if (!data.ok) throw new Error(data.error || 'Save failed');
+  console.log('Save-config response:', data);
+  return data;
 }
 async function saveResponse(username, formId, answers) {
   try {
@@ -1179,6 +1189,9 @@ function openNewClientModal() {
   openModal('m-client');
 }
 
+// Also ensure the Add Client button calls this
+function openClientModal() { openNewClientModal(); }
+
 function renderClientFormAssign(client) {
   const wrap = document.getElementById('m-cForms');
   wrap.innerHTML = '';
@@ -1195,28 +1208,39 @@ function renderClientFormAssign(client) {
   });
 }
 
-function saveClient() {
+async function saveClient() {
   const name = document.getElementById('m-cName').value.trim();
   const u = document.getElementById('m-cUser').value.trim();
   const p = document.getElementById('m-cPass').value.trim();
+  const editId = S.editingClientId;
   if (!name||!u) { toast('Name and username required','err'); return; }
   const forms = [...document.querySelectorAll('#m-cForms input:checked')].map(i=>i.value);
-  if (S.editingClientId) {
-    const c = S.clients.find(x=>x.id===S.editingClientId);
+  if (editId) {
+    const c = S.clients.find(x=>x.id===editId);
     if (c) {
       c.name=name; c.u=u; c.forms=forms;
-      if(p) c.p=p;
+      if(p) { c.p=p; console.log('Password updated for', u, '— new password:', p); }
+      console.log('Client updated:', JSON.stringify(c));
     }
   } else {
     if (!p) { toast('Password required for new client','err'); return; }
-    if (S.clients.find(x=>x.u===u&&x.id!==S.editingClientId)) { toast('Username already taken','err'); return; }
-    S.clients.push({id:'c'+Date.now(),name,u,p,district:S.districtId,forms});
+    if (S.clients.find(x=>x.u===u)) { toast('Username already taken','err'); return; }
+    const newClient = {id:'c'+Date.now(),name,u,p,district:S.districtId,forms};
+    S.clients.push(newClient);
+    console.log('New client added:', JSON.stringify(newClient));
   }
-  saveBlobs();
+  console.log('All clients before save:', JSON.stringify(S.clients.map(c=>({u:c.u,p:c.p,name:c.name}))));
+  try {
+    await saveBlobs();
+    console.log('Blobs saved successfully');
+    toast(editId?'Client updated':'Client added');
+  } catch(e) {
+    console.error('Blob save FAILED:', e);
+    toast('Save failed — check console','err');
+  }
+  S.editingClientId = null;
   closeModal('m-client');
   renderClientsGrid();
-  toast(S.editingClientId?'Client updated':'Client added');
-  S.editingClientId = null;
 }
 function deleteClient(id) {
   if (!confirm('Delete client?')) return;
