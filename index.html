@@ -1203,13 +1203,14 @@ function openClientModal() { openNewClientModal(); }
 function renderClientFormAssign(client) {
   const wrap = document.getElementById('m-cForms');
   wrap.innerHTML = '';
-  const distForms = S.forms.filter(f=>f.district===S.districtId&&f.status==='active');
-  if (!distForms.length) { wrap.innerHTML='<span style="font-size:12px;color:var(--text3)">No active forms in this district yet</span>'; return; }
+  // Show both active and draft forms so admin can assign them
+  const distForms = S.forms.filter(f=>f.district===S.districtId);
+  if (!distForms.length) { wrap.innerHTML='<span style="font-size:12px;color:var(--text3)">No forms in this district yet. Create a form first.</span>'; return; }
   distForms.forEach(f => {
     const checked = client?.forms?.includes(f.id);
     const lbl = document.createElement('label');
     lbl.style.cssText='display:flex;align-items:center;gap:6px;padding:6px 10px;border-radius:7px;border:1.5px solid var(--bord);background:var(--surf);font-size:12px;cursor:pointer;transition:all .18s';
-    lbl.innerHTML=`<input type="checkbox" value="${f.id}" ${checked?'checked':''} style="accent-color:var(--navy)"> ${f.title}`;
+    lbl.innerHTML=`<input type="checkbox" value="${f.id}" ${checked?'checked':''} style="accent-color:var(--navy)"> ${f.title} <span style="font-size:10px;padding:1px 5px;border-radius:3px;background:${f.status==='active'?'rgba(34,165,90,.1)':'rgba(107,122,153,.1)'};color:${f.status==='active'?'#1a7a40':'#6b7a99'};margin-left:4px">${f.status}</span>`;
     if (checked) { lbl.style.borderColor='var(--navy)'; lbl.style.background='#eef2f8'; }
     lbl.querySelector('input').addEventListener('change',function(){lbl.style.borderColor=this.checked?'var(--navy)':'var(--bord)';lbl.style.background=this.checked?'#eef2f8':'var(--surf)';});
     wrap.appendChild(lbl);
@@ -1421,6 +1422,24 @@ function renderClientStats(client) {
   document.getElementById('cStatDone').textContent = done;
   document.getElementById('cStatPct').textContent = pct+'%';
 }
+function renderClientOverview(client) {
+  renderClientStats(client);
+  const wrap = document.getElementById('cGauges');
+  if (!wrap) return;
+  wrap.innerHTML = '';
+  S.phases.forEach((ph,i) => {
+    const pct = calcPhaseProgress(client.district, ph.id);
+    const color = COLORS[i % COLORS.length];
+    const cell = document.createElement('div');
+    cell.className = 'gcell';
+    cell.innerHTML = `${gaugeArc(pct,color,64)}
+      <div class="gpct" style="color:${color}">${pct}%</div>
+      <div class="glbl">${ph.name}</div>
+      <div class="gsub">${pct>=100?'Complete':pct>0?'In progress':'Upcoming'}</div>`;
+    wrap.appendChild(cell);
+  });
+}
+
 function renderClientGauges() {
   const client = S.clients.find(c=>c.u===S.user);
   if (!client) return;
@@ -1436,7 +1455,8 @@ function renderClientForms(client) {
   }
   assigned.forEach(fid=>{
     const form=S.forms.find(f=>f.id===fid);
-    if(!form) return;
+    if(!form) { console.warn('Form not found:', fid); return; }
+    console.log('Rendering form:', form.title, 'questions:', form.questions?.length);
     const resp=S.responses[client.u]?.[fid];
     const qs=form.questions||[];
     const answered=resp?qs.filter(q=>resp[q.id]!==undefined&&String(resp[q.id]).trim()!=='').length:0;
