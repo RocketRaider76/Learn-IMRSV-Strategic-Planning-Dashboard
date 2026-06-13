@@ -1350,9 +1350,9 @@ function renderResponses() {
     card.className = 'response-card';
     card.innerHTML=`<div class="rc-header">
       <div class="rc-client"><span class="client-av" style="width:28px;height:28px;font-size:11px;margin-right:6px">${c.name.charAt(0)}</span>${c.name}</div>
-      <span class="badge ${resp?'badge-green':'badge-gray'}">${resp?'Submitted':'Not started'}</span>
+      <span class="badge ${resp&&resp._complete?'badge-green':resp?'badge-gold':'badge-gray'}">${resp&&resp._complete?'Submitted':resp?'In progress':'Not started'}</span>
     </div>
-    ${resp ? `<div class="rc-answers">${(form.questions||[]).map(q=>`<div class="rc-answer"><div class="rc-q">${q.text||q.type}</div><div class="rc-a">${Array.isArray(resp[q.id])?resp[q.id].join(', '):(resp[q.id]||'<em style="color:var(--text3)">No response</em>')}</div></div>`).join('')}</div>` : '<div style="font-size:12px;color:var(--text3)">No responses submitted yet</div>'}`;
+    ${resp ? `<div class="rc-answers">${(form.questions||[]).filter(q=>q.type!=='heading'&&q.type!=='divider').map(q=>`<div class="rc-answer"><div class="rc-q">${q.text||q.type}</div><div class="rc-a">${Array.isArray(resp[q.id])?resp[q.id].join(', '):(resp[q.id]!==undefined&&resp[q.id]!==''?resp[q.id]:'<em style="color:var(--text3)">No response</em>')}</div></div>`).join('')}</div>` : '<div style="font-size:12px;color:var(--text3)">No responses submitted yet</div>'}`;
     grid.appendChild(card);
   });
 }
@@ -1586,8 +1586,9 @@ function renderClientQuestions(formId,username,questions,resp){
     else if(q.type==='radio'){
       const hasOther = q.allowOther !== false;
       const isOtherSel = val && !(q.options||[]).includes(val);
-      input=`<div>${(q.options||[]).map(o=>`<label class="mc-opt${val===o?' sel':''}"><input type="radio" name="rci-${formId}-${q.id}" value="${o}" ${val===o?'checked':''} onchange="this.closest('.mc-opt').classList.add('sel');this.closest('div').querySelectorAll('.mc-opt').forEach(x=>{if(x!==this.closest('.mc-opt'))x.classList.remove('sel')});document.getElementById('other-${formId}-${q.id}')?.style.setProperty('display','none')"> ${o}</label>`).join('')}
-        ${hasOther?`<label class="mc-opt${isOtherSel?' sel':''}" style="flex-direction:column;align-items:flex-start;gap:6px"><span style="display:flex;align-items:center;gap:8px;width:100%"><input type="radio" name="rci-${formId}-${q.id}" value="__other__" ${isOtherSel?'checked':''} onchange="this.closest('.mc-opt').classList.add('sel');this.closest('div').querySelectorAll('.mc-opt').forEach(x=>{if(x!==this.closest('.mc-opt'))x.classList.remove('sel')});document.getElementById('other-${formId}-${q.id}').style.display='block'"> Other</span><input type="text" id="other-${formId}-${q.id}" placeholder="Please specify..." class="ci" style="display:${isOtherSel?'block':'none'};margin-top:4px;width:100%" value="${isOtherSel?val:''}"></label>`:''}
+      const radioId = 'radio-'+formId+'-'+q.id;
+      input=`<div id="${radioId}">${(q.options||[]).map(o=>`<label class="mc-opt${val===o?' sel':''}"><input type="radio" name="${radioId}" value="${o}" ${val===o?'checked':''} onchange="handleRadioChange(this,'${radioId}','${formId}','${q.id}')"> ${o}</label>`).join('')}
+        ${hasOther?`<label class="mc-opt${isOtherSel?' sel':''}" style="flex-direction:column;align-items:flex-start;gap:6px"><span style="display:flex;align-items:center;gap:8px;width:100%"><input type="radio" name="${radioId}" value="__other__" ${isOtherSel?'checked':''} onchange="handleRadioChange(this,'${radioId}','${formId}','${q.id}')"> Other</span><input type="text" id="other-${formId}-${q.id}" placeholder="Please specify..." class="ci" style="display:${isOtherSel?'block':'none'};margin-top:4px;width:100%" value="${isOtherSel?val:''}"></label>`:''}
       </div>`;
     }
     else if(q.type==='checkbox'){
@@ -1605,13 +1606,23 @@ function renderClientQuestions(formId,username,questions,resp){
     wrap.appendChild(div);
   });
 }
+function handleRadioChange(el, radioId, formId, qid) {
+  // Update selected styles
+  document.querySelectorAll('#'+radioId+' .mc-opt').forEach(x=>x.classList.remove('sel'));
+  el.closest('.mc-opt').classList.add('sel');
+  // Show/hide other text input
+  const otherId = 'other-'+formId+'-'+qid;
+  const otherEl = document.getElementById(otherId);
+  if (otherEl) otherEl.style.display = el.value==='__other__' ? 'block' : 'none';
+}
+
 function setStarC(formId,qid,val){const row=document.getElementById('ci-'+formId+'-'+qid);if(!row)return;row.dataset.val=val;row.querySelectorAll('.star-btn').forEach((b,i)=>b.classList.toggle('on',i+1<=val));}
 async function submitForm(formId,username,complete=false){
   const form=S.forms.find(f=>f.id===formId);if(!form)return;
   const answers={_savedAt:new Date().toISOString(),_complete:complete};
   (form.questions||[]).forEach(q=>{
     const el=document.getElementById('ci-'+formId+'-'+q.id);if(!el)return;
-    if(q.type==='radio'){const ch=document.querySelector('input[name="rci-'+formId+'-'+q.id+'"]:checked');if(ch&&ch.value==='__other__'){const otherEl=document.getElementById('other-'+formId+'-'+q.id);answers[q.id]=otherEl?otherEl.value:'';}else{answers[q.id]=ch?ch.value:'';}}
+    if(q.type==='radio'){const radioId='radio-'+formId+'-'+q.id;const ch=document.querySelector('#'+radioId+' input[type=radio]:checked');if(ch&&ch.value==='__other__'){const otherEl=document.getElementById('other-'+formId+'-'+q.id);answers[q.id]=otherEl?otherEl.value:'';}else{answers[q.id]=ch?ch.value:'';}}
     else if(q.type==='checkbox'){const checked=[...document.querySelectorAll('#ci-'+formId+'-'+q.id+' input[type=checkbox]:checked')].map(i=>i.value);const otherIdx=checked.indexOf('__other__');if(otherIdx!==-1){const otherEl=document.getElementById('other-cb-'+formId+'-'+q.id);checked[otherIdx]=otherEl?otherEl.value:'Other';}answers[q.id]=checked;}
     else if(q.type==='rating')answers[q.id]=parseInt(el.dataset.val)||0;
     else answers[q.id]=el.value||'';
