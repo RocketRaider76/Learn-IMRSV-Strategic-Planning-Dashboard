@@ -629,12 +629,20 @@ const COLORS = ['#27a892','#d4a843','#378add','#7f77dd','#d85a30'];
 // ════════════════════════════════
 // INIT
 // ════════════════════════════════
-// Show login immediately — load data in background after login
+// Load config first, then show login
 window.addEventListener('load', () => {
   const ls = document.getElementById('loadingScreen');
   const login = document.getElementById('loginScreen');
-  if (ls) ls.style.display = 'none';
-  if (login) { login.style.display = 'flex'; login.classList.add('show'); }
+  // Load blobs BEFORE showing login so client credentials are available
+  loadBlobs()
+    .then(() => {
+      console.log('Config loaded — clients available:', S.clients.length);
+    })
+    .catch(e => console.warn('Config load failed:', e))
+    .finally(() => {
+      if (ls) ls.style.display = 'none';
+      if (login) { login.style.display = 'flex'; login.classList.add('show'); }
+    });
 });
 
 // ════════════════════════════════
