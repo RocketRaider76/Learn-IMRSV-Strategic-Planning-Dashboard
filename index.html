@@ -640,6 +640,34 @@ window.addEventListener('load', () => {
     })
     .catch(e => console.warn('Config load failed:', e))
     .finally(() => {
+      // Try to restore saved session
+      try {
+        const saved = localStorage.getItem('lnm_session');
+        if (saved) {
+          const sess = JSON.parse(saved);
+          if (sess.exp > Date.now()) {
+            if (sess.role === 'admin' && S.adminCreds) {
+              S.role = 'admin'; S.user = 'admin';
+              if (ls) ls.style.display = 'none';
+              loadAllResponses().catch(()=>{});
+              launchAdminSilent();
+              return;
+            } else if (sess.role === 'client') {
+              const client = S.clients.find(c => c.u === sess.user);
+              if (client) {
+                S.role = 'client'; S.user = sess.user; S.districtId = client.district;
+                if (ls) ls.style.display = 'none';
+                loadMyResponses(sess.user).then(()=>{ renderClientForms(client); renderClientProgress(client); }).catch(()=>{});
+                launchClientSilent(client);
+                return;
+              }
+            }
+          } else {
+            localStorage.removeItem('lnm_session');
+          }
+        }
+      } catch(e) { localStorage.removeItem('lnm_session'); }
+      // No valid session — show login
       if (ls) ls.style.display = 'none';
       if (login) { login.style.display = 'flex'; login.classList.add('show'); }
     });
@@ -741,8 +769,37 @@ async function doLogin() {
     }
   }
 }
+function launchAdminSilent() {
+  const ls = document.getElementById('loginScreen');
+  if(ls){ls.classList.remove('show');ls.style.display='none';}
+  document.getElementById('adminApp').classList.add('show');
+  showView('home');
+  renderDistrictCards();
+}
+
+function launchClientSilent(client) {
+  const lsc = document.getElementById('loginScreen');
+  if(lsc){lsc.classList.remove('show');lsc.style.display='none';}
+  document.getElementById('clientApp').classList.add('show');
+  const d = S.districts.find(x=>x.id===client.district);
+  const brandEl = document.getElementById('ctbBrand');
+  if(brandEl&&brandEl.childNodes[0]) brandEl.childNodes[0].textContent = d?.short||'District';
+  const subEl = document.getElementById('ctbSub');
+  if(subEl) subEl.textContent = 'Strategic Planning';
+  const userEl = document.getElementById('ctbUser');
+  if(userEl) userEl.textContent = client.name;
+  const heroTitle = document.getElementById('cHeroTitle');
+  if(heroTitle) heroTitle.textContent = d?.name||'Strategic Planning Dashboard';
+  const heroSub = document.getElementById('cHeroSub');
+  if(heroSub) heroSub.textContent = 'Fiscal Year '+(d?.fy||'2025-2026')+' · Learn New Mexico';
+  renderClientOverview(client);
+  renderClientForms(client);
+  renderClientProgress(client);
+}
+
 function signOut() {
   S.role=null; S.user=null; S.districtId=null;
+  localStorage.removeItem('lnm_session');
   ['adminApp','clientApp'].forEach(id=>document.getElementById(id).classList.remove('show'));
   const ls = document.getElementById('loginScreen');
   ls.style.display = 'flex';
@@ -759,6 +816,9 @@ function launchAdmin() {
   ls.classList.remove('show');
   ls.style.display = 'none';
   document.getElementById('adminApp').classList.add('show');
+  // Save session — 30 days for admin
+  const exp = Date.now() + 30*24*60*60*1000;
+  localStorage.setItem('lnm_session', JSON.stringify({role:'admin',user:'admin',exp}));
   showView('home');
   renderDistrictCards();
 }
@@ -840,7 +900,7 @@ function calcPhaseProgress(districtId, phaseId) {
   phaseForms.forEach(form => {
     const assignedClients = distClients.filter(c=>c.forms?.includes(form.id));
     if (!assignedClients.length) return;
-    const qs = form.questions||[];
+    const qs = (form.questions||[]).filter(q=>q.type!=='heading'&&q.type!=='divider');
     if (!qs.length) return;
     assignedClients.forEach(c => {
       const resp = S.responses[c.u]?.[form.id];
@@ -866,7 +926,7 @@ function getPhaseAutoProgress(districtId, phaseId) {
   phaseForms.forEach(form => {
     const assignedClients = distClients.filter(c=>c.forms?.includes(form.id));
     if (!assignedClients.length) return;
-    const qs = form.questions||[];
+    const qs = (form.questions||[]).filter(q=>q.type!=='heading'&&q.type!=='divider');
     if (!qs.length) return;
     assignedClients.forEach(c => {
       const resp = S.responses[c.u]?.[form.id];
@@ -1396,6 +1456,9 @@ function launchClient(client) {
   lsc.classList.remove('show');
   lsc.style.display = 'none';
   document.getElementById('clientApp').classList.add('show');
+  // Save session — 7 days for client
+  const exp = Date.now() + 7*24*60*60*1000;
+  localStorage.setItem('lnm_session', JSON.stringify({role:'client',user:client.u,district:client.district,exp}));
   const d = S.districts.find(x=>x.id===client.district);
   const brandEl = document.getElementById('ctbBrand');
   brandEl.childNodes[0].textContent = d?.short||'District';
@@ -1459,22 +1522,40 @@ function renderClientForms(client) {
     console.log('Rendering form:', form.title, 'questions:', form.questions?.length);
     const resp=S.responses[client.u]?.[fid];
     const qs=form.questions||[];
-    const answered=resp?qs.filter(q=>resp[q.id]!==undefined&&String(resp[q.id]).trim()!=='').length:0;
-    const pct=qs.length?Math.round((answered/qs.length)*100):0;
+    const realQs = qs.filter(q=>q.type!=='heading'&&q.type!=='divider');
+    const answered=resp?realQs.filter(q=>resp[q.id]!==undefined&&String(resp[q.id]).trim()!=='').length:0;
+    const pct=realQs.length?Math.round((answered/realQs.length)*100):0;
     const wrap2=document.createElement('div');
     wrap2.className='client-form-wrap';
+    wrap2.id='cfw-'+fid;
     wrap2.innerHTML=`<div class="cfw-header">
       <div><div class="cfw-title">${form.title}</div><div class="cfw-meta">${qs.length} question${qs.length!==1?'s':''}</div></div>
-      <span class="badge ${pct===100?'badge-green':pct>0?'badge-gold':'badge-gray'}">${answered}/${qs.length} answered</span>
+      <span class="badge ${pct===100?'badge-green':pct>0?'badge-gold':'badge-gray'}">${answered}/${realQs.length} answered</span>
     </div>
     <div class="prog-bar" style="margin-bottom:18px"><div class="prog-fill" style="width:${pct}%;background:${pct===100?'var(--teal)':'var(--gold)'}"></div></div>
     <div id="cqwrap-${fid}"></div>
     <div class="save-bar">
       <div class="save-status" id="css-${fid}"><i class="ti ti-clock"></i> Unsaved</div>
-      <button class="btn btn-teal" onclick="submitForm('${fid}','${client.u}')"><i class="ti ti-device-floppy"></i> Save responses</button>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-ghost" onclick="submitForm('${fid}','${client.u}',false)"><i class="ti ti-device-floppy"></i> Save</button>
+        <button class="btn btn-teal" onclick="submitForm('${fid}','${client.u}',true)"><i class="ti ti-circle-check"></i> Submit & Complete</button>
+      </div>
     </div>`;
     wrap.appendChild(wrap2);
-    renderClientQuestions(fid, client.u, qs, resp);
+    if(resp&&resp._complete){
+      wrap2.innerHTML=`<div style="display:flex;align-items:center;gap:16px;padding:8px 0">
+        <div style="width:48px;height:48px;border-radius:50%;background:rgba(34,165,90,.1);border:2px solid rgba(34,165,90,.3);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          <i class="ti ti-circle-check" style="font-size:24px;color:#22a55a"></i>
+        </div>
+        <div style="flex:1">
+          <div style="font-size:14px;font-weight:700;color:var(--text)">${form.title}</div>
+          <div style="font-size:12px;color:#22a55a;margin-top:2px"><i class="ti ti-check"></i> Submitted ${resp._savedAt?new Date(resp._savedAt).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}):''}</div>
+        </div>
+        <button class="btn btn-ghost btn-sm" onclick="reopenForm('${fid}','${client.u}')"><i class="ti ti-pencil"></i> Edit</button>
+      </div>`;
+    } else {
+      renderClientQuestions(fid, client.u, qs, resp);
+    }
   });
 }
 function renderClientQuestions(formId,username,questions,resp){
@@ -1508,14 +1589,15 @@ function renderClientQuestions(formId,username,questions,resp){
     }
     else if(q.type==='dropdown') input=`<select class="ci" id="ci-${formId}-${q.id}"><option value="">Select...</option>${(q.options||[]).map(o=>`<option value="${o}" ${val===o?'selected':''}>${o}</option>`).join('')}</select>`;
     else if(q.type==='scale') input=`<div style="display:flex;align-items:center;gap:12px"><span style="font-size:12px;color:var(--text3)">${q.min||1}</span><input type="range" class="ci" id="ci-${formId}-${q.id}" min="${q.min||1}" max="${q.max||10}" value="${parseInt(val)||(q.min||1)}" style="flex:1;padding:0;border:none;background:transparent" oninput="document.getElementById('sv-${formId}-${q.id}').textContent=this.value"><span style="font-size:12px;color:var(--text3)">${q.max||10}</span><span style="font-size:14px;font-weight:700;color:var(--navy);min-width:24px" id="sv-${formId}-${q.id}">${parseInt(val)||(q.min||1)}</span></div>`;
-    div.innerHTML=`<div class="cq-text">${i+1}. ${q.text||'Question'}${q.required?'<span class="cq-req">*</span>':''}</div>${q.helper?`<div style="font-size:12px;color:var(--text3);margin-bottom:7px">${q.helper}</div>`:''}${input}`;
+    const qNum = questions.slice(0,i).filter(x=>x.type!=='heading'&&x.type!=='divider').length + 1;
+    div.innerHTML=`<div class="cq-text">${qNum}. ${q.text||'Question'}${q.required?'<span class="cq-req">*</span>':''}</div>${q.helper?`<div style="font-size:12px;color:var(--text3);margin-bottom:7px">${q.helper}</div>`:''}${input}`;
     wrap.appendChild(div);
   });
 }
 function setStarC(formId,qid,val){const row=document.getElementById('ci-'+formId+'-'+qid);if(!row)return;row.dataset.val=val;row.querySelectorAll('.star-btn').forEach((b,i)=>b.classList.toggle('on',i+1<=val));}
-async function submitForm(formId,username){
+async function submitForm(formId,username,complete=false){
   const form=S.forms.find(f=>f.id===formId);if(!form)return;
-  const answers={_savedAt:new Date().toISOString()};
+  const answers={_savedAt:new Date().toISOString(),_complete:complete};
   (form.questions||[]).forEach(q=>{
     const el=document.getElementById('ci-'+formId+'-'+q.id);if(!el)return;
     if(q.type==='radio'){const ch=document.querySelector('input[name="rci-'+formId+'-'+q.id+'"]:checked');if(ch&&ch.value==='__other__'){const otherEl=document.getElementById('other-'+formId+'-'+q.id);answers[q.id]=otherEl?otherEl.value:'';}else{answers[q.id]=ch?ch.value:'';}}
@@ -1526,11 +1608,57 @@ async function submitForm(formId,username){
   if(!S.responses[username])S.responses[username]={};
   S.responses[username][formId]=answers;
   await saveResponse(username,formId,answers);
-  const ss=document.getElementById('css-'+formId);
-  if(ss){ss.className='save-status ok';ss.innerHTML='<i class="ti ti-check"></i> Saved';}
-  toast('Responses saved');
   const client=S.clients.find(c=>c.u===username);
+  if(complete){
+    // Collapse the form and show complete state
+    const wrap2=document.getElementById('cfw-'+formId);
+    if(wrap2){
+      wrap2.innerHTML=`<div style="display:flex;align-items:center;gap:16px;padding:8px 0">
+        <div style="width:48px;height:48px;border-radius:50%;background:rgba(34,165,90,.1);border:2px solid rgba(34,165,90,.3);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          <i class="ti ti-circle-check" style="font-size:24px;color:#22a55a"></i>
+        </div>
+        <div style="flex:1">
+          <div style="font-size:14px;font-weight:700;color:var(--text)">${form.title}</div>
+          <div style="font-size:12px;color:#22a55a;margin-top:2px"><i class="ti ti-check"></i> Submitted ${new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</div>
+        </div>
+        <button class="btn btn-ghost btn-sm" onclick="reopenForm('${formId}','${username}')"><i class="ti ti-pencil"></i> Edit</button>
+      </div>`;
+    }
+    toast('Form submitted successfully');
+  } else {
+    const ss=document.getElementById('css-'+formId);
+    if(ss){ss.className='save-status ok';ss.innerHTML='<i class="ti ti-check"></i> Saved';}
+    toast('Responses saved');
+  }
   if(client){renderClientStats(client);renderClientProgress(client);}
+}
+
+function reopenForm(formId,username){
+  const client=S.clients.find(c=>c.u===username);
+  if(!client)return;
+  const resp=S.responses[username]?.[formId];
+  const form=S.forms.find(f=>f.id===formId);
+  if(!form)return;
+  const wrap=document.getElementById('cfw-'+formId);
+  if(!wrap)return;
+  const qs=form.questions||[];
+  const realQs=qs.filter(q=>q.type!=='heading'&&q.type!=='divider');
+  const answered=resp?realQs.filter(q=>resp[q.id]!==undefined&&String(resp[q.id]).trim()!=='').length:0;
+  const pct=realQs.length?Math.round((answered/realQs.length)*100):0;
+  wrap.innerHTML=`<div class="cfw-header">
+    <div><div class="cfw-title">${form.title}</div><div class="cfw-meta">${qs.length} question${qs.length!==1?'s':''}</div></div>
+    <span class="badge badge-gold">${answered}/${realQs.length} answered</span>
+  </div>
+  <div class="prog-bar" style="margin-bottom:18px"><div class="prog-fill" style="width:${pct}%;background:var(--gold)"></div></div>
+  <div id="cqwrap-${formId}"></div>
+  <div class="save-bar">
+    <div class="save-status" id="css-${formId}"><i class="ti ti-clock"></i> Unsaved</div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-ghost" onclick="submitForm('${formId}','${username}',false)"><i class="ti ti-device-floppy"></i> Save</button>
+      <button class="btn btn-teal" onclick="submitForm('${formId}','${username}',true)"><i class="ti ti-circle-check"></i> Submit & Complete</button>
+    </div>
+  </div>`;
+  renderClientQuestions(formId,username,qs,resp);
 }
 function renderClientProgress(client){
   const wrap=document.getElementById('cProgressList');wrap.innerHTML='';
@@ -1541,15 +1669,16 @@ function renderClientProgress(client){
     const form=S.forms.find(f=>f.id===fid);if(!form)return;
     const resp=S.responses[client.u]?.[fid];
     const qs=form.questions||[];
-    const answered=resp?qs.filter(q=>resp[q.id]!==undefined&&String(resp[q.id]).trim()!=='').length:0;
-    const pct=qs.length?Math.round((answered/qs.length)*100):0;
+    const realQs2 = qs.filter(q=>q.type!=='heading'&&q.type!=='divider');
+    const answered=resp?realQs2.filter(q=>resp[q.id]!==undefined&&String(resp[q.id]).trim()!=='').length:0;
+    const pct=realQs2.length?Math.round((answered/realQs2.length)*100):0;
     card.innerHTML+=`<div style="margin-bottom:16px">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px">
         <span style="font-size:13px;font-weight:700;color:var(--text)">${form.title}</span>
         <span class="badge ${pct===100?'badge-green':pct>0?'badge-gold':'badge-gray'}">${pct===100?'Complete':pct>0?'In progress':'Not started'}</span>
       </div>
       <div class="prog-bar"><div class="prog-fill" style="width:${pct}%;background:${pct===100?'var(--teal)':'var(--gold)'}"></div></div>
-      <div style="font-size:11px;color:var(--text3);margin-top:3px">${answered} of ${qs.length} questions answered</div>
+      <div style="font-size:11px;color:var(--text3);margin-top:3px">${answered} of ${realQs2.length} questions answered</div>
     </div>`;
   });
   wrap.appendChild(card);
