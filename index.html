@@ -712,7 +712,9 @@ async function doLogin() {
 function signOut() {
   S.role=null; S.user=null; S.districtId=null;
   ['adminApp','clientApp'].forEach(id=>document.getElementById(id).classList.remove('show'));
-  document.getElementById('loginScreen').classList.add('show');
+  const ls = document.getElementById('loginScreen');
+  ls.style.display = 'flex';
+  ls.classList.add('show');
   document.getElementById('lUser').value='';
   document.getElementById('lPass').value='';
 }
@@ -721,7 +723,9 @@ function signOut() {
 // ADMIN LAUNCH
 // ════════════════════════════════
 function launchAdmin() {
-  document.getElementById('loginScreen').classList.remove('show');
+  const ls = document.getElementById('loginScreen');
+  ls.classList.remove('show');
+  ls.style.display = 'none';
   document.getElementById('adminApp').classList.add('show');
   showView('home');
   renderDistrictCards();
@@ -1255,8 +1259,9 @@ function updateGauge(did,pid,val,slider){
 // CLIENT APP
 // ════════════════════════════════
 function launchClient(client) {
-  document.getElementById('loginScreen').classList.remove('show');
-  document.getElementById('loginScreen').style.display='none';
+  const lsc = document.getElementById('loginScreen');
+  lsc.classList.remove('show');
+  lsc.style.display = 'none';
   document.getElementById('clientApp').classList.add('show');
   const d = S.districts.find(x=>x.id===client.district);
   const brandEl = document.getElementById('ctbBrand');
