@@ -247,6 +247,57 @@ input,textarea,select{font-family:'DM Sans',sans-serif}
 .prog-bar{height:5px;background:var(--surf);border-radius:10px;overflow:hidden;border:1px solid var(--bord);margin-top:4px}
 .prog-fill{height:100%;border-radius:10px;transition:width .5s;background:var(--teal)}
 
+/* ── MEETINGS ── */
+.meeting-card{background:var(--white);border:1px solid var(--bord);border-radius:var(--rad);padding:14px 16px;margin-bottom:8px;display:flex;gap:14px;align-items:flex-start;box-shadow:var(--shadow)}
+.meeting-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.meeting-body{flex:1}
+.meeting-title{font-size:13px;font-weight:700;color:var(--text)}
+.meeting-meta{font-size:11px;color:var(--text3);margin-top:2px}
+.meeting-notes{font-size:12px;color:var(--text2);margin-top:6px;line-height:1.5}
+.meeting-actions{display:flex;gap:6px;flex-shrink:0}
+.sow-tracker{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px;margin-bottom:20px}
+.sow-item{background:var(--white);border:1px solid var(--bord);border-radius:var(--rad);padding:12px;box-shadow:var(--shadow)}
+.sow-item.done{border-color:var(--teal);background:rgba(39,168,146,.04)}
+.sow-item .si-title{font-size:12px;font-weight:700;color:var(--text);margin-bottom:3px}
+.sow-item .si-req{font-size:11px;color:var(--text3)}
+.sow-item .si-count{font-size:18px;font-weight:700;margin-top:6px}
+.sow-item.done .si-count{color:var(--teal)}
+
+/* ── KPIs ── */
+.priority-card{background:var(--white);border:1px solid var(--bord);border-radius:var(--rad2);padding:18px;margin-bottom:14px;box-shadow:var(--shadow)}
+.priority-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px;gap:10px}
+.priority-num{width:32px;height:32px;border-radius:50%;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0}
+.priority-title{font-size:14px;font-weight:700;color:var(--text)}
+.priority-desc{font-size:12px;color:var(--text3);margin-top:2px}
+.kpi-row{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--surf);border-radius:8px;border:1px solid var(--bord);margin-bottom:6px}
+.kpi-label{flex:1;font-size:12px;font-weight:600;color:var(--text)}
+.kpi-values{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--text3);white-space:nowrap}
+.kpi-status{padding:3px 8px;border-radius:20px;font-size:10px;font-weight:700}
+.kpi-status.on-track{background:rgba(34,165,90,.1);color:#1a7a40;border:1px solid rgba(34,165,90,.2)}
+.kpi-status.at-risk{background:rgba(212,168,67,.12);color:#8a6200;border:1px solid rgba(212,168,67,.25)}
+.kpi-status.off-track{background:#fff0f0;color:var(--red);border:1px solid #f5c6cb}
+.kpi-status.not-started{background:var(--surf);color:var(--text3);border:1px solid var(--bord2)}
+
+/* ── DOCUMENTS ── */
+.doc-card{background:var(--white);border:1px solid var(--bord);border-radius:var(--rad);padding:14px 16px;margin-bottom:8px;display:flex;align-items:center;gap:12px;box-shadow:var(--shadow);transition:border-color .2s}
+.doc-card:hover{border-color:var(--bord2)}
+.doc-icon{width:38px;height:38px;border-radius:9px;background:var(--surf);border:1px solid var(--bord);display:flex;align-items:center;justify-content:center;font-size:17px;color:var(--navy);flex-shrink:0}
+.doc-info{flex:1}
+.doc-title{font-size:13px;font-weight:700;color:var(--text)}
+.doc-meta{font-size:11px;color:var(--text3);margin-top:2px}
+.doc-actions{display:flex;gap:6px;flex-shrink:0}
+
+/* ── VISIBILITY TOGGLES ── */
+.visibility-bar{background:var(--surf);border:1px solid var(--bord);border-radius:var(--rad);padding:10px 14px;margin-bottom:16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.vb-label{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.07em}
+.vis-toggle{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:500;color:var(--text2);padding:5px 10px;border-radius:7px;border:1.5px solid var(--bord);background:var(--white);cursor:pointer;transition:all .2s}
+.vis-toggle.visible{border-color:var(--teal);background:rgba(39,168,146,.08);color:var(--teal2)}
+.vis-toggle i{font-size:14px}
+
+/* ── CLIENT TABS (new) ── */
+.client-doc-card{background:var(--white);border:1px solid var(--bord);border-radius:var(--rad);padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;gap:10px;box-shadow:var(--shadow)}
+
+/* GAUGE */
 /* GAUGE */
 .gauge-row{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:16px}
 .gcell{background:var(--white);border:1px solid var(--bord);border-radius:var(--rad);padding:12px 8px;text-align:center;box-shadow:var(--shadow)}
@@ -365,6 +416,9 @@ input,textarea,select{font-family:'DM Sans',sans-serif}
         <button class="dtab on" onclick="dTab('forms',this)"><i class="ti ti-clipboard-list"></i> Forms</button>
         <button class="dtab" onclick="dTab('clients',this)"><i class="ti ti-users"></i> Clients</button>
         <button class="dtab" onclick="dTab('responses',this)"><i class="ti ti-chart-bar"></i> Responses</button>
+        <button class="dtab" onclick="dTab('meetings',this)"><i class="ti ti-calendar-event"></i> Meetings</button>
+        <button class="dtab" onclick="dTab('kpis',this)"><i class="ti ti-target"></i> KPIs</button>
+        <button class="dtab" onclick="dTab('documents',this)"><i class="ti ti-folder"></i> Documents</button>
         <button class="dtab" onclick="dTab('dsettings',this)"><i class="ti ti-settings"></i> Settings</button>
       </div>
 
@@ -396,6 +450,37 @@ input,textarea,select{font-family:'DM Sans',sans-serif}
           <select id="respFormSelect" onchange="renderResponses()" style="padding:7px 10px;border-radius:7px;border:1.5px solid var(--bord);font-size:13px;font-family:inherit;background:var(--surf);outline:none"></select>
         </div>
         <div id="responsesGrid"></div>
+      </div>
+
+      <!-- MEETINGS -->
+      <div class="district-panel" id="dp-meetings">
+        <div class="page-hdr">
+          <div><h2>Meeting Log</h2><p>Track all SOW-required sessions for this district</p></div>
+          <button class="btn btn-primary" onclick="openNewMeeting()"><i class="ti ti-plus"></i> Log Meeting</button>
+        </div>
+        <div id="meetingsList"></div>
+      </div>
+
+      <!-- KPIs -->
+      <div class="district-panel" id="dp-kpis">
+        <div class="page-hdr">
+          <div><h2>Strategic Priorities & KPIs</h2><p>Track measurable goals aligned to the strategic plan</p></div>
+          <button class="btn btn-primary" onclick="openNewPriority()"><i class="ti ti-plus"></i> Add Priority</button>
+        </div>
+        <div id="kpisList"></div>
+      </div>
+
+      <!-- DOCUMENTS -->
+      <div class="district-panel" id="dp-documents">
+        <div class="page-hdr">
+          <div><h2>Documents & Deliverables</h2><p>Link Google Drive documents and generate reports from form data</p></div>
+          <button class="btn btn-primary" onclick="openNewDocument()"><i class="ti ti-plus"></i> Add Document</button>
+        </div>
+        <div id="documentsList"></div>
+        <div class="card" style="margin-top:16px">
+          <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:12px"><i class="ti ti-file-export" style="margin-right:6px;color:var(--navy)"></i>Generate Reports from Form Data</div>
+          <div id="generateReportsList"></div>
+        </div>
       </div>
 
       <!-- SETTINGS -->
@@ -528,10 +613,13 @@ input,textarea,select{font-family:'DM Sans',sans-serif}
 <div id="clientApp">
   <div class="client-topbar">
     <div class="ctb-brand" id="ctbBrand">District <span id="ctbSub">Strategic Planning</span></div>
-    <div class="ctabs">
+    <div class="ctabs" id="clientTabsRow">
       <button class="ctab on" onclick="cTab('overview',this)"><i class="ti ti-layout-dashboard"></i> Overview</button>
       <button class="ctab" onclick="cTab('myforms',this)"><i class="ti ti-forms"></i> My Forms</button>
       <button class="ctab" onclick="cTab('progress',this)"><i class="ti ti-chart-bar"></i> Progress</button>
+      <button class="ctab" id="ctab-meetings" style="display:none" onclick="cTab('cmeetings',this)"><i class="ti ti-calendar-event"></i> Meetings</button>
+      <button class="ctab" id="ctab-kpis" style="display:none" onclick="cTab('ckpis',this)"><i class="ti ti-target"></i> KPIs</button>
+      <button class="ctab" id="ctab-documents" style="display:none" onclick="cTab('cdocuments',this)"><i class="ti ti-folder"></i> Documents</button>
     </div>
     <div class="ctb-right">
       <span id="ctbUser" style="font-size:12px;color:var(--text3)"></span>
@@ -595,6 +683,81 @@ input,textarea,select{font-family:'DM Sans',sans-serif}
     <div class="modal-footer">
       <button class="btn btn-ghost" onclick="closeModal('m-client')">Cancel</button>
       <button class="btn btn-primary" onclick="saveClient()"><i class="ti ti-check"></i> Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- MEETING MODAL -->
+<div class="modal-overlay" id="m-meeting">
+  <div class="modal">
+    <button class="mclose" onclick="closeModal('m-meeting')"><i class="ti ti-x"></i></button>
+    <h3 id="m-meetingTitle">Log Meeting</h3><div class="msub">Record a session from the SOW schedule</div>
+    <div class="ff-row">
+      <div class="ff"><label>Meeting Type</label>
+        <select id="m-mType">
+          <option value="Leadership Meeting">Leadership Meeting</option>
+          <option value="Focus Group">Focus Group</option>
+          <option value="Leadership Retreat">Leadership Retreat</option>
+          <option value="Board Work Session">Board Work Session</option>
+          <option value="Virtual Check-in">Virtual Check-in</option>
+          <option value="Final Presentation">Final Presentation</option>
+          <option value="Community Session">Community Session</option>
+        </select>
+      </div>
+      <div class="ff"><label>Date</label><input type="date" id="m-mDate"></div>
+    </div>
+    <div class="ff-row">
+      <div class="ff"><label>Duration (minutes)</label><input type="number" id="m-mDuration" placeholder="90" min="15" step="15"></div>
+      <div class="ff"><label>Attendees</label><input type="text" id="m-mAttendees" placeholder="e.g. Leadership team, 12 staff"></div>
+    </div>
+    <div class="ff"><label>Notes / Summary</label><textarea id="m-mNotes" placeholder="Key discussion points, decisions made, next steps..."></textarea></div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('m-meeting')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveMeeting()"><i class="ti ti-check"></i> Save Meeting</button>
+    </div>
+  </div>
+</div>
+
+<!-- PRIORITY / KPI MODAL -->
+<div class="modal-overlay" id="m-priority">
+  <div class="modal" style="max-width:600px">
+    <button class="mclose" onclick="closeModal('m-priority')"><i class="ti ti-x"></i></button>
+    <h3 id="m-priorityTitle">Add Strategic Priority</h3><div class="msub">Define a priority area with measurable KPIs</div>
+    <div class="ff"><label>Priority Title</label><input type="text" id="m-pTitle" placeholder="e.g. Student Achievement & Academic Growth"></div>
+    <div class="ff"><label>Description</label><textarea id="m-pDesc" placeholder="Brief description of this strategic priority..." style="min-height:56px"></textarea></div>
+    <div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px;margin-top:4px">KPI Goals</div>
+    <div id="m-kpiRows"></div>
+    <button class="btn btn-ghost btn-sm" onclick="addKpiRow()" style="width:100%;margin-bottom:4px"><i class="ti ti-plus"></i> Add KPI Goal</button>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('m-priority')">Cancel</button>
+      <button class="btn btn-primary" onclick="savePriority()"><i class="ti ti-check"></i> Save Priority</button>
+    </div>
+  </div>
+</div>
+
+<!-- DOCUMENT MODAL -->
+<div class="modal-overlay" id="m-document">
+  <div class="modal">
+    <button class="mclose" onclick="closeModal('m-document')"><i class="ti ti-x"></i></button>
+    <h3>Add Document</h3><div class="msub">Link a Google Drive document or deliverable</div>
+    <div class="ff"><label>Document Title</label><input type="text" id="m-docTitle" placeholder="e.g. Strategic Plan Draft"></div>
+    <div class="ff"><label>Document Type</label>
+      <select id="m-docType">
+        <option value="Strategic Plan">Strategic Plan</option>
+        <option value="Implementation Roadmap">Implementation Roadmap</option>
+        <option value="Communication Summary">Communication Summary</option>
+        <option value="Presentation Deck">Presentation Deck</option>
+        <option value="KPI Framework">KPI Framework</option>
+        <option value="Meeting Notes">Meeting Notes</option>
+        <option value="Focus Group Summary">Focus Group Summary</option>
+        <option value="Other">Other</option>
+      </select>
+    </div>
+    <div class="ff"><label>Google Drive Link</label><input type="url" id="m-docUrl" placeholder="https://drive.google.com/..."></div>
+    <div class="ff"><label>Notes (optional)</label><input type="text" id="m-docNotes" placeholder="Brief description..."></div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('m-document')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveDocument()"><i class="ti ti-check"></i> Add Document</button>
     </div>
   </div>
 </div>
@@ -986,6 +1149,9 @@ function dTab(name, el) {
   if (el) el.classList.add('on'); else document.querySelector('.dtab')?.classList.add('on');
   document.getElementById('dp-'+name).classList.add('on');
   if (name==='responses') renderResponses();
+  if (name==='meetings') renderMeetingsTab();
+  if (name==='kpis') renderKpisTab();
+  if (name==='documents') renderDocumentsTab();
 }
 
 // ════════════════════════════════
@@ -1523,6 +1689,11 @@ function cTab(name,el){
   document.querySelectorAll('.cpanel').forEach(p=>p.classList.remove('on'));
   el.classList.add('on');
   document.getElementById('cp-'+name).classList.add('on');
+  const client = S.clients.find(c=>c.u===S.user);
+  if (!client) return;
+  if (name==='cmeetings') renderClientMeetings(client);
+  if (name==='ckpis') renderClientKpis(client);
+  if (name==='cdocuments') renderClientDocs(client);
 }
 function renderClientStats(client) {
   const assigned = client.forms||[];
@@ -1784,6 +1955,441 @@ function toast(msg,type='ok'){
   clearTimeout(toastT);
   toastT=setTimeout(()=>t.classList.remove('show'),3000);
 }
+
+
+// ════════════════════════════════
+// VISIBILITY TOGGLES (admin controls what clients see)
+// ════════════════════════════════
+const VISIBILITY_TABS = ['meetings','kpis','documents'];
+const VISIBILITY_LABELS = {meetings:'Meeting Log',kpis:'KPIs & Priorities',documents:'Documents'};
+const VISIBILITY_ICONS = {meetings:'ti-calendar-event',kpis:'ti-target',documents:'ti-folder'};
+
+function getVisibility(districtId) {
+  const d = S.districts.find(x=>x.id===districtId);
+  return d?.clientVisibility || {};
+}
+function setVisibility(districtId, tab, val) {
+  const d = S.districts.find(x=>x.id===districtId);
+  if (!d) return;
+  if (!d.clientVisibility) d.clientVisibility = {};
+  d.clientVisibility[tab] = val;
+  saveBlobs();
+  renderVisibilityBar();
+}
+
+function renderVisibilityBar(containerId='visibilityBar') {
+  const wrap = document.getElementById(containerId);
+  if (!wrap) return;
+  const vis = getVisibility(S.districtId);
+  wrap.innerHTML = `<span class="vb-label"><i class="ti ti-eye"></i> Client visibility</span>` +
+    VISIBILITY_TABS.map(t => {
+      const on = vis[t] === true;
+      return `<div class="vis-toggle ${on?'visible':''}" onclick="setVisibility('${S.districtId}','${t}',${!on})">
+        <i class="ti ${VISIBILITY_ICONS[t]}"></i> ${VISIBILITY_LABELS[t]}
+        <i class="ti ${on?'ti-eye':'ti-eye-off'}" style="margin-left:2px;font-size:12px"></i>
+      </div>`;
+    }).join('');
+}
+
+function applyClientVisibility(client) {
+  const vis = getVisibility(client.district);
+  VISIBILITY_TABS.forEach(t => {
+    const btn = document.getElementById('ctab-'+t);
+    if (btn) btn.style.display = vis[t] ? 'flex' : 'none';
+  });
+}
+
+// ════════════════════════════════
+// MEETINGS
+// ════════════════════════════════
+const SOW_REQUIREMENTS = [
+  {type:'Leadership Meeting', phase:'June', required:2, label:'Leadership Meetings'},
+  {type:'Focus Group', phase:'Jul–Aug', required:5, label:'Focus Groups'},
+  {type:'Leadership Retreat', phase:'Jul–Aug', required:1, label:'Leadership Retreat'},
+  {type:'Virtual Check-in', phase:'September', required:2, label:'Check-ins'},
+  {type:'Board Work Session', phase:'October', required:1, label:'Board Work Session'},
+  {type:'Final Presentation', phase:'October', required:1, label:'Final Presentation'},
+];
+
+const MTG_COLORS = {
+  'Leadership Meeting':'#1a4f8a','Focus Group':'#27a892','Leadership Retreat':'#d4a843',
+  'Board Work Session':'#534ab7','Virtual Check-in':'#378add','Final Presentation':'#d85a30','Community Session':'#993c1d'
+};
+
+function renderMeetingsTab() {
+  const wrap = document.getElementById('meetingsList');
+  if (!wrap) return;
+  const meetings = (S.districts.find(d=>d.id===S.districtId)?.meetings||[]).sort((a,b)=>new Date(b.date)-new Date(a.date));
+
+  // SOW tracker
+  let html = `<div style="font-size:12px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px">SOW Progress</div>
+    <div class="sow-tracker">`;
+  SOW_REQUIREMENTS.forEach(req => {
+    const count = meetings.filter(m=>m.type===req.type).length;
+    const done = count >= req.required;
+    html += `<div class="sow-item ${done?'done':''}">
+      <div class="si-title">${req.label}</div>
+      <div class="si-req">${req.phase} · ${req.required} required</div>
+      <div class="si-count" style="color:${done?'var(--teal)':'var(--text3)'}">${count}/${req.required}</div>
+    </div>`;
+  });
+  html += `</div>`;
+
+  // Visibility bar
+  html += `<div class="visibility-bar" id="visibilityBar" style="margin-bottom:16px"></div>`;
+
+  // Meeting cards
+  if (!meetings.length) {
+    html += `<div style="text-align:center;padding:32px;color:var(--text3)"><i class="ti ti-calendar-off" style="font-size:28px;display:block;margin-bottom:8px;opacity:.4"></i><p style="font-size:13px">No meetings logged yet</p></div>`;
+  } else {
+    meetings.forEach((m,i) => {
+      const color = MTG_COLORS[m.type]||'var(--navy)';
+      html += `<div class="meeting-card">
+        <div class="meeting-icon" style="background:${color}20;color:${color}"><i class="ti ti-calendar-event"></i></div>
+        <div class="meeting-body">
+          <div class="meeting-title">${m.type}</div>
+          <div class="meeting-meta">${m.date?new Date(m.date+'T12:00:00').toLocaleDateString('en-US',{weekday:'short',month:'long',day:'numeric',year:'numeric'}):''} · ${m.duration||0} min · ${m.attendees||''}</div>
+          ${m.notes?`<div class="meeting-notes">${m.notes}</div>`:''}
+        </div>
+        <div class="meeting-actions">
+          <button class="btn btn-danger btn-sm" onclick="deleteMeeting(${i})"><i class="ti ti-trash"></i></button>
+        </div>
+      </div>`;
+    });
+  }
+  wrap.innerHTML = html;
+  renderVisibilityBar('visibilityBar');
+}
+
+let editingMeetingIdx = null;
+function openNewMeeting() {
+  editingMeetingIdx = null;
+  document.getElementById('m-meetingTitle').textContent = 'Log Meeting';
+  document.getElementById('m-mDate').value = new Date().toISOString().split('T')[0];
+  document.getElementById('m-mDuration').value = '90';
+  document.getElementById('m-mAttendees').value = '';
+  document.getElementById('m-mNotes').value = '';
+  openModal('m-meeting');
+}
+
+function saveMeeting() {
+  const d = S.districts.find(x=>x.id===S.districtId);
+  if (!d) return;
+  if (!d.meetings) d.meetings = [];
+  const m = {
+    type: document.getElementById('m-mType').value,
+    date: document.getElementById('m-mDate').value,
+    duration: +document.getElementById('m-mDuration').value,
+    attendees: document.getElementById('m-mAttendees').value.trim(),
+    notes: document.getElementById('m-mNotes').value.trim(),
+    loggedAt: new Date().toISOString()
+  };
+  d.meetings.push(m);
+  saveBlobs();
+  closeModal('m-meeting');
+  renderMeetingsTab();
+  toast('Meeting logged');
+}
+
+function deleteMeeting(idx) {
+  if (!confirm('Delete this meeting log?')) return;
+  const d = S.districts.find(x=>x.id===S.districtId);
+  if (d?.meetings) { d.meetings.splice(idx,1); saveBlobs(); renderMeetingsTab(); toast('Meeting removed','err'); }
+}
+
+// Client meetings view
+function renderClientMeetings(client) {
+  const wrap = document.getElementById('cMeetingsList');
+  if (!wrap) return;
+  const d = S.districts.find(x=>x.id===client.district);
+  const meetings = (d?.meetings||[]).sort((a,b)=>new Date(b.date)-new Date(a.date));
+  if (!meetings.length) { wrap.innerHTML='<div style="text-align:center;padding:32px;color:var(--text3);font-size:13px">No meetings logged yet</div>'; return; }
+  wrap.innerHTML = meetings.map(m => {
+    const color = MTG_COLORS[m.type]||'var(--navy)';
+    return `<div class="meeting-card">
+      <div class="meeting-icon" style="background:${color}20;color:${color}"><i class="ti ti-calendar-event"></i></div>
+      <div class="meeting-body">
+        <div class="meeting-title">${m.type}</div>
+        <div class="meeting-meta">${m.date?new Date(m.date+'T12:00:00').toLocaleDateString('en-US',{weekday:'short',month:'long',day:'numeric',year:'numeric'}):''} · ${m.duration||0} min</div>
+        ${m.notes?`<div class="meeting-notes">${m.notes}</div>`:''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ════════════════════════════════
+// KPIs
+// ════════════════════════════════
+function renderKpisTab() {
+  const wrap = document.getElementById('kpisList');
+  if (!wrap) return;
+  const d = S.districts.find(x=>x.id===S.districtId);
+  const priorities = d?.priorities||[];
+
+  if (!priorities.length) {
+    wrap.innerHTML=`<div style="text-align:center;padding:40px;color:var(--text3)"><i class="ti ti-target" style="font-size:28px;display:block;margin-bottom:8px;opacity:.4"></i><p style="font-size:13px">No strategic priorities yet. Add your first priority to begin tracking KPIs.</p></div>`;
+    return;
+  }
+
+  wrap.innerHTML = priorities.map((p,pi) => `
+    <div class="priority-card">
+      <div class="priority-header">
+        <div style="display:flex;align-items:flex-start;gap:10px;flex:1">
+          <div class="priority-num">${pi+1}</div>
+          <div>
+            <div class="priority-title">${p.title}</div>
+            ${p.desc?`<div class="priority-desc">${p.desc}</div>`:''}
+          </div>
+        </div>
+        <div style="display:flex;gap:6px">
+          <button class="btn btn-ghost btn-sm" onclick="openEditPriority(${pi})"><i class="ti ti-pencil"></i></button>
+          <button class="btn btn-danger btn-sm" onclick="deletePriority(${pi})"><i class="ti ti-trash"></i></button>
+        </div>
+      </div>
+      ${(p.kpis||[]).map((k,ki) => `
+        <div class="kpi-row">
+          <div class="kpi-label">${k.goal}</div>
+          <div class="kpi-values">
+            <span>Target: <strong>${k.target||'—'}</strong></span>
+            <span>Current: <strong>${k.current||'—'}</strong></span>
+          </div>
+          <span class="kpi-status ${k.status||'not-started'}">${(k.status||'not-started').replace('-',' ')}</span>
+          <button class="btn btn-ghost btn-sm" onclick="updateKpiStatus(${pi},${ki})" title="Update status"><i class="ti ti-refresh"></i></button>
+        </div>`).join('')}
+      ${!(p.kpis||[]).length?'<div style="font-size:12px;color:var(--text3);padding:8px 0">No KPI goals added yet</div>':''}
+    </div>`).join('');
+}
+
+let editingPriorityIdx = null;
+function openNewPriority() {
+  editingPriorityIdx = null;
+  document.getElementById('m-priorityTitle').textContent = 'Add Strategic Priority';
+  document.getElementById('m-pTitle').value = '';
+  document.getElementById('m-pDesc').value = '';
+  document.getElementById('m-kpiRows').innerHTML = '';
+  addKpiRow();
+  openModal('m-priority');
+}
+function openEditPriority(idx) {
+  editingPriorityIdx = idx;
+  const d = S.districts.find(x=>x.id===S.districtId);
+  const p = d?.priorities?.[idx];
+  if (!p) return;
+  document.getElementById('m-priorityTitle').textContent = 'Edit Priority';
+  document.getElementById('m-pTitle').value = p.title;
+  document.getElementById('m-pDesc').value = p.desc||'';
+  document.getElementById('m-kpiRows').innerHTML = '';
+  (p.kpis||[]).forEach(k => addKpiRow(k));
+  if (!(p.kpis||[]).length) addKpiRow();
+  openModal('m-priority');
+}
+
+function addKpiRow(kpi={}) {
+  const row = document.createElement('div');
+  row.style.cssText='display:grid;grid-template-columns:1fr auto auto auto;gap:6px;margin-bottom:8px;align-items:center';
+  row.innerHTML = `
+    <input type="text" placeholder="KPI Goal (e.g. 80% of students meet grade-level reading)" value="${kpi.goal||''}" style="padding:8px 10px;border-radius:7px;border:1.5px solid var(--bord);font-size:12px;font-family:inherit;outline:none;background:var(--surf)">
+    <input type="text" placeholder="Target" value="${kpi.target||''}" style="width:80px;padding:8px 10px;border-radius:7px;border:1.5px solid var(--bord);font-size:12px;font-family:inherit;outline:none;background:var(--surf)">
+    <input type="text" placeholder="Current" value="${kpi.current||''}" style="width:80px;padding:8px 10px;border-radius:7px;border:1.5px solid var(--bord);font-size:12px;font-family:inherit;outline:none;background:var(--surf)">
+    <select style="padding:8px;border-radius:7px;border:1.5px solid var(--bord);font-size:11px;font-family:inherit;outline:none;background:var(--surf)">
+      <option value="not-started" ${(kpi.status||'not-started')==='not-started'?'selected':''}>Not started</option>
+      <option value="on-track" ${kpi.status==='on-track'?'selected':''}>On track</option>
+      <option value="at-risk" ${kpi.status==='at-risk'?'selected':''}>At risk</option>
+      <option value="off-track" ${kpi.status==='off-track'?'selected':''}>Off track</option>
+    </select>`;
+  document.getElementById('m-kpiRows').appendChild(row);
+}
+
+function savePriority() {
+  const title = document.getElementById('m-pTitle').value.trim();
+  if (!title) { toast('Priority title required','err'); return; }
+  const desc = document.getElementById('m-pDesc').value.trim();
+  const rows = [...document.querySelectorAll('#m-kpiRows > div')];
+  const kpis = rows.map(r => {
+    const inputs = r.querySelectorAll('input');
+    const sel = r.querySelector('select');
+    return {goal:inputs[0].value.trim(),target:inputs[1].value.trim(),current:inputs[2].value.trim(),status:sel.value};
+  }).filter(k=>k.goal);
+  const d = S.districts.find(x=>x.id===S.districtId);
+  if (!d) return;
+  if (!d.priorities) d.priorities = [];
+  const p = {title,desc,kpis};
+  if (editingPriorityIdx !== null) d.priorities[editingPriorityIdx] = p;
+  else d.priorities.push(p);
+  saveBlobs(); closeModal('m-priority'); renderKpisTab(); toast('Priority saved');
+}
+
+function deletePriority(idx) {
+  if (!confirm('Delete this priority and its KPIs?')) return;
+  const d = S.districts.find(x=>x.id===S.districtId);
+  if (d?.priorities) { d.priorities.splice(idx,1); saveBlobs(); renderKpisTab(); toast('Priority deleted','err'); }
+}
+
+function updateKpiStatus(pi, ki) {
+  const d = S.districts.find(x=>x.id===S.districtId);
+  if (!d?.priorities?.[pi]?.kpis?.[ki]) return;
+  const statuses = ['not-started','on-track','at-risk','off-track'];
+  const kpi = d.priorities[pi].kpis[ki];
+  const next = statuses[(statuses.indexOf(kpi.status||'not-started')+1)%statuses.length];
+  kpi.status = next;
+  saveBlobs(); renderKpisTab();
+}
+
+// Client KPIs view
+function renderClientKpis(client) {
+  const wrap = document.getElementById('cKpisList');
+  if (!wrap) return;
+  const d = S.districts.find(x=>x.id===client.district);
+  const priorities = d?.priorities||[];
+  if (!priorities.length) { wrap.innerHTML='<div style="text-align:center;padding:32px;color:var(--text3);font-size:13px">No strategic priorities defined yet</div>'; return; }
+  wrap.innerHTML = priorities.map((p,pi) => `
+    <div class="priority-card">
+      <div class="priority-header">
+        <div style="display:flex;align-items:flex-start;gap:10px">
+          <div class="priority-num">${pi+1}</div>
+          <div><div class="priority-title">${p.title}</div>${p.desc?`<div class="priority-desc">${p.desc}</div>`:''}</div>
+        </div>
+      </div>
+      ${(p.kpis||[]).map(k=>`
+        <div class="kpi-row">
+          <div class="kpi-label">${k.goal}</div>
+          <div class="kpi-values"><span>Target: <strong>${k.target||'—'}</strong></span><span>Current: <strong>${k.current||'—'}</strong></span></div>
+          <span class="kpi-status ${k.status||'not-started'}">${(k.status||'not-started').replace('-',' ')}</span>
+        </div>`).join('')}
+    </div>`).join('');
+}
+
+// ════════════════════════════════
+// DOCUMENTS
+// ════════════════════════════════
+const DOC_ICONS = {
+  'Strategic Plan':'ti-file-text','Implementation Roadmap':'ti-road',
+  'Communication Summary':'ti-speakerphone','Presentation Deck':'ti-presentation',
+  'KPI Framework':'ti-target','Meeting Notes':'ti-notes',
+  'Focus Group Summary':'ti-users','Other':'ti-paperclip'
+};
+
+function renderDocumentsTab() {
+  const wrap = document.getElementById('documentsList');
+  if (!wrap) return;
+  const d = S.districts.find(x=>x.id===S.districtId);
+  const docs = d?.documents||[];
+
+  if (!docs.length) {
+    wrap.innerHTML=`<div style="text-align:center;padding:32px;color:var(--text3)"><i class="ti ti-folder-off" style="font-size:28px;display:block;margin-bottom:8px;opacity:.4"></i><p style="font-size:13px">No documents linked yet. Add a Google Drive link to get started.</p></div>`;
+  } else {
+    wrap.innerHTML = docs.map((doc,i) => `
+      <div class="doc-card">
+        <div class="doc-icon"><i class="ti ${DOC_ICONS[doc.type]||'ti-paperclip'}"></i></div>
+        <div class="doc-info">
+          <div class="doc-title">${doc.title}</div>
+          <div class="doc-meta">${doc.type}${doc.notes?' · '+doc.notes:''}</div>
+        </div>
+        <div class="doc-actions">
+          <a href="${doc.url}" target="_blank" class="btn btn-teal btn-sm"><i class="ti ti-external-link"></i> Open</a>
+          <button class="btn btn-danger btn-sm" onclick="deleteDocument(${i})"><i class="ti ti-trash"></i></button>
+        </div>
+      </div>`).join('');
+  }
+
+  // Generate reports section
+  const reportWrap = document.getElementById('generateReportsList');
+  if (reportWrap) {
+    const forms = S.forms.filter(f=>f.district===S.districtId&&f.status==='active');
+    if (!forms.length) {
+      reportWrap.innerHTML='<div style="font-size:12px;color:var(--text3)">No active forms to generate reports from</div>';
+    } else {
+      reportWrap.innerHTML = forms.map(f=>`
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--surf);border-radius:8px;border:1px solid var(--bord);margin-bottom:6px">
+          <div>
+            <div style="font-size:13px;font-weight:600;color:var(--text)">${f.title}</div>
+            <div style="font-size:11px;color:var(--text3)">${(f.questions||[]).filter(q=>q.type!=='heading'&&q.type!=='divider').length} questions · ${S.clients.filter(c=>c.forms?.includes(f.id)).length} clients assigned</div>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="generateReport('${f.id}')"><i class="ti ti-file-export"></i> Generate Report</button>
+        </div>`).join('');
+    }
+  }
+}
+
+function openNewDocument() {
+  ['m-docTitle','m-docUrl','m-docNotes'].forEach(id=>document.getElementById(id).value='');
+  openModal('m-document');
+}
+function saveDocument() {
+  const title = document.getElementById('m-docTitle').value.trim();
+  const url = document.getElementById('m-docUrl').value.trim();
+  if (!title||!url) { toast('Title and URL required','err'); return; }
+  const d = S.districts.find(x=>x.id===S.districtId);
+  if (!d) return;
+  if (!d.documents) d.documents = [];
+  d.documents.push({title,type:document.getElementById('m-docType').value,url,notes:document.getElementById('m-docNotes').value.trim(),addedAt:new Date().toISOString()});
+  saveBlobs(); closeModal('m-document'); renderDocumentsTab(); toast('Document added');
+}
+function deleteDocument(idx) {
+  if (!confirm('Remove this document?')) return;
+  const d = S.districts.find(x=>x.id===S.districtId);
+  if (d?.documents) { d.documents.splice(idx,1); saveBlobs(); renderDocumentsTab(); toast('Document removed','err'); }
+}
+
+function generateReport(formId) {
+  const form = S.forms.find(f=>f.id===formId);
+  if (!form) return;
+  const clients = S.clients.filter(c=>c.district===S.districtId&&c.forms?.includes(formId));
+  const qs = (form.questions||[]).filter(q=>q.type!=='heading'&&q.type!=='divider');
+  const d = S.districts.find(x=>x.id===S.districtId);
+
+  let html = `<!DOCTYPE html><html><head><meta charset="UTF-8">
+    <title>${form.title} — Response Report</title>
+    <style>
+      body{font-family:'Segoe UI',sans-serif;max-width:900px;margin:40px auto;padding:0 20px;color:#1a1a2e}
+      h1{font-size:24px;color:#0f2240;border-bottom:3px solid #d4a843;padding-bottom:10px;margin-bottom:6px}
+      .meta{font-size:13px;color:#6b7a99;margin-bottom:28px}
+      h2{font-size:16px;font-weight:700;color:#0f2240;margin-top:28px;margin-bottom:12px;padding:8px 12px;background:#f4f7fb;border-left:4px solid #d4a843}
+      .q-block{margin-bottom:20px;padding:14px;border:1px solid #d0dbe8;border-radius:8px;background:#fff}
+      .q-text{font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:10px}
+      .response{padding:8px 12px;background:#f4f7fb;border-radius:6px;margin-bottom:6px;font-size:13px}
+      .client-name{font-size:11px;font-weight:700;color:#6b7a99;margin-bottom:3px;text-transform:uppercase;letter-spacing:.05em}
+      .no-resp{color:#b8c8d8;font-style:italic}
+      .footer{margin-top:40px;font-size:11px;color:#b8c8d8;border-top:1px solid #d0dbe8;padding-top:12px}
+    </style></head><body>
+    <h1>${form.title}</h1>
+    <div class="meta">District: ${d?.name||''} · Generated: ${new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})} · ${clients.length} respondents</div>`;
+
+  qs.forEach((q,i) => {
+    html += `<div class="q-block"><div class="q-text">${i+1}. ${q.text}</div>`;
+    clients.forEach(c => {
+      const resp = S.responses[c.u]?.[formId];
+      const ans = resp?.[q.id];
+      html += `<div class="client-name">${c.name}</div>
+        <div class="response">${ans?(Array.isArray(ans)?ans.join(', '):String(ans)):'<span class="no-resp">No response</span>'}</div>`;
+    });
+    html += `</div>`;
+  });
+  html += `<div class="footer">Learn New Mexico LLC · Strategic Planning Platform · ${d?.name||''} · ${d?.fy||''}</div></body></html>`;
+
+  const blob = new Blob([html],{type:'text/html'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = form.title.replace(/\s+/g,'_')+'_Report.html';
+  a.click();
+  toast('Report generated — open in browser and print to PDF');
+}
+
+// Client docs view
+function renderClientDocs(client) {
+  const wrap = document.getElementById('cDocsList');
+  if (!wrap) return;
+  const d = S.districts.find(x=>x.id===client.district);
+  const docs = d?.documents||[];
+  if (!docs.length) { wrap.innerHTML='<div style="text-align:center;padding:32px;color:var(--text3);font-size:13px">No documents shared yet</div>'; return; }
+  wrap.innerHTML = docs.map(doc=>`
+    <div class="doc-card">
+      <div class="doc-icon"><i class="ti ${DOC_ICONS[doc.type]||'ti-paperclip'}"></i></div>
+      <div class="doc-info"><div class="doc-title">${doc.title}</div><div class="doc-meta">${doc.type}${doc.notes?' · '+doc.notes:''}</div></div>
+      <a href="${doc.url}" target="_blank" class="btn btn-teal btn-sm"><i class="ti ti-external-link"></i> Open</a>
+    </div>`).join('');
+}
+
 </script>
 </body>
 </html>
