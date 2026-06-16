@@ -2052,6 +2052,7 @@ function renderMeetingsTab() {
           ${m.notes?`<div class="meeting-notes">${m.notes}</div>`:''}
         </div>
         <div class="meeting-actions">
+          <button class="btn btn-ghost btn-sm" onclick="openEditMeeting(${i})"><i class="ti ti-pencil"></i></button>
           <button class="btn btn-danger btn-sm" onclick="deleteMeeting(${i})"><i class="ti ti-trash"></i></button>
         </div>
       </div>`;
@@ -2065,10 +2066,27 @@ let editingMeetingIdx = null;
 function openNewMeeting() {
   editingMeetingIdx = null;
   document.getElementById('m-meetingTitle').textContent = 'Log Meeting';
+  document.getElementById('m-mType').value = 'Leadership Meeting';
   document.getElementById('m-mDate').value = new Date().toISOString().split('T')[0];
   document.getElementById('m-mDuration').value = '90';
   document.getElementById('m-mAttendees').value = '';
   document.getElementById('m-mNotes').value = '';
+  openModal('m-meeting');
+}
+
+function openEditMeeting(idx) {
+  const d = S.districts.find(x=>x.id===S.districtId);
+  const meetings = d?.meetings||[];
+  const m = meetings.sort((a,b)=>new Date(b.date)-new Date(a.date))[idx];
+  if (!m) return;
+  // Find original index in unsorted array
+  editingMeetingIdx = d.meetings.indexOf(m);
+  document.getElementById('m-meetingTitle').textContent = 'Edit Meeting';
+  document.getElementById('m-mType').value = m.type||'Leadership Meeting';
+  document.getElementById('m-mDate').value = m.date||'';
+  document.getElementById('m-mDuration').value = m.duration||90;
+  document.getElementById('m-mAttendees').value = m.attendees||'';
+  document.getElementById('m-mNotes').value = m.notes||'';
   openModal('m-meeting');
 }
 
@@ -2084,11 +2102,17 @@ function saveMeeting() {
     notes: document.getElementById('m-mNotes').value.trim(),
     loggedAt: new Date().toISOString()
   };
-  d.meetings.push(m);
+  if (editingMeetingIdx !== null && editingMeetingIdx >= 0) {
+    d.meetings[editingMeetingIdx] = m;
+    toast('Meeting updated');
+  } else {
+    d.meetings.push(m);
+    toast('Meeting logged');
+  }
+  editingMeetingIdx = null;
   saveBlobs();
   closeModal('m-meeting');
   renderMeetingsTab();
-  toast('Meeting logged');
 }
 
 function deleteMeeting(idx) {
