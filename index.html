@@ -294,6 +294,24 @@ input,textarea,select{font-family:'DM Sans',sans-serif}
 .vis-toggle.visible{border-color:var(--teal);background:rgba(39,168,146,.08);color:var(--teal2)}
 .vis-toggle i{font-size:14px}
 
+/* ── CROSSWALK ── */
+.cw-row-admin{border-bottom:1px solid var(--bord);transition:background .15s}
+.cw-row-admin:last-child{border-bottom:none}
+.cw-row-admin:hover{background:var(--surf)}
+.eff-pills{display:flex;gap:4px;flex-wrap:wrap}
+.eff-pill-btn{padding:4px 10px;border-radius:20px;border:1.5px solid var(--bord2);background:var(--surf);font-size:11px;font-weight:600;color:var(--text3);cursor:pointer;transition:all .15s;font-family:inherit}
+.eff-pill-btn.yes{background:rgba(39,168,146,.12);border-color:var(--teal);color:var(--teal2)}
+.eff-pill-btn.partially{background:rgba(212,168,67,.12);border-color:var(--gold);color:#8a6200}
+.eff-pill-btn.no{background:#fff0f0;border-color:#c0392b;color:#c0392b}
+.rec-badge{display:inline-flex;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;white-space:nowrap}
+.rec-badge.keep{background:rgba(39,168,146,.1);color:var(--teal2);border:1px solid rgba(39,168,146,.2)}
+.rec-badge.revise{background:rgba(212,168,67,.12);color:#8a6200;border:1px solid rgba(212,168,67,.25)}
+.rec-badge.remove{background:#fff0f0;color:#c0392b;border:1px solid #f5c6cb}
+.cw-client-row{background:var(--white);border:1px solid var(--bord);border-radius:var(--rad);padding:16px;margin-bottom:10px}
+.cw-client-row.complete{border-color:var(--teal);background:rgba(39,168,146,.02)}
+.cw-stat-card{background:var(--white);border:1px solid var(--bord);border-radius:var(--rad);padding:14px;text-align:center;box-shadow:var(--shadow)}
+.cw-stat-num{font-size:26px;font-weight:700;line-height:1;margin-bottom:3px}
+.cw-stat-lbl{font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:var(--text3)}
 /* ── CLIENT TABS (new) ── */
 .client-doc-card{background:var(--white);border:1px solid var(--bord);border-radius:var(--rad);padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;gap:10px;box-shadow:var(--shadow)}
 
@@ -418,6 +436,7 @@ input,textarea,select{font-family:'DM Sans',sans-serif}
         <button class="dtab" onclick="dTab('responses',this)"><i class="ti ti-chart-bar"></i> Responses</button>
         <button class="dtab" onclick="dTab('meetings',this)"><i class="ti ti-calendar-event"></i> Meetings</button>
         <button class="dtab" onclick="dTab('kpis',this)"><i class="ti ti-target"></i> KPIs</button>
+        <button class="dtab" onclick="dTab('crosswalk',this)"><i class="ti ti-table"></i> Crosswalk</button>
         <button class="dtab" onclick="dTab('documents',this)"><i class="ti ti-folder"></i> Documents</button>
         <button class="dtab" onclick="dTab('dsettings',this)"><i class="ti ti-settings"></i> Settings</button>
       </div>
@@ -468,6 +487,59 @@ input,textarea,select{font-family:'DM Sans',sans-serif}
           <button class="btn btn-primary" onclick="openNewPriority()"><i class="ti ti-plus"></i> Add Priority</button>
         </div>
         <div id="kpisList"></div>
+      </div>
+
+      <!-- CROSSWALK -->
+      <div class="district-panel" id="dp-crosswalk">
+        <div class="page-hdr">
+          <div><h2>Systems Alignment Mapping</h2><p>Admin adds systems — clients rate effectiveness, gaps, and recommendations</p></div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button class="btn btn-ghost btn-sm" onclick="exportCrosswalkCSV()"><i class="ti ti-download"></i> Export CSV</button>
+            <button class="btn btn-primary" onclick="openAddSystem()"><i class="ti ti-plus"></i> Add System</button>
+          </div>
+        </div>
+
+        <!-- District Info -->
+        <div class="card" style="margin-bottom:16px">
+          <div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:12px">District Information</div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px">
+            <div class="ff"><label>Focus Area / Domain</label><input type="text" id="cw-focusArea" placeholder="e.g. MTSS, Curriculum, HR" oninput="saveCrosswalkMeta()"></div>
+            <div class="ff"><label>Academic Year</label><input type="text" id="cw-academicYear" placeholder="e.g. 2024–2025" oninput="saveCrosswalkMeta()"></div>
+            <div class="ff"><label>Facilitator</label><input type="text" id="cw-facilitator" placeholder="Name and role" oninput="saveCrosswalkMeta()"></div>
+            <div class="ff"><label>Review Team</label><input type="text" id="cw-reviewTeam" placeholder="e.g. Leadership Cabinet" oninput="saveCrosswalkMeta()"></div>
+          </div>
+        </div>
+
+        <!-- Visibility toggle -->
+        <div class="visibility-bar" id="cwVisBar" style="margin-bottom:16px"></div>
+
+        <!-- Summary stats -->
+        <div id="cwSummaryStrip" style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px"></div>
+
+        <!-- Admin: systems table -->
+        <div class="card" style="padding:0;overflow:hidden">
+          <div style="overflow-x:auto">
+            <table style="width:100%;border-collapse:collapse" id="cwAdminTable">
+              <thead>
+                <tr style="background:var(--navy)">
+                  <th style="padding:10px 14px;text-align:left;font-size:11px;font-weight:700;color:rgba(255,255,255,.8);text-transform:uppercase;letter-spacing:.06em;white-space:nowrap">#</th>
+                  <th style="padding:10px 14px;text-align:left;font-size:11px;font-weight:700;color:rgba(255,255,255,.8);text-transform:uppercase;letter-spacing:.06em;white-space:nowrap">System / Program</th>
+                  <th style="padding:10px 14px;text-align:left;font-size:11px;font-weight:700;color:rgba(255,255,255,.8);text-transform:uppercase;letter-spacing:.06em">Purpose</th>
+                  <th style="padding:10px 14px;text-align:center;font-size:11px;font-weight:700;color:rgba(255,255,255,.8);text-transform:uppercase;letter-spacing:.06em;white-space:nowrap">Client Responses</th>
+                  <th style="padding:10px 14px;font-size:11px;color:rgba(255,255,255,.4);width:40px"></th>
+                </tr>
+              </thead>
+              <tbody id="cwAdminBody"></tbody>
+            </table>
+            <div id="cwAdminEmpty" style="text-align:center;padding:40px;color:var(--text3);display:none">
+              <i class="ti ti-table-off" style="font-size:28px;display:block;margin-bottom:8px;opacity:.4"></i>
+              <p style="font-size:13px">No systems added yet. Click <strong>+ Add System</strong> to begin.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Admin: client response summary -->
+        <div style="margin-top:16px" id="cwClientSummaryWrap"></div>
       </div>
 
       <!-- DOCUMENTS -->
@@ -619,6 +691,7 @@ input,textarea,select{font-family:'DM Sans',sans-serif}
       <button class="ctab" onclick="cTab('progress',this)"><i class="ti ti-chart-bar"></i> Progress</button>
       <button class="ctab" id="ctab-meetings" style="display:none" onclick="cTab('cmeetings',this)"><i class="ti ti-calendar-event"></i> Meetings</button>
       <button class="ctab" id="ctab-kpis" style="display:none" onclick="cTab('ckpis',this)"><i class="ti ti-target"></i> KPIs</button>
+      <button class="ctab" id="ctab-crosswalk" style="display:none" onclick="cTab('ccrosswalk',this)"><i class="ti ti-table"></i> Crosswalk</button>
       <button class="ctab" id="ctab-documents" style="display:none" onclick="cTab('cdocuments',this)"><i class="ti ti-folder"></i> Documents</button>
     </div>
     <div class="ctb-right">
@@ -678,7 +751,16 @@ input,textarea,select{font-family:'DM Sans',sans-serif}
       <div class="ff"><label>Display Name</label><input type="text" id="m-cName" placeholder="Jane Smith"></div>
       <div class="ff"><label>Username</label><input type="text" id="m-cUser" placeholder="jsmith"></div>
     </div>
-    <div class="ff"><label>Password</label><input type="password" id="m-cPass" placeholder="Set password"></div>
+    <div class="ff"><label>Password</label>
+      <div style="position:relative">
+        <input type="text" id="m-cPass" placeholder="Set password" autocomplete="off"
+          style="-webkit-text-security:disc;font-family:monospace"
+          onfocus="this.style.webkitTextSecurity='none'"
+          oninput="this.dataset.val=this.value"
+          onblur="this.style.webkitTextSecurity='disc';this.dataset.val=this.value">
+        <button type="button" onclick="togglePassVis()" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--text3);cursor:pointer;font-size:14px" id="passVisBtn"><i class="ti ti-eye"></i></button>
+      </div>
+    </div>
     <div class="ff"><label>Assign Forms</label><div id="m-cForms" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:4px;min-height:28px"></div></div>
     <div class="modal-footer">
       <button class="btn btn-ghost" onclick="closeModal('m-client')">Cancel</button>
@@ -731,6 +813,21 @@ input,textarea,select{font-family:'DM Sans',sans-serif}
     <div class="modal-footer">
       <button class="btn btn-ghost" onclick="closeModal('m-priority')">Cancel</button>
       <button class="btn btn-primary" onclick="savePriority()"><i class="ti ti-check"></i> Save Priority</button>
+    </div>
+  </div>
+</div>
+
+<!-- CROSSWALK SYSTEM MODAL -->
+<div class="modal-overlay" id="m-system">
+  <div class="modal">
+    <button class="mclose" onclick="closeModal('m-system')"><i class="ti ti-x"></i></button>
+    <h3 id="m-systemTitle">Add System / Program</h3>
+    <div class="msub">Admin defines the system — clients will rate its effectiveness</div>
+    <div class="ff"><label>System / Program Name</label><input type="text" id="m-sysName" placeholder="e.g. MTSS / Tiered Support System"></div>
+    <div class="ff"><label>Purpose</label><textarea id="m-sysPurpose" placeholder="What is this system designed to do?" style="min-height:72px"></textarea></div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('m-system')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveSystem()"><i class="ti ti-check"></i> Save System</button>
     </div>
   </div>
 </div>
@@ -975,6 +1072,15 @@ async function launchClientSilent(client) {
   renderClientProgress(client);
 }
 
+function togglePassVis() {
+  const el = document.getElementById('m-cPass');
+  const btn = document.getElementById('passVisBtn');
+  if (!el) return;
+  const showing = el.style.webkitTextSecurity === 'none';
+  el.style.webkitTextSecurity = showing ? 'disc' : 'none';
+  if (btn) btn.innerHTML = showing ? '<i class="ti ti-eye"></i>' : '<i class="ti ti-eye-off"></i>';
+}
+
 function signOut() {
   S.role=null; S.user=null; S.districtId=null;
   localStorage.removeItem('lnm_session');
@@ -1151,6 +1257,7 @@ function dTab(name, el) {
   if (name==='responses') renderResponses();
   if (name==='meetings') renderMeetingsTab();
   if (name==='kpis') renderKpisTab();
+  if (name==='crosswalk') { loadAllResponses().then(renderCrosswalkAdmin).catch(renderCrosswalkAdmin); }
   if (name==='documents') renderDocumentsTab();
 }
 
@@ -1449,7 +1556,8 @@ function openEditClient(id) {
   document.getElementById('m-clientTitle').textContent = 'Edit Client';
   document.getElementById('m-cName').value = c.name;
   document.getElementById('m-cUser').value = c.u;
-  document.getElementById('m-cPass').value = '';
+  const passEl = document.getElementById('m-cPass');
+  if (passEl) { passEl.value=''; passEl.dataset.val=''; passEl.style.webkitTextSecurity='disc'; }
   renderClientFormAssign(c);
   openModal('m-client');
 }
@@ -1457,7 +1565,9 @@ function openEditClient(id) {
 function openNewClientModal() {
   S.editingClientId = null;
   document.getElementById('m-clientTitle').textContent = 'Add Client';
-  ['m-cName','m-cUser','m-cPass'].forEach(id=>document.getElementById(id).value='');
+  ['m-cName','m-cUser'].forEach(id=>document.getElementById(id).value='');
+  const passEl = document.getElementById('m-cPass');
+  if (passEl) { passEl.value=''; passEl.dataset.val=''; passEl.style.webkitTextSecurity='disc'; }
   renderClientFormAssign(null);
   openModal('m-client');
 }
@@ -1485,7 +1595,8 @@ function renderClientFormAssign(client) {
 async function saveClient() {
   const name = document.getElementById('m-cName').value.trim();
   const u = document.getElementById('m-cUser').value.trim();
-  const p = document.getElementById('m-cPass').value.trim();
+  const passEl = document.getElementById('m-cPass');
+  const p = (passEl?.value || passEl?.dataset?.val || '').trim();
   const editId = S.editingClientId;
   if (!name||!u) { toast('Name and username required','err'); return; }
   const forms = [...document.querySelectorAll('#m-cForms input:checked')].map(i=>i.value);
@@ -1693,6 +1804,7 @@ function cTab(name,el){
   if (!client) return;
   if (name==='cmeetings') renderClientMeetings(client);
   if (name==='ckpis') renderClientKpis(client);
+  if (name==='ccrosswalk') renderClientCrosswalk(client);
   if (name==='cdocuments') renderClientDocs(client);
 }
 function renderClientStats(client) {
@@ -1993,7 +2105,7 @@ function renderVisibilityBar(containerId='visibilityBar') {
 
 function applyClientVisibility(client) {
   const vis = getVisibility(client.district);
-  VISIBILITY_TABS.forEach(t => {
+  [...VISIBILITY_TABS, 'crosswalk'].forEach(t => {
     const btn = document.getElementById('ctab-'+t);
     if (btn) btn.style.display = vis[t] ? 'flex' : 'none';
   });
@@ -2412,6 +2524,365 @@ function renderClientDocs(client) {
       <div class="doc-info"><div class="doc-title">${doc.title}</div><div class="doc-meta">${doc.type}${doc.notes?' · '+doc.notes:''}</div></div>
       <a href="${doc.url}" target="_blank" class="btn btn-teal btn-sm"><i class="ti ti-external-link"></i> Open</a>
     </div>`).join('');
+}
+
+
+
+// ════════════════════════════════
+// SYSTEMS ALIGNMENT CROSSWALK
+// ════════════════════════════════
+
+function getCrosswalk() {
+  const d = S.districts.find(x=>x.id===S.districtId);
+  if (!d.crosswalk) d.crosswalk = { meta:{}, systems:[] };
+  return d.crosswalk;
+}
+
+// ── VISIBILITY ──
+const VISIBILITY_TABS_EXT = ['crosswalk'];
+function renderCwVisBar() {
+  const wrap = document.getElementById('cwVisBar');
+  if (!wrap) return;
+  const vis = getVisibility(S.districtId);
+  const on = vis['crosswalk'] === true;
+  wrap.innerHTML = `<span class="vb-label"><i class="ti ti-eye"></i> Client visibility</span>
+    <div class="vis-toggle ${on?'visible':''}" onclick="setVisibility('${S.districtId}','crosswalk',${!on})">
+      <i class="ti ti-table"></i> Systems Alignment Mapping
+      <i class="ti ${on?'ti-eye':'ti-eye-off'}" style="margin-left:2px;font-size:12px"></i>
+    </div>`;
+}
+
+// ── META SAVE ──
+function saveCrosswalkMeta() {
+  const cw = getCrosswalk();
+  cw.meta = {
+    focusArea: document.getElementById('cw-focusArea')?.value||'',
+    academicYear: document.getElementById('cw-academicYear')?.value||'',
+    facilitator: document.getElementById('cw-facilitator')?.value||'',
+    reviewTeam: document.getElementById('cw-reviewTeam')?.value||''
+  };
+  saveBlobs();
+}
+
+// ── ADMIN: ADD / EDIT SYSTEM ──
+let editingSystemIdx = null;
+
+function openAddSystem() {
+  editingSystemIdx = null;
+  document.getElementById('m-systemTitle').textContent = 'Add System / Program';
+  document.getElementById('m-sysName').value = '';
+  document.getElementById('m-sysPurpose').value = '';
+  openModal('m-system');
+}
+
+function openEditSystem(idx) {
+  const cw = getCrosswalk();
+  const sys = cw.systems[idx];
+  if (!sys) return;
+  editingSystemIdx = idx;
+  document.getElementById('m-systemTitle').textContent = 'Edit System';
+  document.getElementById('m-sysName').value = sys.name;
+  document.getElementById('m-sysPurpose').value = sys.purpose;
+  openModal('m-system');
+}
+
+function saveSystem() {
+  const name = document.getElementById('m-sysName').value.trim();
+  if (!name) { toast('System name required','err'); return; }
+  const cw = getCrosswalk();
+  const sys = { id: 'sys'+Date.now(), name, purpose: document.getElementById('m-sysPurpose').value.trim() };
+  if (editingSystemIdx !== null) {
+    sys.id = cw.systems[editingSystemIdx].id; // preserve id
+    cw.systems[editingSystemIdx] = sys;
+  } else {
+    cw.systems.push(sys);
+  }
+  editingSystemIdx = null;
+  saveBlobs();
+  closeModal('m-system');
+  renderCrosswalkAdmin();
+  toast(editingSystemIdx !== null ? 'System updated' : 'System added');
+}
+
+function deleteSystem(idx) {
+  if (!confirm('Remove this system?')) return;
+  const cw = getCrosswalk();
+  cw.systems.splice(idx, 1);
+  saveBlobs();
+  renderCrosswalkAdmin();
+  toast('System removed','err');
+}
+
+// ── ADMIN: RENDER ──
+function renderCrosswalkAdmin() {
+  const cw = getCrosswalk();
+
+  // Load meta
+  if (cw.meta) {
+    ['focusArea','academicYear','facilitator','reviewTeam'].forEach(f => {
+      const el = document.getElementById('cw-'+f);
+      if (el && cw.meta[f]) el.value = cw.meta[f];
+    });
+  }
+
+  renderCwVisBar();
+
+  const systems = cw.systems||[];
+  const tbody = document.getElementById('cwAdminBody');
+  const empty = document.getElementById('cwAdminEmpty');
+  if (!tbody) return;
+
+  tbody.innerHTML = '';
+  empty.style.display = systems.length ? 'none' : 'block';
+
+  // Collect all client responses for summary
+  const distClients = S.clients.filter(c=>c.district===S.districtId);
+  let totalKeep=0, totalRevise=0, totalRemove=0, totalResponses=0;
+
+  systems.forEach((sys, i) => {
+    // Gather responses for this system
+    const responses = distClients.map(c => {
+      const cwResp = S.responses[c.u]?.['__crosswalk__'];
+      return cwResp?.rows?.[sys.id] ? { client: c.name, ...cwResp.rows[sys.id] } : null;
+    }).filter(Boolean);
+
+    responses.forEach(r => {
+      if (r.rec==='Keep') totalKeep++;
+      else if (r.rec==='Revise') totalRevise++;
+      else if (r.rec==='Remove') totalRemove++;
+      if (r.eff||r.rec||r.gap) totalResponses++;
+    });
+
+    const recCounts = {};
+    responses.forEach(r => { if(r.rec) recCounts[r.rec]=(recCounts[r.rec]||0)+1; });
+    const topRec = Object.entries(recCounts).sort((a,b)=>b[1]-a[1])[0]?.[0]||'';
+
+    const tr = document.createElement('tr');
+    tr.className = 'cw-row-admin';
+    tr.innerHTML = `
+      <td style="padding:10px 14px;font-size:12px;font-weight:700;color:var(--text3);text-align:center">${i+1}</td>
+      <td style="padding:10px 14px">
+        <div style="font-size:13px;font-weight:700;color:var(--text)">${sys.name}</div>
+      </td>
+      <td style="padding:10px 14px;font-size:12px;color:var(--text2);max-width:240px">${sys.purpose||'—'}</td>
+      <td style="padding:10px 14px;text-align:center">
+        ${responses.length
+          ? `<div style="font-size:11px;color:var(--text3);margin-bottom:4px">${responses.length}/${distClients.length} responded</div>
+             ${topRec?`<span class="rec-badge ${topRec.toLowerCase()}">${topRec}</span>`:''}
+             <div style="font-size:10px;color:var(--text3);margin-top:4px">${responses.map(r=>`${r.client}: ${r.eff||'?'}`).join(' · ')}</div>`
+          : `<span style="font-size:11px;color:var(--text3)">No responses yet</span>`}
+      </td>
+      <td style="padding:10px 14px">
+        <div style="display:flex;gap:4px">
+          <button class="btn btn-ghost btn-sm" onclick="openEditSystem(${i})"><i class="ti ti-pencil"></i></button>
+          <button class="btn btn-danger btn-sm" onclick="deleteSystem(${i})"><i class="ti ti-trash"></i></button>
+        </div>
+      </td>`;
+    tbody.appendChild(tr);
+  });
+
+  // Summary strip
+  const strip = document.getElementById('cwSummaryStrip');
+  if (strip) {
+    strip.innerHTML = [
+      {num:systems.length, lbl:'Total Systems', color:'var(--navy)'},
+      {num:totalKeep, lbl:'Keep', color:'var(--teal)'},
+      {num:totalRevise, lbl:'Revise', color:'var(--gold)'},
+      {num:totalRemove, lbl:'Remove', color:'#c0392b'}
+    ].map(s=>`<div class="cw-stat-card"><div class="cw-stat-num" style="color:${s.color}">${s.num}</div><div class="cw-stat-lbl">${s.lbl}</div></div>`).join('');
+  }
+
+  // Client response summary
+  const summaryWrap = document.getElementById('cwClientSummaryWrap');
+  if (summaryWrap && distClients.length) {
+    summaryWrap.innerHTML = `<div style="font-size:12px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px">Client Response Summary</div>` +
+      distClients.map(c => {
+        const cwResp = S.responses[c.u]?.['__crosswalk__'];
+        const rows = cwResp?.rows||{};
+        const completed = Object.keys(rows).filter(k=>rows[k].eff||rows[k].rec).length;
+        const pct = systems.length ? Math.round((completed/systems.length)*100) : 0;
+        return `<div class="card" style="padding:12px 16px;margin-bottom:8px">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+            <div style="display:flex;align-items:center;gap:8px">
+              <span class="client-av" style="width:28px;height:28px;font-size:11px">${c.name.charAt(0)}</span>
+              <span style="font-size:13px;font-weight:600;color:var(--text)">${c.name}</span>
+            </div>
+            <span class="badge ${pct===100?'badge-green':pct>0?'badge-gold':'badge-gray'}">${completed}/${systems.length} rows</span>
+          </div>
+          <div class="prog-bar"><div class="prog-fill" style="width:${pct}%;background:${pct===100?'var(--teal)':'var(--gold)'}"></div></div>
+          ${cwResp?.notes?.themes?`<div style="font-size:11px;color:var(--text3);margin-top:8px"><strong>Notes:</strong> ${cwResp.notes.themes}</div>`:''}
+        </div>`;
+      }).join('');
+  }
+}
+
+// ── CLIENT: RENDER ──
+function renderClientCrosswalk(client) {
+  const d = S.districts.find(x=>x.id===client.district);
+  if (!d?.crosswalk?.systems?.length) {
+    document.getElementById('cwClientForm').innerHTML = '<div style="text-align:center;padding:32px;color:var(--text3);font-size:13px">No systems have been added by your administrator yet.</div>';
+    return;
+  }
+  const systems = d.crosswalk.systems;
+  const existing = S.responses[client.u]?.['__crosswalk__']?.rows||{};
+  const notes = S.responses[client.u]?.['__crosswalk__']?.notes||{};
+
+  // Restore notes
+  ['themes','nextSteps','stakeholders','goals'].forEach(f => {
+    const el = document.getElementById('cw-'+f);
+    if (el) el.value = notes[f]||'';
+  });
+
+  const wrap = document.getElementById('cwClientForm');
+  wrap.innerHTML = '';
+
+  systems.forEach((sys, i) => {
+    const saved = existing[sys.id]||{};
+    const complete = !!(saved.eff||saved.rec);
+    const div = document.createElement('div');
+    div.className = 'cw-client-row'+(complete?' complete':'');
+    div.id = 'cwr-'+sys.id;
+    div.innerHTML = `
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:12px">
+        <div>
+          <div style="font-size:13px;font-weight:700;color:var(--text)">${i+1}. ${sys.name}</div>
+          ${sys.purpose?`<div style="font-size:12px;color:var(--text3);margin-top:2px">${sys.purpose}</div>`:''}
+        </div>
+        ${complete?`<span class="badge badge-green"><i class="ti ti-check"></i> Rated</span>`:'<span class="badge badge-gray">Pending</span>'}
+      </div>
+      <div style="display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:start">
+        <div>
+          <div style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px">Effective?</div>
+          <div class="eff-pills">
+            ${['Yes','Partially','No'].map(v=>`<button class="eff-pill-btn ${saved.eff===v?v.toLowerCase():''}" onclick="setCwEff('${sys.id}','${v}',this,'${client.u}')">${v}</button>`).join('')}
+          </div>
+        </div>
+        <div>
+          <div style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px">Gap Areas</div>
+          <textarea id="cwgap-${sys.id}" placeholder="What is missing, broken, or duplicated?" style="width:100%;min-height:56px;padding:7px 10px;border-radius:7px;border:1.5px solid var(--bord);background:var(--surf);font-size:12px;font-family:inherit;resize:vertical;outline:none" oninput="cwClientAutoSave()" onfocus="this.style.borderColor='var(--teal)'" onblur="this.style.borderColor='var(--bord)'">${saved.gap||''}</textarea>
+        </div>
+        <div>
+          <div style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px">Recommendation</div>
+          <div style="display:flex;flex-direction:column;gap:4px">
+            ${['Keep','Revise','Remove'].map(v=>`<button class="eff-pill-btn ${saved.rec===v?v.toLowerCase():''}" onclick="setCwRec('${sys.id}','${v}',this,'${client.u}')">${v}</button>`).join('')}
+          </div>
+        </div>
+      </div>`;
+    wrap.appendChild(div);
+  });
+
+  updateCwClientProgress(client, systems);
+}
+
+function setCwEff(sysId, val, btn, username) {
+  btn.closest('.eff-pills').querySelectorAll('.eff-pill-btn').forEach(b=>{b.className='eff-pill-btn';});
+  btn.classList.add(val.toLowerCase());
+  cwClientAutoSave();
+}
+
+function setCwRec(sysId, val, btn, username) {
+  btn.closest('div').querySelectorAll('.eff-pill-btn').forEach(b=>{b.className='eff-pill-btn';});
+  btn.classList.add(val.toLowerCase());
+  cwClientAutoSave();
+}
+
+function updateCwClientProgress(client, systems) {
+  const existing = S.responses[client.u]?.['__crosswalk__']?.rows||{};
+  const completed = systems.filter(s=>existing[s.id]?.eff||existing[s.id]?.rec).length;
+  const pct = systems.length ? Math.round((completed/systems.length)*100) : 0;
+  const prog = document.getElementById('cwClientProgress');
+  const fill = document.getElementById('cwClientProgFill');
+  if (prog) prog.textContent = completed+' of '+systems.length+' rows completed';
+  if (fill) { fill.style.width=pct+'%'; fill.style.background=pct===100?'var(--teal)':'var(--gold)'; }
+}
+
+let cwSaveTimer = null;
+function cwClientAutoSave() {
+  clearTimeout(cwSaveTimer);
+  cwSaveTimer = setTimeout(()=>{ submitCrosswalk(false); }, 1200);
+}
+
+async function submitCrosswalk(complete=true) {
+  const client = S.clients.find(c=>c.u===S.user);
+  if (!client) return;
+  const d = S.districts.find(x=>x.id===client.district);
+  const systems = d?.crosswalk?.systems||[];
+
+  const rows = {};
+  systems.forEach(sys => {
+    const effBtns = document.querySelectorAll(`#cwr-${sys.id} .eff-pills .eff-pill-btn`);
+    const recBtns = document.querySelectorAll(`#cwr-${sys.id} > div:last-child > div:last-child .eff-pill-btn`);
+    let eff='', rec='';
+    effBtns.forEach(b=>{ if(b.classList.contains('yes'))eff='Yes'; if(b.classList.contains('partially'))eff='Partially'; if(b.classList.contains('no'))eff='No'; });
+    recBtns.forEach(b=>{ if(b.classList.contains('keep'))rec='Keep'; if(b.classList.contains('revise'))rec='Revise'; if(b.classList.contains('remove'))rec='Remove'; });
+    const gap = document.getElementById('cwgap-'+sys.id)?.value||'';
+    rows[sys.id] = {eff, rec, gap};
+  });
+
+  const notes = {
+    themes: document.getElementById('cw-themes')?.value||'',
+    nextSteps: document.getElementById('cw-nextSteps')?.value||'',
+    stakeholders: document.getElementById('cw-stakeholders')?.value||'',
+    goals: document.getElementById('cw-goals')?.value||''
+  };
+
+  const payload = { rows, notes, _complete: complete, _savedAt: new Date().toISOString() };
+  if (!S.responses[client.u]) S.responses[client.u] = {};
+  S.responses[client.u]['__crosswalk__'] = payload;
+  await saveResponse(client.u, '__crosswalk__', payload);
+
+  const status = document.getElementById('cwClientSaveStatus');
+  if (status) { status.className='save-status ok'; status.innerHTML='<i class="ti ti-check"></i> '+(complete?'Submitted':'Auto-saved'); }
+  updateCwClientProgress(client, systems);
+
+  // Update completion badges
+  systems.forEach(sys => {
+    const row = document.getElementById('cwr-'+sys.id);
+    if (!row) return;
+    const r = rows[sys.id];
+    const badge = row.querySelector('.badge');
+    if (badge) {
+      const done = !!(r.eff||r.rec);
+      badge.className = 'badge '+(done?'badge-green':'badge-gray');
+      badge.innerHTML = done?'<i class="ti ti-check"></i> Rated':'Pending';
+      row.className = 'cw-client-row'+(done?' complete':'');
+    }
+  });
+
+  if (complete) toast('Crosswalk submitted');
+}
+
+// ── EXPORT CSV ──
+function exportCrosswalkCSV() {
+  const d = S.districts.find(x=>x.id===S.districtId);
+  const cw = d?.crosswalk||{};
+  const systems = cw.systems||[];
+  const distClients = S.clients.filter(c=>c.district===S.districtId);
+
+  let csv = `"Systems Alignment Mapping — ${d?.name||''}"
+`;
+  csv += `"Focus Area: ${cw.meta?.focusArea||''}","Academic Year: ${cw.meta?.academicYear||''}","Facilitator: ${cw.meta?.facilitator||''}"
+
+`;
+  let csvHeader = '"#","System / Program","Purpose"';
+  distClients.forEach(c => { csvHeader += ',"'+c.name+' - Effective?","'+c.name+' - Gap Areas","'+c.name+' - Recommendation"'; });
+  csv += csvHeader + '\n';
+
+  systems.forEach((sys,i) => {
+    let row = '"'+(i+1)+'","'+sys.name.replace(/"/g,'""')+'","'+(sys.purpose||'').replace(/"/g,'""')+'"';
+    distClients.forEach(c => {
+      const r = S.responses[c.u]?.['__crosswalk__']?.rows?.[sys.id]||{};
+      row += ',"'+(r.eff||'')+'","'+(r.gap||'').replace(/"/g,'""')+'","'+(r.rec||'')+'"';
+    });
+    csv += row + '\n';
+  });
+
+  const blob = new Blob([csv],{type:'text/csv'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `Systems-Alignment-Mapping-${d?.short||'District'}.csv`;
+  a.click();
+  toast('CSV exported');
 }
 
 </script>
