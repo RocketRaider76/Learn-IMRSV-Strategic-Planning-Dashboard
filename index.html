@@ -1108,26 +1108,77 @@ function renderDistrictCards() {
   grid.appendChild(add);
 }
 
-function calcPhaseProgress(districtId, phaseId) {
+const SOW_REQUIREMENTS = [
+  {type:'Leadership Meeting',phase:'June',required:2,label:'Leadership Meetings'},
+  {type:'Focus Group',phase:'Jul–Aug',required:5,label:'Focus Groups'},
+  {type:'Leadership Retreat',phase:'Jul–Aug',required:1,label:'Leadership Retreat'},
+  {type:'Virtual Check-in',phase:'September',required:2,label:'Check-ins'},
+  {type:'Board Work Session',phase:'October',required:1,label:'Board Work Session'},
+  {type:'Final Presentation',phase:'October',required:1,label:'Final Presentation'},
+];
+// Returns { auto, nudge, total } for admin gauges
+function calcPhaseProgressAdmin(districtId, phaseId) {
   const phaseForms = S.forms.filter(f=>f.district===districtId&&f.phase===phaseId&&f.status==='active');
-  if (!phaseForms.length) return S.phaseProgress[districtId]?.[phaseId] || 0;
   const distClients = S.clients.filter(c=>c.district===districtId);
-  if (!distClients.length) return S.phaseProgress[districtId]?.[phaseId] || 0;
-  let totalPct = 0, count = 0;
+  let points = 0, total = 0;
+
+  // ── Form responses: every client-question pair ──
   phaseForms.forEach(form => {
     const assignedClients = distClients.filter(c=>c.forms?.includes(form.id));
-    if (!assignedClients.length) return;
     const qs = (form.questions||[]).filter(q=>q.type!=='heading'&&q.type!=='divider');
-    if (!qs.length) return;
+    if (!qs.length || !assignedClients.length) return;
     assignedClients.forEach(c => {
       const resp = S.responses[c.u]?.[form.id];
       const answered = resp ? qs.filter(q=>resp[q.id]!==undefined&&String(resp[q.id]).trim()!=='').length : 0;
-      totalPct += answered/qs.length; count++;
+      points += answered; total += qs.length;
     });
   });
-  const autoProgress = count > 0 ? Math.round((totalPct/count)*60) : 0;
-  const adminOverride = S.phaseProgress[districtId]?.[phaseId+'_override'] || 0;
-  return Math.min(100, autoProgress + adminOverride);
+
+  // ── Meetings: count logged vs SOW required for this phase ──
+  const d = S.districts.find(x=>x.id===districtId);
+  const meetings = d?.meetings||[];
+  const phaseObj = S.phases.find(p=>p.id===phaseId);
+  const sowForPhase = SOW_REQUIREMENTS.filter(r=>r.phase===phaseObj?.month);
+  sowForPhase.forEach(req => {
+    const logged = meetings.filter(m=>m.type===req.type).length;
+    points += Math.min(logged, req.required); total += req.required;
+  });
+
+  // ── Crosswalk: 1 point per assigned client who submitted ──
+  const cwAssigned = getCrosswalkAssignedClients(districtId);
+  if (cwAssigned.length > 0) {
+    cwAssigned.forEach(cid => {
+      const client = S.clients.find(c=>c.id===cid);
+      if (!client) return;
+      const cwResp = S.responses[client.u]?.['__crosswalk__'];
+      points += cwResp?._complete ? 1 : 0; total += 1;
+    });
+  }
+
+  const auto = total > 0 ? Math.round((points / total) * 100) : 0;
+  const nudge = S.phaseProgress[districtId]?.[phaseId+'_nudge'] || 0;
+  const totalPct = Math.min(100, auto + nudge);
+  return { auto, nudge, total: totalPct };
+}
+
+// Client-scoped version: only their assigned forms, per-phase
+function calcPhaseProgressClient(client, phaseId) {
+  const phaseForms = S.forms.filter(f=>f.district===client.district&&f.phase===phaseId&&f.status==='active'&&client.forms?.includes(f.id));
+  if (!phaseForms.length) return 0;
+  let points = 0, total = 0;
+  phaseForms.forEach(form => {
+    const qs = (form.questions||[]).filter(q=>q.type!=='heading'&&q.type!=='divider');
+    if (!qs.length) return;
+    const resp = S.responses[client.u]?.[form.id];
+    const answered = resp ? qs.filter(q=>resp[q.id]!==undefined&&String(resp[q.id]).trim()!=='').length : 0;
+    points += answered; total += qs.length;
+  });
+  return total > 0 ? Math.round((points / total) * 100) : 0;
+}
+
+// Legacy shim used by district card average
+function calcPhaseProgress(districtId, phaseId) {
+  return calcPhaseProgressAdmin(districtId, phaseId).total;
 }
 
 function openDistrict(id) {
@@ -1511,39 +1562,68 @@ function gaugeArc(pct,color,sz){
     ${pct>0?`<path d="M${x1} ${y1} A${r} ${r} 0 ${la} 1 ${x2} ${y2}" fill="none" stroke="${color}" stroke-width="4" stroke-linecap="round"/>`:''}
   </svg>`;
 }
+// Dual-arc gauge: shows calculated (teal) + nudge (color) layers on one track
+function gaugeArcDual(autoPct, totalPct, color, sz) {
+  const r=sz/2-5,cx=sz/2,cy=sz/2,start=-210,sweep=240;
+  function arcPath(pct) {
+    const a1=start*Math.PI/180, a2=(start+sweep*(pct/100))*Math.PI/180;
+    const x1=cx+r*Math.cos(a1),y1=cy+r*Math.sin(a1);
+    const x2=cx+r*Math.cos(a2),y2=cy+r*Math.sin(a2);
+    const la=sweep*(pct/100)>180?1:0;
+    return {x1,y1,x2,y2,la};
+  }
+  const ax=(start+sweep)*Math.PI/180;
+  const xf=cx+r*Math.cos(ax),yf=cy+r*Math.sin(ax);
+  const x1f=cx+r*Math.cos(start*Math.PI/180),y1f=cy+r*Math.sin(start*Math.PI/180);
+  const bg = `<path d="M${x1f} ${y1f} A${r} ${r} 0 1 1 ${xf} ${yf}" fill="none" stroke="#d0dbe8" stroke-width="5" stroke-linecap="round"/>`;
+  let autoArc='', nudgeArc='';
+  if (autoPct > 0) { const p=arcPath(autoPct); autoArc=`<path d="M${p.x1} ${p.y1} A${r} ${r} 0 ${p.la} 1 ${p.x2} ${p.y2}" fill="none" stroke="var(--teal)" stroke-width="5" stroke-linecap="round"/>`; }
+  if (totalPct > autoPct) { const p=arcPath(totalPct); nudgeArc=`<path d="M${p.x1} ${p.y1} A${r} ${r} 0 ${p.la} 1 ${p.x2} ${p.y2}" fill="none" stroke="${color}" stroke-width="5" stroke-linecap="round" stroke-dasharray="4 3" opacity="0.7"/>`; }
+  return `<svg width="${sz}" height="${sz}" viewBox="0 0 ${sz} ${sz}">${bg}${autoArc}${nudgeArc}</svg>`;
+}
+
 function renderSettingsGauges() {
   const wrap = document.getElementById('settingsGauges'); if (!wrap) return;
   wrap.innerHTML = '';
   S.phases.forEach((ph,i) => {
-    const overridePct = S.phaseProgress[S.districtId]?.[ph.id+'_override'] || 0;
+    const nudge = S.phaseProgress[S.districtId]?.[ph.id+'_nudge'] || 0;
     const color = COLORS[i%COLORS.length];
     const cell = document.createElement('div'); cell.className='gcell'; cell.id=`sg-${S.districtId}-${ph.id}`;
-    cell.innerHTML=`${gaugeArc(0,color,68)}
+    cell.innerHTML=`
+      <div style="position:relative;display:inline-block" id="sgsvg-${S.districtId}-${ph.id}">
+        ${gaugeArc(0,color,72)}
+      </div>
       <div class="gpct" style="color:${color}" id="sgpct-${S.districtId}-${ph.id}">0%</div>
       <div class="glbl">${ph.name}</div>
-      <div class="gsub" id="sgsub-${S.districtId}-${ph.id}">loading...</div>
-      <div style="font-size:10px;color:var(--text3);margin-bottom:3px">Admin override (0–40%)</div>
-      <input type="range" min="0" max="40" step="1" value="${overridePct}" oninput="updateGaugeOverride('${S.districtId}','${ph.id}',+this.value)">`;
+      <div style="font-size:10px;color:var(--text3);margin-top:2px" id="sgsub-${S.districtId}-${ph.id}">calculating...</div>
+      <div style="font-size:10px;color:var(--text3);margin:6px 0 2px;display:flex;justify-content:space-between">
+        <span>Admin nudge</span><span id="sgnudge-${S.districtId}-${ph.id}">${nudge>0?'+'+nudge+'%':nudge+'%'}</span>
+      </div>
+      <input type="range" min="0" max="30" step="1" value="${nudge}"
+        oninput="updateGaugeNudge('${S.districtId}','${ph.id}',+this.value)"
+        style="width:100%;accent-color:${color}">`;
     wrap.appendChild(cell);
   });
   loadAllResponses().then(()=>{ S.phases.forEach(ph => refreshGaugeCell(S.districtId, ph.id)); }).catch(()=>{ S.phases.forEach(ph => refreshGaugeCell(S.districtId, ph.id)); });
 }
-function updateGaugeOverride(did,pid,val){
+function updateGaugeNudge(did,pid,val){
   if(!S.phaseProgress[did]) S.phaseProgress[did]={};
-  S.phaseProgress[did][pid+'_override'] = val;
+  S.phaseProgress[did][pid+'_nudge'] = val;
   refreshGaugeCell(did, pid); saveBlobs(); renderClientGauges();
 }
 function refreshGaugeCell(did, pid) {
-  const autoPct = calcPhaseProgress(did, pid);
-  const overridePct = S.phaseProgress[did]?.[pid+'_override'] || 0;
-  const totalPct = Math.min(100, autoPct + overridePct);
+  const result = calcPhaseProgressAdmin(did, pid);
   const cell = document.getElementById(`sg-${did}-${pid}`); if (!cell) return;
   const i = S.phases.findIndex(p=>p.id===pid);
   const color = COLORS[i%COLORS.length];
-  const old = cell.querySelector('svg');
-  if (old) { const t=document.createElement('div'); t.innerHTML=gaugeArc(totalPct,color,68); cell.replaceChild(t.firstChild,old); }
-  const pctEl = document.getElementById(`sgpct-${did}-${pid}`); if (pctEl) pctEl.textContent = totalPct+'%';
-  const sub = cell.querySelector('.gsub'); if (sub) sub.textContent = autoPct+'% auto · '+overridePct+'% override';
+  // Dual-arc SVG: gray track → teal auto fill → color nudge fill
+  const svgWrap = document.getElementById(`sgsvg-${did}-${pid}`);
+  if (svgWrap) svgWrap.innerHTML = gaugeArcDual(result.auto, result.total, color, 72);
+  const pctEl = document.getElementById(`sgpct-${did}-${pid}`); if (pctEl) pctEl.textContent = result.total+'%';
+  const sub = document.getElementById(`sgsub-${did}-${pid}`);
+  if (sub) sub.innerHTML = `<span style="color:var(--teal2);font-weight:600">${result.auto}% calculated</span>${result.nudge>0?' <span style="color:'+color+'">+'+result.nudge+'% nudge</span>':''}`;
+  const nudgeLabel = document.getElementById(`sgnudge-${did}-${pid}`);
+  if (nudgeLabel) nudgeLabel.textContent = result.nudge > 0 ? '+'+result.nudge+'%' : result.nudge+'%';
 }
 
 // ════════════════════════════════
@@ -1629,13 +1709,21 @@ function renderClientOverview(client) {
   const wrap = document.getElementById('cGauges'); if (!wrap) return;
   wrap.innerHTML = '';
   S.phases.forEach((ph,i) => {
-    const pct = calcPhaseProgress(client.district, ph.id);
+    const pct = calcPhaseProgressClient(client, ph.id);
     const color = COLORS[i % COLORS.length];
+    // Count their assigned forms in this phase for the sub-label
+    const phaseForms = S.forms.filter(f=>f.district===client.district&&f.phase===ph.id&&f.status==='active'&&client.forms?.includes(f.id));
+    const totalQs = phaseForms.reduce((a,f)=>a+(f.questions||[]).filter(q=>q.type!=='heading'&&q.type!=='divider').length,0);
+    const answeredQs = phaseForms.reduce((a,f)=>{
+      const qs=(f.questions||[]).filter(q=>q.type!=='heading'&&q.type!=='divider');
+      const resp=S.responses[client.u]?.[f.id];
+      return a+(resp?qs.filter(q=>resp[q.id]!==undefined&&String(resp[q.id]).trim()!=='').length:0);
+    },0);
     const cell = document.createElement('div'); cell.className = 'gcell';
     cell.innerHTML = `${gaugeArc(pct,color,64)}
       <div class="gpct" style="color:${color}">${pct}%</div>
       <div class="glbl">${ph.name}</div>
-      <div class="gsub">${pct>=100?'Complete':pct>0?'In progress':'Upcoming'}</div>`;
+      <div class="gsub">${phaseForms.length ? answeredQs+'/'+totalQs+' answers' : pct>=100?'Complete':pct>0?'In progress':'Upcoming'}</div>`;
     wrap.appendChild(cell);
   });
 }
@@ -1814,14 +1902,7 @@ function renderClientProgress(client){
 // ════════════════════════════════
 // MEETINGS
 // ════════════════════════════════
-const SOW_REQUIREMENTS = [
-  {type:'Leadership Meeting',phase:'June',required:2,label:'Leadership Meetings'},
-  {type:'Focus Group',phase:'Jul–Aug',required:5,label:'Focus Groups'},
-  {type:'Leadership Retreat',phase:'Jul–Aug',required:1,label:'Leadership Retreat'},
-  {type:'Virtual Check-in',phase:'September',required:2,label:'Check-ins'},
-  {type:'Board Work Session',phase:'October',required:1,label:'Board Work Session'},
-  {type:'Final Presentation',phase:'October',required:1,label:'Final Presentation'},
-];
+
 const MTG_COLORS = {
   'Leadership Meeting':'#1a4f8a','Focus Group':'#27a892','Leadership Retreat':'#d4a843',
   'Board Work Session':'#534ab7','Virtual Check-in':'#378add','Final Presentation':'#d85a30','Community Session':'#993c1d'
