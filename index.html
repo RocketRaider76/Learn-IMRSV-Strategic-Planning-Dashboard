@@ -20,8 +20,6 @@
 body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px}
 button{font-family:'DM Sans',sans-serif;cursor:pointer}
 input,textarea,select{font-family:'DM Sans',sans-serif}
-
-/* ── LOADING ── */
 #loadingScreen{position:fixed;inset:0;background:var(--navy);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999}
 #loadingScreen.hide{opacity:0;pointer-events:none;visibility:hidden;display:none}
 .ld-title{font-family:'DM Serif Display',serif;font-size:30px;color:#fff;margin-bottom:6px}
@@ -29,8 +27,6 @@ input,textarea,select{font-family:'DM Sans',sans-serif}
 .ld-bar{width:180px;height:3px;background:rgba(255,255,255,.12);border-radius:10px;overflow:hidden}
 .ld-fill{height:100%;background:var(--gold);border-radius:10px;animation:ldprog 1.6s ease forwards}
 @keyframes ldprog{from{width:0}to{width:100%}}
-
-/* ── LOGIN ── */
 #loginScreen{display:none;min-height:100vh;background:linear-gradient(135deg,#08162a 0%,#0f2240 55%,#0d2e4a 100%);align-items:center;justify-content:center;padding:20px}
 #loginScreen.show{display:flex}
 .login-brand{text-align:center;margin-bottom:28px}
@@ -48,12 +44,8 @@ input,textarea,select{font-family:'DM Sans',sans-serif}
 .login-btn:hover{background:var(--navy2)}
 .login-err{font-size:12px;color:var(--red);margin-top:9px;min-height:16px;text-align:center;font-weight:500}
 .login-footer{text-align:center;font-size:11px;color:rgba(255,255,255,.25);margin-top:18px}
-
-/* ── ADMIN SHELL ── */
 #adminApp,#clientApp{display:none;min-height:100vh;flex-direction:column}
 #adminApp.show,#clientApp.show{display:flex}
-
-/* ── ADMIN TOPBAR ── */
 .admin-topbar{height:54px;background:#09192e;display:flex;align-items:center;padding:0 20px;gap:16px;flex-shrink:0;border-bottom:1px solid rgba(255,255,255,.07)}
 .atb-brand{font-family:'DM Serif Display',serif;font-size:17px;color:#fff;font-weight:400;white-space:nowrap}
 .atb-brand span{display:block;font-size:10px;font-family:'DM Sans',sans-serif;font-weight:600;color:rgba(255,255,255,.35);letter-spacing:.08em;text-transform:uppercase;margin-top:-1px}
@@ -66,15 +58,9 @@ input,textarea,select{font-family:'DM Sans',sans-serif}
 .atb-badge{font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;background:rgba(212,168,67,.15);color:var(--gold);border:1px solid rgba(212,168,67,.25)}
 .signout-btn{background:transparent;border:1px solid rgba(255,255,255,.12);border-radius:7px;padding:5px 11px;font-size:11px;font-weight:600;color:rgba(255,255,255,.45);transition:all .2s}
 .signout-btn:hover{border-color:rgba(255,255,255,.3);color:rgba(255,255,255,.8)}
-
-/* ── ADMIN BODY ── */
 .admin-body{flex:1;overflow-y:auto;background:var(--bg)}
-
-/* ── VIEWS ── */
 .view{display:none;padding:24px;max-width:1100px;margin:0 auto;width:100%}
 .view.on{display:block}
-
-/* ── DISTRICT CARDS (homepage) ── */
 .districts-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
 .district-card{background:var(--white);border:1px solid var(--bord);border-radius:var(--rad2);padding:22px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden;box-shadow:var(--shadow)}
 .district-card:hover{box-shadow:var(--shadow2);border-color:var(--bord2);transform:translateY(-2px)}
@@ -91,15 +77,11 @@ input,textarea,select{font-family:'DM Sans',sans-serif}
 .add-district-card:hover{border-color:var(--navy);color:var(--navy);background:var(--surf)}
 .add-district-card i{font-size:28px}
 .add-district-card span{font-size:13px;font-weight:600}
-
-/* ── DISTRICT WORKSPACE ── */
 .district-tabs{display:flex;gap:0;border-bottom:1px solid var(--bord);margin-bottom:22px;background:var(--white);border-radius:var(--rad2) var(--rad2) 0 0;overflow:hidden;box-shadow:var(--shadow)}
 .dtab{padding:14px 22px;font-size:13px;font-weight:600;color:var(--text3);border:none;background:none;border-bottom:2px solid transparent;transition:all .2s;display:flex;align-items:center;gap:7px;margin-bottom:-1px}
 .dtab:hover{color:var(--text)}
 .dtab.on{color:var(--navy);border-bottom-color:var(--navy);background:var(--surf)}
 .district-panel{display:none}.district-panel.on{display:block}
-
-/* ── FORMS LIST ── */
 .forms-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
 .form-card{background:var(--white);border:1px solid var(--bord);border-radius:var(--rad2);padding:18px;box-shadow:var(--shadow);transition:all .2s;cursor:pointer}
 .form-card:hover{box-shadow:var(--shadow2);border-color:var(--bord2)}
@@ -110,10 +92,6 @@ input,textarea,select{font-family:'DM Sans',sans-serif}
 .fc-actions{display:flex;gap:5px;flex-shrink:0}
 .add-form-card{background:transparent;border:2px dashed var(--bord2);border-radius:var(--rad2);padding:18px;cursor:pointer;transition:all .2s;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;min-height:120px;color:var(--text3)}
 .add-form-card:hover{border-color:var(--navy);color:var(--navy);background:var(--surf)}
-
-/* ══════════════════════════════════════
-   JOTFORM-STYLE BUILDER (full page)
-══════════════════════════════════════ */
 #builderView{display:none;flex-direction:column;height:calc(100vh - 54px)}
 #builderView.on{display:flex}
 .builder-topbar{height:52px;background:var(--white);border-bottom:1px solid var(--bord);display:flex;align-items:center;padding:0 20px;gap:14px;flex-shrink:0;box-shadow:var(--shadow)}
@@ -123,10 +101,7 @@ input,textarea,select{font-family:'DM Sans',sans-serif}
 .btb-title input{border:none;background:transparent;font-size:15px;font-weight:700;color:var(--text);font-family:inherit;outline:none;width:100%}
 .btb-title input:focus{border-bottom:2px solid var(--gold)}
 .btb-actions{display:flex;gap:8px;margin-left:auto}
-
 .builder-body{display:flex;flex:1;overflow:hidden}
-
-/* LEFT PANEL */
 .builder-left{width:220px;background:var(--white);border-right:1px solid var(--bord);overflow-y:auto;flex-shrink:0;padding:16px}
 .bleft-section{margin-bottom:18px}
 .bleft-section h4{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--text3);margin-bottom:10px}
@@ -134,8 +109,6 @@ input,textarea,select{font-family:'DM Sans',sans-serif}
 .field-btn:hover{border-color:var(--navy);color:var(--navy);background:#eef2f8}
 .field-btn i{font-size:16px;color:var(--text3);width:18px;text-align:center}
 .field-btn:hover i{color:var(--navy)}
-
-/* CANVAS */
 .builder-canvas{flex:1;overflow-y:auto;padding:24px;background:#f0f4f9}
 .canvas-inner{max-width:700px;margin:0 auto}
 .canvas-form-header{background:var(--white);border-radius:var(--rad2);padding:22px 24px;margin-bottom:12px;border:1px solid var(--bord);box-shadow:var(--shadow)}
@@ -144,8 +117,6 @@ input,textarea,select{font-family:'DM Sans',sans-serif}
 .canvas-empty{background:var(--white);border:2px dashed var(--bord2);border-radius:var(--rad2);padding:48px;text-align:center;color:var(--text3)}
 .canvas-empty i{font-size:36px;display:block;margin-bottom:10px;opacity:.4}
 .canvas-empty p{font-size:13px}
-
-/* QUESTION CARDS ON CANVAS */
 .qcard{background:var(--white);border:2px solid var(--bord);border-radius:var(--rad);padding:18px 18px 16px;margin-bottom:10px;position:relative;transition:all .2s;cursor:default}
 .qcard:hover,.qcard.selected{border-color:var(--navy);box-shadow:0 0 0 3px rgba(15,34,64,.07)}
 .qcard.dragging{opacity:.4}
@@ -168,8 +139,6 @@ input,textarea,select{font-family:'DM Sans',sans-serif}
 .mc-opt-preview{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text3);padding:6px 10px;background:var(--surf);border-radius:6px;border:1px solid var(--bord)}
 .star-preview{display:flex;gap:5px}
 .star-preview span{font-size:20px;color:var(--bord2)}
-
-/* QUESTION EDITOR PANEL (right side) */
 .builder-right{width:280px;background:var(--white);border-left:1px solid var(--bord);overflow-y:auto;flex-shrink:0;padding:16px;transition:all .2s}
 .bright-empty{text-align:center;padding:32px 16px;color:var(--text3)}
 .bright-empty i{font-size:28px;display:block;margin-bottom:8px;opacity:.4}
@@ -193,8 +162,6 @@ input,textarea,select{font-family:'DM Sans',sans-serif}
 .toggle-slider::before{content:'';position:absolute;width:13px;height:13px;border-radius:50%;background:#fff;bottom:2.5px;left:2.5px;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
 .toggle input:checked + .toggle-slider{background:var(--navy)}
 .toggle input:checked + .toggle-slider::before{transform:translateX(15px)}
-
-/* ── CLIENTS TAB ── */
 .clients-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
 .client-card{background:var(--white);border:1px solid var(--bord);border-radius:var(--rad);padding:14px 16px;display:flex;align-items:center;gap:12px;margin-bottom:8px;box-shadow:var(--shadow);transition:border-color .2s}
 .client-card:hover{border-color:var(--bord2)}
@@ -203,8 +170,6 @@ input,textarea,select{font-family:'DM Sans',sans-serif}
 .client-name{font-size:13px;font-weight:700;color:var(--text)}
 .client-meta{font-size:11px;color:var(--text3);margin-top:2px}
 .client-actions{display:flex;gap:6px}
-
-/* ── RESPONSES TAB ── */
 .response-form-select{display:flex;align-items:center;gap:12px;margin-bottom:18px;flex-wrap:wrap}
 .response-card{background:var(--white);border:1px solid var(--bord);border-radius:var(--rad);padding:16px;margin-bottom:10px;box-shadow:var(--shadow)}
 .rc-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
@@ -213,8 +178,6 @@ input,textarea,select{font-family:'DM Sans',sans-serif}
 .rc-answer{padding:10px;background:var(--surf);border-radius:8px;border:1px solid var(--bord)}
 .rc-q{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
 .rc-a{font-size:13px;color:var(--text2)}
-
-/* ── SHARED ── */
 .page-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;gap:12px;flex-wrap:wrap}
 .page-hdr h2{font-size:19px;font-weight:700;color:var(--text)}
 .page-hdr p{font-size:12px;color:var(--text3);margin-top:2px}
@@ -246,8 +209,6 @@ input,textarea,select{font-family:'DM Sans',sans-serif}
 .mclose{float:right;background:none;border:none;font-size:20px;color:var(--text3);line-height:1}
 .prog-bar{height:5px;background:var(--surf);border-radius:10px;overflow:hidden;border:1px solid var(--bord);margin-top:4px}
 .prog-fill{height:100%;border-radius:10px;transition:width .5s;background:var(--teal)}
-
-/* ── MEETINGS ── */
 .meeting-card{background:var(--white);border:1px solid var(--bord);border-radius:var(--rad);padding:14px 16px;margin-bottom:8px;display:flex;gap:14px;align-items:flex-start;box-shadow:var(--shadow)}
 .meeting-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
 .meeting-body{flex:1}
@@ -262,8 +223,6 @@ input,textarea,select{font-family:'DM Sans',sans-serif}
 .sow-item .si-req{font-size:11px;color:var(--text3)}
 .sow-item .si-count{font-size:18px;font-weight:700;margin-top:6px}
 .sow-item.done .si-count{color:var(--teal)}
-
-/* ── KPIs ── */
 .priority-card{background:var(--white);border:1px solid var(--bord);border-radius:var(--rad2);padding:18px;margin-bottom:14px;box-shadow:var(--shadow)}
 .priority-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px;gap:10px}
 .priority-num{width:32px;height:32px;border-radius:50%;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0}
@@ -277,8 +236,6 @@ input,textarea,select{font-family:'DM Sans',sans-serif}
 .kpi-status.at-risk{background:rgba(212,168,67,.12);color:#8a6200;border:1px solid rgba(212,168,67,.25)}
 .kpi-status.off-track{background:#fff0f0;color:var(--red);border:1px solid #f5c6cb}
 .kpi-status.not-started{background:var(--surf);color:var(--text3);border:1px solid var(--bord2)}
-
-/* ── DOCUMENTS ── */
 .doc-card{background:var(--white);border:1px solid var(--bord);border-radius:var(--rad);padding:14px 16px;margin-bottom:8px;display:flex;align-items:center;gap:12px;box-shadow:var(--shadow);transition:border-color .2s}
 .doc-card:hover{border-color:var(--bord2)}
 .doc-icon{width:38px;height:38px;border-radius:9px;background:var(--surf);border:1px solid var(--bord);display:flex;align-items:center;justify-content:center;font-size:17px;color:var(--navy);flex-shrink:0}
@@ -286,19 +243,20 @@ input,textarea,select{font-family:'DM Sans',sans-serif}
 .doc-title{font-size:13px;font-weight:700;color:var(--text)}
 .doc-meta{font-size:11px;color:var(--text3);margin-top:2px}
 .doc-actions{display:flex;gap:6px;flex-shrink:0}
-
-/* ── VISIBILITY TOGGLES ── */
-.visibility-bar{background:var(--surf);border:1px solid var(--bord);border-radius:var(--rad);padding:10px 14px;margin-bottom:16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
-.vb-label{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.07em}
-.vis-toggle{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:500;color:var(--text2);padding:5px 10px;border-radius:7px;border:1.5px solid var(--bord);background:var(--white);cursor:pointer;transition:all .2s}
-.vis-toggle.visible{border-color:var(--teal);background:rgba(39,168,146,.08);color:var(--teal2)}
-.vis-toggle i{font-size:14px}
-
 /* ── CROSSWALK ── */
+.cw-assign-bar{background:var(--surf);border:1px solid var(--bord);border-radius:var(--rad);padding:14px 16px;margin-bottom:16px}
+.cw-assign-bar .vb-label{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.cw-assign-clients{display:flex;flex-wrap:wrap;gap:8px}
+.cw-client-check{display:flex;align-items:center;gap:7px;padding:6px 12px;border-radius:7px;border:1.5px solid var(--bord);background:var(--white);cursor:pointer;font-size:12px;font-weight:500;color:var(--text2);transition:all .2s;user-select:none}
+.cw-client-check.assigned{border-color:var(--teal);background:rgba(39,168,146,.08);color:var(--teal2);font-weight:700}
+.cw-client-check input{accent-color:var(--teal);width:13px;height:13px}
 .cw-row-admin{border-bottom:1px solid var(--bord);transition:background .15s}
 .cw-row-admin:last-child{border-bottom:none}
 .cw-row-admin:hover{background:var(--surf)}
-.eff-pills{display:flex;gap:4px;flex-wrap:wrap}
+.eff-chip{padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700;border:1.5px solid}
+.eff-chip.yes{background:rgba(39,168,146,.12);border-color:var(--teal);color:var(--teal2)}
+.eff-chip.partially{background:rgba(212,168,67,.12);border-color:var(--gold);color:#8a6200}
+.eff-chip.no{background:#fff0f0;border-color:#c0392b;color:#c0392b}
 .eff-pill-btn{padding:4px 10px;border-radius:20px;border:1.5px solid var(--bord2);background:var(--surf);font-size:11px;font-weight:600;color:var(--text3);cursor:pointer;transition:all .15s;font-family:inherit}
 .eff-pill-btn.yes{background:rgba(39,168,146,.12);border-color:var(--teal);color:var(--teal2)}
 .eff-pill-btn.partially{background:rgba(212,168,67,.12);border-color:var(--gold);color:#8a6200}
@@ -312,11 +270,19 @@ input,textarea,select{font-family:'DM Sans',sans-serif}
 .cw-stat-card{background:var(--white);border:1px solid var(--bord);border-radius:var(--rad);padding:14px;text-align:center;box-shadow:var(--shadow)}
 .cw-stat-num{font-size:26px;font-weight:700;line-height:1;margin-bottom:3px}
 .cw-stat-lbl{font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:var(--text3)}
-/* ── CLIENT TABS (new) ── */
-.client-doc-card{background:var(--white);border:1px solid var(--bord);border-radius:var(--rad);padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;gap:10px;box-shadow:var(--shadow)}
-
-/* GAUGE */
-/* GAUGE */
+/* crosswalk admin table */
+.cw-admin-tbl{width:100%;border-collapse:collapse}
+.cw-admin-tbl thead tr{background:var(--navy)}
+.cw-admin-tbl thead th{padding:10px 12px;text-align:left;font-size:11px;font-weight:700;color:rgba(255,255,255,.8);text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}
+.cw-admin-tbl thead th.center{text-align:center}
+.cw-admin-tbl tbody tr{border-bottom:1px solid var(--bord);transition:background .15s}
+.cw-admin-tbl tbody tr:last-child{border-bottom:none}
+.cw-admin-tbl tbody tr:hover{background:var(--surf)}
+.cw-admin-tbl tbody td{padding:10px 12px;font-size:12px;vertical-align:middle}
+.cw-admin-tbl tbody td.center{text-align:center}
+.cw-response-cell{display:flex;flex-direction:column;gap:4px}
+.cw-resp-item{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text3)}
+.cw-resp-item strong{color:var(--text2);font-size:11px}
 .gauge-row{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:16px}
 .gcell{background:var(--white);border:1px solid var(--bord);border-radius:var(--rad);padding:12px 8px;text-align:center;box-shadow:var(--shadow)}
 .gcell svg{display:block;margin:0 auto 4px}
@@ -324,8 +290,6 @@ input,textarea,select{font-family:'DM Sans',sans-serif}
 .gcell .glbl{font-size:11px;font-weight:600;color:var(--text);margin-top:2px;line-height:1.3}
 .gcell .gsub{font-size:10px;color:var(--text3);margin-top:1px}
 .gcell input[type=range]{width:100%;margin-top:6px;accent-color:var(--navy)}
-
-/* CLIENT APP */
 .client-topbar{height:54px;background:#fff;border-bottom:1px solid var(--bord);display:flex;align-items:center;padding:0 20px;gap:0;box-shadow:var(--shadow);flex-shrink:0}
 .ctb-brand{font-size:15px;font-weight:700;color:var(--navy);margin-right:28px;white-space:nowrap}
 .ctb-brand span{display:block;font-size:11px;font-weight:400;color:var(--text3)}
@@ -365,13 +329,10 @@ input,textarea,select{font-family:'DM Sans',sans-serif}
 .save-bar{display:flex;align-items:center;justify-content:space-between;padding-top:14px;border-top:1px solid var(--bord);gap:10px;flex-wrap:wrap}
 .save-status{font-size:12px;color:var(--text3);display:flex;align-items:center;gap:5px}
 .save-status.ok{color:var(--teal)}
-
-/* TOAST */
 #toast{position:fixed;bottom:22px;right:22px;background:#1a1a2e;color:#fff;padding:11px 18px;border-radius:9px;font-size:13px;font-weight:500;z-index:9999;transform:translateY(70px);opacity:0;transition:all .3s;box-shadow:var(--shadow2);display:flex;align-items:center;gap:7px}
 #toast.show{transform:translateY(0);opacity:1}
 #toast.ok{background:var(--teal2)}
 #toast.err{background:var(--red)}
-
 @media(max-width:768px){
   .districts-grid{grid-template-columns:1fr}
   .gauge-row{grid-template-columns:repeat(3,1fr)}
@@ -419,7 +380,6 @@ input,textarea,select{font-family:'DM Sans',sans-serif}
     </div>
   </div>
   <div class="admin-body">
-    <!-- HOME: district cards -->
     <div class="view on" id="view-home">
       <div class="page-hdr" style="margin-top:4px">
         <div><h2>Districts</h2><p>Select a district to manage its forms, clients, and responses</p></div>
@@ -428,7 +388,6 @@ input,textarea,select{font-family:'DM Sans',sans-serif}
       <div class="districts-grid" id="districtsGrid"></div>
     </div>
 
-    <!-- DISTRICT WORKSPACE -->
     <div class="view" id="view-district">
       <div class="district-tabs" id="districtTabs">
         <button class="dtab on" onclick="dTab('forms',this)"><i class="ti ti-clipboard-list"></i> Forms</button>
@@ -489,7 +448,7 @@ input,textarea,select{font-family:'DM Sans',sans-serif}
         <div id="kpisList"></div>
       </div>
 
-      <!-- CROSSWALK -->
+      <!-- CROSSWALK — REBUILT -->
       <div class="district-panel" id="dp-crosswalk">
         <div class="page-hdr">
           <div><h2>Systems Alignment Mapping</h2><p>Admin adds systems — clients rate effectiveness, gaps, and recommendations</p></div>
@@ -499,34 +458,28 @@ input,textarea,select{font-family:'DM Sans',sans-serif}
           </div>
         </div>
 
-        <!-- District Info -->
-        <div class="card" style="margin-bottom:16px">
-          <div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:12px">District Information</div>
-          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px">
-            <div class="ff"><label>Focus Area / Domain</label><input type="text" id="cw-focusArea" placeholder="e.g. MTSS, Curriculum, HR" oninput="saveCrosswalkMeta()"></div>
-            <div class="ff"><label>Academic Year</label><input type="text" id="cw-academicYear" placeholder="e.g. 2024–2025" oninput="saveCrosswalkMeta()"></div>
-            <div class="ff"><label>Facilitator</label><input type="text" id="cw-facilitator" placeholder="Name and role" oninput="saveCrosswalkMeta()"></div>
-            <div class="ff"><label>Review Team</label><input type="text" id="cw-reviewTeam" placeholder="e.g. Leadership Cabinet" oninput="saveCrosswalkMeta()"></div>
-          </div>
+        <!-- CLIENT ASSIGNMENT (replaces visibility toggle) -->
+        <div class="cw-assign-bar" id="cwAssignBar">
+          <div class="vb-label"><i class="ti ti-users"></i> Assign to Clients — only selected clients will see the Crosswalk tab</div>
+          <div class="cw-assign-clients" id="cwAssignClients"></div>
         </div>
-
-        <!-- Visibility toggle -->
-        <div class="visibility-bar" id="cwVisBar" style="margin-bottom:16px"></div>
 
         <!-- Summary stats -->
         <div id="cwSummaryStrip" style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px"></div>
 
-        <!-- Admin: systems table -->
+        <!-- Admin systems table — full columns -->
         <div class="card" style="padding:0;overflow:hidden">
           <div style="overflow-x:auto">
-            <table style="width:100%;border-collapse:collapse" id="cwAdminTable">
+            <table class="cw-admin-tbl" id="cwAdminTable">
               <thead>
-                <tr style="background:var(--navy)">
-                  <th style="padding:10px 14px;text-align:left;font-size:11px;font-weight:700;color:rgba(255,255,255,.8);text-transform:uppercase;letter-spacing:.06em;white-space:nowrap">#</th>
-                  <th style="padding:10px 14px;text-align:left;font-size:11px;font-weight:700;color:rgba(255,255,255,.8);text-transform:uppercase;letter-spacing:.06em;white-space:nowrap">System / Program</th>
-                  <th style="padding:10px 14px;text-align:left;font-size:11px;font-weight:700;color:rgba(255,255,255,.8);text-transform:uppercase;letter-spacing:.06em">Purpose</th>
-                  <th style="padding:10px 14px;text-align:center;font-size:11px;font-weight:700;color:rgba(255,255,255,.8);text-transform:uppercase;letter-spacing:.06em;white-space:nowrap">Client Responses</th>
-                  <th style="padding:10px 14px;font-size:11px;color:rgba(255,255,255,.4);width:40px"></th>
+                <tr>
+                  <th style="width:40px;text-align:center">#</th>
+                  <th style="width:180px">System / Program</th>
+                  <th>Purpose</th>
+                  <th style="width:110px;text-align:center">Effective?</th>
+                  <th style="width:220px">Gap Areas</th>
+                  <th style="width:110px;text-align:center">Recommendation</th>
+                  <th style="width:72px"></th>
                 </tr>
               </thead>
               <tbody id="cwAdminBody"></tbody>
@@ -538,7 +491,7 @@ input,textarea,select{font-family:'DM Sans',sans-serif}
           </div>
         </div>
 
-        <!-- Admin: client response summary -->
+        <!-- Client response summary -->
         <div style="margin-top:16px" id="cwClientSummaryWrap"></div>
       </div>
 
@@ -579,7 +532,7 @@ input,textarea,select{font-family:'DM Sans',sans-serif}
       </div>
     </div>
 
-    <!-- FORM BUILDER (full page, flex) -->
+    <!-- FORM BUILDER -->
     <div id="builderView">
       <div class="builder-topbar">
         <button class="btb-back" onclick="closeBuilder()"><i class="ti ti-arrow-left"></i> Back to Forms</button>
@@ -597,7 +550,6 @@ input,textarea,select{font-family:'DM Sans',sans-serif}
         </div>
       </div>
       <div class="builder-body">
-        <!-- LEFT: field types -->
         <div class="builder-left">
           <div class="bleft-section">
             <h4>Text Fields</h4>
@@ -622,8 +574,6 @@ input,textarea,select{font-family:'DM Sans',sans-serif}
             <button class="field-btn" onclick="addField('divider')"><i class="ti ti-minus"></i>Divider</button>
           </div>
         </div>
-
-        <!-- CENTER: canvas -->
         <div class="builder-canvas" id="builderCanvas" onclick="deselectQuestion($event)">
           <div class="canvas-inner">
             <div class="canvas-form-header" style="position:relative">
@@ -638,8 +588,6 @@ input,textarea,select{font-family:'DM Sans',sans-serif}
             </div>
           </div>
         </div>
-
-        <!-- RIGHT: question editor -->
         <div class="builder-right" id="builderRight">
           <div class="bright-empty" id="brightEmpty">
             <i class="ti ti-click"></i>
@@ -723,6 +671,43 @@ input,textarea,select{font-family:'DM Sans',sans-serif}
       <div class="page-hdr"><div><h2>My Progress</h2><p>Your completion status across all assigned forms</p></div></div>
       <div id="cProgressList"></div>
     </div>
+    <div class="cpanel" id="cp-cmeetings">
+      <div class="page-hdr"><div><h2>Meeting Log</h2><p>Sessions scheduled for your district</p></div></div>
+      <div id="cMeetingsList"></div>
+    </div>
+    <div class="cpanel" id="cp-ckpis">
+      <div class="page-hdr"><div><h2>Strategic Priorities & KPIs</h2></div></div>
+      <div id="cKpisList"></div>
+    </div>
+    <div class="cpanel" id="cp-ccrosswalk">
+      <div class="page-hdr"><div><h2>Systems Alignment Mapping</h2><p>Rate each system's effectiveness and provide recommendations</p></div></div>
+      <div id="cwClientProgressBar" style="margin-bottom:16px;display:none">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+          <span style="font-size:12px;color:var(--text3)" id="cwClientProgress">0 of 0 rows completed</span>
+          <div class="save-status" id="cwClientSaveStatus"><i class="ti ti-clock"></i> Unsaved</div>
+        </div>
+        <div class="prog-bar"><div class="prog-fill" id="cwClientProgFill" style="width:0%"></div></div>
+      </div>
+      <div id="cwClientForm"></div>
+      <div id="cwClientNotes" style="display:none">
+        <div class="card" style="margin-top:16px">
+          <div style="font-size:12px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:14px">Summary Notes</div>
+          <div class="ff"><label>Emerging Themes</label><textarea id="cw-themes" class="ci-ta" placeholder="Common patterns or themes across systems..." oninput="cwClientAutoSave()"></textarea></div>
+          <div class="ff"><label>Recommended Next Steps</label><textarea id="cw-nextSteps" class="ci-ta" placeholder="Priority actions for the planning team..." oninput="cwClientAutoSave()"></textarea></div>
+          <div class="ff-row">
+            <div class="ff"><label>Key Stakeholders</label><input type="text" id="cw-stakeholders" class="ci" placeholder="Who should be involved?" oninput="cwClientAutoSave()"></div>
+            <div class="ff"><label>Alignment Goals</label><input type="text" id="cw-goals" class="ci" placeholder="Strategic priorities to address" oninput="cwClientAutoSave()"></div>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:16px;display:flex;justify-content:flex-end;gap:8px" id="cwClientActions" style="display:none">
+        <button class="btn btn-teal" onclick="submitCrosswalk(true)"><i class="ti ti-circle-check"></i> Submit Crosswalk</button>
+      </div>
+    </div>
+    <div class="cpanel" id="cp-cdocuments">
+      <div class="page-hdr"><div><h2>Documents</h2><p>Resources shared by your administrator</p></div></div>
+      <div id="cDocsList"></div>
+    </div>
   </div>
 </div>
 
@@ -769,7 +754,6 @@ input,textarea,select{font-family:'DM Sans',sans-serif}
   </div>
 </div>
 
-<!-- MEETING MODAL -->
 <div class="modal-overlay" id="m-meeting">
   <div class="modal">
     <button class="mclose" onclick="closeModal('m-meeting')"><i class="ti ti-x"></i></button>
@@ -800,7 +784,6 @@ input,textarea,select{font-family:'DM Sans',sans-serif}
   </div>
 </div>
 
-<!-- PRIORITY / KPI MODAL -->
 <div class="modal-overlay" id="m-priority">
   <div class="modal" style="max-width:600px">
     <button class="mclose" onclick="closeModal('m-priority')"><i class="ti ti-x"></i></button>
@@ -817,7 +800,6 @@ input,textarea,select{font-family:'DM Sans',sans-serif}
   </div>
 </div>
 
-<!-- CROSSWALK SYSTEM MODAL -->
 <div class="modal-overlay" id="m-system">
   <div class="modal">
     <button class="mclose" onclick="closeModal('m-system')"><i class="ti ti-x"></i></button>
@@ -832,7 +814,6 @@ input,textarea,select{font-family:'DM Sans',sans-serif}
   </div>
 </div>
 
-<!-- DOCUMENT MODAL -->
 <div class="modal-overlay" id="m-document">
   <div class="modal">
     <button class="mclose" onclick="closeModal('m-document')"><i class="ti ti-x"></i></button>
@@ -892,24 +873,18 @@ const COLORS = ['#27a892','#d4a843','#378add','#7f77dd','#d85a30'];
 // ════════════════════════════════
 // INIT
 // ════════════════════════════════
-// Load config first, then show login
 window.addEventListener('load', () => {
   const ls = document.getElementById('loadingScreen');
   const login = document.getElementById('loginScreen');
-  // Load blobs BEFORE showing login so client credentials are available
   loadBlobs()
-    .then(() => {
-      console.log('Config loaded — clients available:', S.clients.length);
-    })
     .catch(e => console.warn('Config load failed:', e))
     .finally(() => {
-      // Try to restore saved session
       try {
         const saved = localStorage.getItem('lnm_session');
         if (saved) {
           const sess = JSON.parse(saved);
           if (sess.exp > Date.now()) {
-            if (sess.role === 'admin' && S.adminCreds) {
+            if (sess.role === 'admin') {
               S.role = 'admin'; S.user = 'admin';
               if (ls) ls.style.display = 'none';
               loadAllResponses().catch(()=>{});
@@ -925,12 +900,9 @@ window.addEventListener('load', () => {
                 return;
               }
             }
-          } else {
-            localStorage.removeItem('lnm_session');
-          }
+          } else { localStorage.removeItem('lnm_session'); }
         }
       } catch(e) { localStorage.removeItem('lnm_session'); }
-      // No valid session — show login
       if (ls) ls.style.display = 'none';
       if (login) { login.style.display = 'flex'; login.classList.add('show'); }
     });
@@ -941,34 +913,25 @@ window.addEventListener('load', () => {
 // ════════════════════════════════
 async function loadBlobs() {
   const r = await fetch('/.netlify/functions/load-config');
-  if (!r.ok) { console.warn('load-config returned', r.status); return; }
+  if (!r.ok) return;
   const d = await r.json();
-  console.log('Loaded config — ok:', d.ok, 'has config:', !!d.config);
   if (d.ok && d.config) {
     const c = d.config;
     if (c.adminCreds) S.adminCreds = c.adminCreds;
     if (c.districts?.length) S.districts = c.districts;
     if (c.phases?.length) S.phases = c.phases;
     if (c.forms) S.forms = c.forms;
-    if (c.clients?.length) {
-      S.clients = c.clients;
-      console.log('Clients loaded from blobs:', S.clients.map(x=>({u:x.u,name:x.name})));
-    }
+    if (c.clients?.length) S.clients = c.clients;
     if (c.phaseProgress) S.phaseProgress = c.phaseProgress;
-  } else {
-    console.log('No config in blobs — using defaults');
   }
 }
 async function saveBlobs() {
   const payload = {config:{adminCreds:S.adminCreds,districts:S.districts,phases:S.phases,forms:S.forms,clients:S.clients,phaseProgress:S.phaseProgress}};
-  console.log('Saving blobs — clients count:', S.clients.length);
   const res = await fetch('/.netlify/functions/save-config', {
-    method:'POST', headers:{'Content-Type':'application/json'},
-    body: JSON.stringify(payload)
+    method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload)
   });
   const data = await res.json();
   if (!data.ok) throw new Error(data.error || 'Save failed');
-  console.log('Save-config response:', data);
   return data;
 }
 async function saveResponse(username, formId, answers) {
@@ -983,22 +946,14 @@ async function loadMyResponses(username) {
   try {
     const r = await fetch(`/.netlify/functions/load-my-responses?username=${encodeURIComponent(username)}`);
     const d = await r.json();
-    console.log('loadMyResponses for', username, '— ok:', d.ok, 'forms:', d.responses ? Object.keys(d.responses) : 'none');
-    if (d.ok && d.responses) {
-      S.responses[username] = d.responses;
-      console.log('My responses:', Object.entries(d.responses).map(([fid,r])=>fid+': answered='+(Object.keys(r).filter(k=>!k.startsWith('_')).length)));
-    }
+    if (d.ok && d.responses) S.responses[username] = d.responses;
   } catch(e) { console.warn('loadMyResponses error:', e); }
 }
 async function loadAllResponses() {
   try {
     const r = await fetch('/.netlify/functions/load-responses');
     const d = await r.json();
-    console.log('loadAllResponses — ok:', d.ok, 'users:', d.responses ? Object.keys(d.responses) : 'none');
-    if (d.ok && d.responses) {
-      S.responses = d.responses;
-      console.log('S.responses loaded:', Object.entries(S.responses).map(([u,forms])=>u+': '+Object.keys(forms).length+' forms'));
-    }
+    if (d.ok && d.responses) S.responses = d.responses;
   } catch(e) { console.warn('loadAllResponses error:', e); }
 }
 
@@ -1016,26 +971,20 @@ async function doLogin() {
   const err = document.getElementById('lErr');
   err.textContent = '';
   if (!u||!p) { err.textContent='Please enter your username and password.'; return; }
-
-  const tab = S.loginTab;
-
-  if (tab==='admin') {
+  if (S.loginTab==='admin') {
     if (u===S.adminCreds.u && p===S.adminCreds.p) {
       S.role='admin'; S.user='admin';
       launchAdmin();
-      loadBlobs().then(() => { renderDistrictCards(); loadAllResponses(); }).catch(e=>console.warn('Blob load:',e));
-    } else {
-      err.textContent = 'Invalid admin credentials.';
-    }
+      loadBlobs().then(() => { renderDistrictCards(); loadAllResponses(); }).catch(()=>{});
+    } else { err.textContent = 'Invalid admin credentials.'; }
   } else {
-    // Client login — search all clients
     const c = S.clients.find(x => x.u === u && x.p === p);
     if (c) {
       S.role='client'; S.user=u; S.districtId=c.district;
       launchClient(c);
       loadMyResponses(u).then(()=>{ renderClientForms(c); renderClientProgress(c); }).catch(()=>{});
     } else {
-      err.textContent = 'Invalid client credentials. Check username and password.';
+      err.textContent = 'Invalid client credentials.';
       document.getElementById('lPass').value='';
     }
   }
@@ -1046,10 +995,8 @@ function launchAdminSilent() {
   document.getElementById('adminApp').classList.add('show');
   showView('home');
   renderDistrictCards();
-  // Load all responses so phase progress calculates correctly
   loadAllResponses().then(()=>renderDistrictCards()).catch(()=>{});
 }
-
 async function launchClientSilent(client) {
   const lsc = document.getElementById('loginScreen');
   if(lsc){lsc.classList.remove('show');lsc.style.display='none';}
@@ -1057,21 +1004,16 @@ async function launchClientSilent(client) {
   const d = S.districts.find(x=>x.id===client.district);
   const brandEl = document.getElementById('ctbBrand');
   if(brandEl&&brandEl.childNodes[0]) brandEl.childNodes[0].textContent = d?.short||'District';
-  const subEl = document.getElementById('ctbSub');
-  if(subEl) subEl.textContent = 'Strategic Planning';
-  const userEl = document.getElementById('ctbUser');
-  if(userEl) userEl.textContent = client.name;
-  const heroTitle = document.getElementById('cHeroTitle');
-  if(heroTitle) heroTitle.textContent = d?.name||'Strategic Planning Dashboard';
-  const heroSub = document.getElementById('cHeroSub');
-  if(heroSub) heroSub.textContent = 'Fiscal Year '+(d?.fy||'2025-2026')+' · Learn New Mexico';
-  // Load responses first
+  const subEl = document.getElementById('ctbSub'); if(subEl) subEl.textContent = 'Strategic Planning';
+  const userEl = document.getElementById('ctbUser'); if(userEl) userEl.textContent = client.name;
+  const heroTitle = document.getElementById('cHeroTitle'); if(heroTitle) heroTitle.textContent = d?.name||'Strategic Planning Dashboard';
+  const heroSub = document.getElementById('cHeroSub'); if(heroSub) heroSub.textContent = 'Fiscal Year '+(d?.fy||'2025-2026')+' · Learn New Mexico';
   try { await loadMyResponses(client.u); } catch(e) {}
+  applyClientVisibility(client);
   renderClientOverview(client);
   renderClientForms(client);
   renderClientProgress(client);
 }
-
 function togglePassVis() {
   const el = document.getElementById('m-cPass');
   const btn = document.getElementById('passVisBtn');
@@ -1080,14 +1022,12 @@ function togglePassVis() {
   el.style.webkitTextSecurity = showing ? 'disc' : 'none';
   if (btn) btn.innerHTML = showing ? '<i class="ti ti-eye"></i>' : '<i class="ti ti-eye-off"></i>';
 }
-
 function signOut() {
   S.role=null; S.user=null; S.districtId=null;
   localStorage.removeItem('lnm_session');
   ['adminApp','clientApp'].forEach(id=>document.getElementById(id).classList.remove('show'));
   const ls = document.getElementById('loginScreen');
-  ls.style.display = 'flex';
-  ls.classList.add('show');
+  ls.style.display = 'flex'; ls.classList.add('show');
   document.getElementById('lUser').value='';
   document.getElementById('lPass').value='';
 }
@@ -1097,18 +1037,14 @@ function signOut() {
 // ════════════════════════════════
 function launchAdmin() {
   const ls = document.getElementById('loginScreen');
-  ls.classList.remove('show');
-  ls.style.display = 'none';
+  ls.classList.remove('show'); ls.style.display = 'none';
   document.getElementById('adminApp').classList.add('show');
-  // Save session — 30 days for admin
   const exp = Date.now() + 30*24*60*60*1000;
   localStorage.setItem('lnm_session', JSON.stringify({role:'admin',user:'admin',exp}));
   showView('home');
   renderDistrictCards();
-  // Load all responses then re-render so phase gauges are accurate
   loadAllResponses().then(()=>renderDistrictCards()).catch(()=>{});
 }
-
 function showView(name) {
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('on'));
   document.getElementById('builderView').classList.remove('on');
@@ -1122,19 +1058,16 @@ function showView(name) {
   }
   updateBreadcrumb(name);
 }
-
 function updateBreadcrumb(view) {
   const bc = document.getElementById('breadcrumb');
   const d = S.districts.find(x=>x.id===S.districtId);
   if (view==='home') { bc.innerHTML='<span class="crumb">All Districts</span>'; return; }
   if (view==='district'||view==='builder') {
     bc.innerHTML=`<span class="crumb link" onclick="goHome()">All Districts</span>
-      <span class="sep">›</span>
-      <span class="crumb">${d?.short||''}</span>
+      <span class="sep">›</span><span class="crumb">${d?.short||''}</span>
       ${view==='builder'?`<span class="sep">›</span><span class="crumb">Form Builder</span>`:''}`;
   }
 }
-
 function goHome() { showView('home'); renderDistrictCards(); }
 
 // ════════════════════════════════
@@ -1165,7 +1098,6 @@ function renderDistrictCards() {
     card.addEventListener('click', () => openDistrict(d.id));
     grid.appendChild(card);
   });
-  // Add district card
   const add = document.createElement('div');
   add.className='add-district-card';
   add.innerHTML='<i class="ti ti-plus"></i><span>Add District</span>';
@@ -1175,58 +1107,24 @@ function renderDistrictCards() {
 
 function calcPhaseProgress(districtId, phaseId) {
   const phaseForms = S.forms.filter(f=>f.district===districtId&&f.phase===phaseId&&f.status==='active');
-  console.log(`[Phase ${phaseId}] forms matching:`, phaseForms.length, phaseForms.map(f=>({id:f.id,title:f.title,phase:f.phase,status:f.status})));
   if (!phaseForms.length) return S.phaseProgress[districtId]?.[phaseId] || 0;
-
   const distClients = S.clients.filter(c=>c.district===districtId);
-  console.log(`[Phase ${phaseId}] district clients:`, distClients.length);
   if (!distClients.length) return S.phaseProgress[districtId]?.[phaseId] || 0;
-
   let totalPct = 0, count = 0;
   phaseForms.forEach(form => {
     const assignedClients = distClients.filter(c=>c.forms?.includes(form.id));
-    console.log(`[Phase ${phaseId}] form "${form.title}" assigned to:`, assignedClients.map(c=>c.u));
     if (!assignedClients.length) return;
     const qs = (form.questions||[]).filter(q=>q.type!=='heading'&&q.type!=='divider');
-    console.log(`[Phase ${phaseId}] real questions:`, qs.length);
     if (!qs.length) return;
     assignedClients.forEach(c => {
       const resp = S.responses[c.u]?.[form.id];
-      console.log(`[Phase ${phaseId}] responses for ${c.u}:`, resp ? Object.keys(resp).length+' keys' : 'NONE');
-      console.log(`[Phase ${phaseId}] S.responses keys:`, Object.keys(S.responses));
       const answered = resp ? qs.filter(q=>resp[q.id]!==undefined&&String(resp[q.id]).trim()!=='').length : 0;
-      console.log(`[Phase ${phaseId}] answered:`, answered, '/', qs.length);
-      totalPct += answered/qs.length;
-      count++;
+      totalPct += answered/qs.length; count++;
     });
   });
-
   const autoProgress = count > 0 ? Math.round((totalPct/count)*60) : 0;
   const adminOverride = S.phaseProgress[districtId]?.[phaseId+'_override'] || 0;
-  const total = Math.min(100, autoProgress + adminOverride);
-  console.log(`[Phase ${phaseId}] RESULT: auto=${autoProgress} override=${adminOverride} total=${total}`);
-  return total;
-}
-
-function getPhaseAutoProgress(districtId, phaseId) {
-  const phaseForms = S.forms.filter(f=>f.district===districtId&&f.phase===phaseId&&f.status==='active');
-  if (!phaseForms.length) return 0;
-  const distClients = S.clients.filter(c=>c.district===districtId);
-  if (!distClients.length) return 0;
-  let totalPct = 0, count = 0;
-  phaseForms.forEach(form => {
-    const assignedClients = distClients.filter(c=>c.forms?.includes(form.id));
-    if (!assignedClients.length) return;
-    const qs = (form.questions||[]).filter(q=>q.type!=='heading'&&q.type!=='divider');
-    if (!qs.length) return;
-    assignedClients.forEach(c => {
-      const resp = S.responses[c.u]?.[form.id];
-      const answered = resp ? qs.filter(q=>resp[q.id]!==undefined&&String(resp[q.id]).trim()!=='').length : 0;
-      totalPct += answered/qs.length;
-      count++;
-    });
-  });
-  return count > 0 ? Math.round((totalPct/count)*60) : 0;
+  return Math.min(100, autoProgress + adminOverride);
 }
 
 function openDistrict(id) {
@@ -1234,19 +1132,8 @@ function openDistrict(id) {
   showView('district');
   dTab('forms', document.querySelector('.dtab'));
   document.getElementById('dpFormsTitle').textContent = S.districts.find(d=>d.id===id)?.name + ' — Forms';
-  renderFormsGrid();
-  renderClientsGrid();
-  renderResponsesPanel();
-  renderSettingsPanel();
-  // Reload all responses to ensure phase progress is current
-  loadAllResponses().then(()=>{
-    renderDistrictCards();
-    if(S.districtId===id) {
-      renderSettingsPanel();
-      // Force re-render gauges with fresh data
-      renderSettingsGauges();
-    }
-  }).catch(()=>{});
+  renderFormsGrid(); renderClientsGrid(); renderResponsesPanel(); renderSettingsPanel();
+  loadAllResponses().then(()=>{ renderDistrictCards(); if(S.districtId===id) renderSettingsGauges(); }).catch(()=>{});
 }
 
 function dTab(name, el) {
@@ -1296,14 +1183,11 @@ function renderFormsGrid() {
   add.onclick = openNewForm;
   grid.appendChild(add);
 }
-
 function openNewForm() {
   const id = 'f'+Date.now();
   S.forms.push({id, title:'Untitled Form', district:S.districtId, phase:'', status:'draft', questions:[], desc:'', createdAt:new Date().toISOString()});
-  saveBlobs();
-  openBuilder(id);
+  saveBlobs(); openBuilder(id);
 }
-
 function deleteForm(id) {
   if (!confirm('Delete this form?')) return;
   S.forms = S.forms.filter(f=>f.id!==id);
@@ -1315,53 +1199,30 @@ function deleteForm(id) {
 // FORM BUILDER
 // ════════════════════════════════
 function openBuilder(formId) {
-  S.currentFormId = formId;
-  S.selectedQ = null;
-  const f = S.forms.find(x=>x.id===formId);
-  if (!f) return;
+  S.currentFormId = formId; S.selectedQ = null;
+  const f = S.forms.find(x=>x.id===formId); if (!f) return;
   document.getElementById('builderTitle').value = f.title;
   document.getElementById('builderStatus').value = f.status||'draft';
-  // Populate phase select
   const phaseSel = document.getElementById('builderPhase');
   phaseSel.innerHTML = '<option value="">No phase</option>' +
     S.phases.map(p=>`<option value="${p.id}" ${f.phase===p.id?'selected':''}>${p.name}</option>`).join('');
   document.getElementById('canvasTitle').textContent = f.title;
   document.getElementById('canvasDesc').textContent = f.desc||'Form description...';
-  renderQuestionsList();
-  showEditor(null);
-  showView('builder');
+  renderQuestionsList(); showEditor(null); showView('builder');
 }
-
-function closeBuilder() {
-  showView('district');
-  renderFormsGrid();
-}
-
+function closeBuilder() { showView('district'); renderFormsGrid(); }
 function updateFormTitle(v) {
   const f = S.forms.find(x=>x.id===S.currentFormId);
   if (f) { f.title=v; const t=document.getElementById('canvasTitle'); if(t)t.innerText=v; const bt=document.getElementById('builderTitle'); if(bt)bt.value=v; }
 }
 function updateFormField(field, val) {
-  const f = S.forms.find(x=>x.id===S.currentFormId);
-  if (!f) return;
+  const f = S.forms.find(x=>x.id===S.currentFormId); if (!f) return;
   if (field==='title') { f.title=val.trim(); document.getElementById('builderTitle').value=val.trim(); }
-  if (field==='desc') { f.desc=val.trim(); }
+  if (field==='desc') f.desc=val.trim();
 }
-function updateFormStatus(v) {
-  const f = S.forms.find(x=>x.id===S.currentFormId);
-  if (f) f.status=v;
-}
-function updateFormPhase(v) {
-  const f = S.forms.find(x=>x.id===S.currentFormId);
-  if (f) f.phase=v;
-}
-
-function saveBuilder() {
-  saveBlobs();
-  toast('Form saved');
-  closeBuilder();
-}
-
+function updateFormStatus(v) { const f = S.forms.find(x=>x.id===S.currentFormId); if (f) f.status=v; }
+function updateFormPhase(v) { const f = S.forms.find(x=>x.id===S.currentFormId); if (f) f.phase=v; }
+function saveBuilder() { saveBlobs(); toast('Form saved'); closeBuilder(); }
 function renderQuestionsList() {
   const f = S.forms.find(x=>x.id===S.currentFormId);
   const qs = f?.questions||[];
@@ -1369,36 +1230,30 @@ function renderQuestionsList() {
   const empty = document.getElementById('canvasEmpty');
   list.innerHTML = '';
   empty.style.display = qs.length ? 'none' : 'block';
-  qs.forEach((q,i) => {
-    const card = buildQCard(q, i);
-    list.appendChild(card);
-  });
+  qs.forEach((q,i) => list.appendChild(buildQCard(q, i)));
 }
-
 function buildQCard(q, idx) {
   const div = document.createElement('div');
   div.className = 'qcard' + (S.selectedQ===idx?' selected':'');
-  div.dataset.idx = idx;
-  div.draggable = true;
+  div.dataset.idx = idx; div.draggable = true;
   div.onclick = (e) => { e.stopPropagation(); selectQuestion(idx); };
   div.innerHTML = `<div class="qcard-drag"><i class="ti ti-grip-vertical"></i></div>
     <div class="qcard-body">
-      ${q.type==='heading' ? `<div style="margin-bottom:2px"><div style="font-size:17px;font-weight:700;color:var(--text);border-bottom:2px solid var(--bord);padding-bottom:6px;margin-bottom:5px">${q.text||'Section Heading'}</div>${q.helper?`<div style="font-size:13px;color:var(--text3);margin-top:4px">${q.helper}</div>`:''}</div>` :
+      ${q.type==='heading' ? `<div><div style="font-size:17px;font-weight:700;color:var(--text);border-bottom:2px solid var(--bord);padding-bottom:6px;margin-bottom:5px">${q.text||'Section Heading'}</div>${q.helper?`<div style="font-size:13px;color:var(--text3);margin-top:4px">${q.helper}</div>`:''}</div>` :
         q.type==='divider' ? `<hr style="border:none;border-top:2px dashed var(--bord);margin:4px 0">` :
         `<div class="qcard-label">${q.text||'<em style="color:var(--text3);font-weight:400">Click to add question text</em>'}${q.required?'<span class="qcard-required">*</span>':''}</div>
-        ${q.helper?`<div class="qcard-helper" style="font-size:12px;color:var(--text3);margin-bottom:8px;font-style:italic">${q.helper}</div>`:''}
+        ${q.helper?`<div class="qcard-helper">${q.helper}</div>`:''}
         <div class="qcard-preview">${getQPreview(q)}</div>`}
     </div>
     <div class="qcard-actions">
-      <button class="qcard-btn" onclick="event.stopPropagation();duplicateQ(${idx})" title="Duplicate"><i class="ti ti-copy"></i></button>
-      <button class="qcard-btn del" onclick="event.stopPropagation();removeQ(${idx})" title="Delete"><i class="ti ti-trash"></i></button>
+      <button class="qcard-btn" onclick="event.stopPropagation();duplicateQ(${idx})"><i class="ti ti-copy"></i></button>
+      <button class="qcard-btn del" onclick="event.stopPropagation();removeQ(${idx})"><i class="ti ti-trash"></i></button>
     </div>`;
   setupQCardDrag(div, idx);
   return div;
 }
-
 function getQPreview(q) {
-  if (q.type==='text') return `<input type="text" placeholder="Short answer..." class="qcard-preview" style="pointer-events:none;width:100%;padding:7px 9px;border-radius:6px;border:1.5px solid var(--bord);background:var(--surf);font-size:12px;color:var(--text3);font-family:inherit">`;
+  if (q.type==='text') return `<input type="text" placeholder="Short answer..." style="pointer-events:none;width:100%;padding:7px 9px;border-radius:6px;border:1.5px solid var(--bord);background:var(--surf);font-size:12px;color:var(--text3);font-family:inherit">`;
   if (q.type==='textarea') return `<textarea placeholder="Long answer..." style="pointer-events:none;width:100%;padding:7px 9px;border-radius:6px;border:1.5px solid var(--bord);background:var(--surf);font-size:12px;min-height:52px;font-family:inherit;color:var(--text3);resize:none"></textarea>`;
   if (q.type==='number') return `<input type="number" placeholder="0" style="pointer-events:none;width:120px;padding:7px 9px;border-radius:6px;border:1.5px solid var(--bord);background:var(--surf);font-size:12px;font-family:inherit;color:var(--text3)">`;
   if (q.type==='radio'||q.type==='checkbox') return `<div class="mc-preview">${(q.options||['Option 1','Option 2']).map(o=>`<div class="mc-opt-preview"><span style="width:14px;height:14px;border-radius:${q.type==='radio'?'50%':'3px'};border:1.5px solid var(--bord2);display:inline-block;flex-shrink:0"></span>${o}</div>`).join('')}</div>`;
@@ -1407,37 +1262,22 @@ function getQPreview(q) {
   if (q.type==='scale') return `<div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text3)"><span>${q.min||1}</span><div style="flex:1;height:4px;background:var(--bord2);border-radius:4px"></div><span>${q.max||10}</span></div>`;
   return '';
 }
-
 function addField(type) {
-  const f = S.forms.find(x=>x.id===S.currentFormId);
-  if (!f) return;
-  const q = {id:'q'+Date.now(), type, text:'', helper:'', required:false, options: (type==='radio'||type==='checkbox'||type==='dropdown')?['Option 1','Option 2']:[], min:1, max:10};
-  f.questions = f.questions||[];
-  f.questions.push(q);
-  renderQuestionsList();
-  selectQuestion(f.questions.length-1);
+  const f = S.forms.find(x=>x.id===S.currentFormId); if (!f) return;
+  const q = {id:'q'+Date.now(), type, text:'', helper:'', required:false, options:(type==='radio'||type==='checkbox'||type==='dropdown')?['Option 1','Option 2']:[], min:1, max:10};
+  f.questions = f.questions||[]; f.questions.push(q);
+  renderQuestionsList(); selectQuestion(f.questions.length-1);
 }
-
-function selectQuestion(idx) {
-  S.selectedQ = idx;
-  renderQuestionsList();
-  showEditor(idx);
-}
-
+function selectQuestion(idx) { S.selectedQ = idx; renderQuestionsList(); showEditor(idx); }
 function deselectQuestion(e) {
   if (e && e.target.id!=='builderCanvas' && e.target.className!=='canvas-inner') return;
-  S.selectedQ = null;
-  renderQuestionsList();
-  showEditor(null);
+  S.selectedQ = null; renderQuestionsList(); showEditor(null);
 }
-
 function showEditor(idx) {
-  const empty = document.getElementById('brightEmpty');
-  const editor = document.getElementById('brightEditor');
+  const empty = document.getElementById('brightEmpty'), editor = document.getElementById('brightEditor');
   if (idx===null) { empty.style.display='block'; editor.style.display='none'; return; }
   const f = S.forms.find(x=>x.id===S.currentFormId);
-  const q = f?.questions?.[idx];
-  if (!q) return;
+  const q = f?.questions?.[idx]; if (!q) return;
   empty.style.display='none'; editor.style.display='block';
   document.getElementById('eq-text').value = q.text||'';
   document.getElementById('eq-helper').value = q.helper||'';
@@ -1448,35 +1288,20 @@ function showEditor(idx) {
   document.getElementById('eq-scale-section').style.display = isScale?'block':'none';
   if (hasOpts) renderOptionsList(q.options||[]);
   if (isScale) { document.getElementById('eq-min').value=q.min||1; document.getElementById('eq-max').value=q.max||10; }
-  const allowOtherEl = document.getElementById('eq-allowOther');
-  if (allowOtherEl) allowOtherEl.checked = q.allowOther !== false && ['radio','checkbox'].includes(q.type);
   const isSpecial = ['heading','divider'].includes(q.type);
-  // Update label based on field type
-  const textLabel = document.querySelector('#brightEditor .edit-field label');
-  if (textLabel) textLabel.textContent = q.type==='heading' ? 'Heading Text' : q.type==='divider' ? 'Divider' : 'Question Text';
-  const helperLabel = document.querySelectorAll('#brightEditor .edit-field label')[1];
-  if (helperLabel) helperLabel.textContent = q.type==='heading' ? 'Subheading / Description' : 'Helper Text';
-  // Update section title in editor panel
-  const sectionTitle = document.querySelector('#brightEditor .bright-section h4');
-  if (sectionTitle) sectionTitle.textContent = q.type==='heading' ? 'Title / Header Settings' : q.type==='divider' ? 'Divider' : 'Question Settings';
   document.getElementById('eq-text').closest('.edit-field').style.display = isSpecial&&q.type==='divider'?'none':'block';
   document.getElementById('eq-helper').closest('.edit-field').style.display = q.type==='divider'?'none':'block';
   document.getElementById('eq-required').closest('.toggle-row').style.display = isSpecial?'none':'flex';
 }
-
 function updateSelectedQ(prop, val) {
   const f = S.forms.find(x=>x.id===S.currentFormId);
   if (!f||S.selectedQ===null) return;
-  f.questions[S.selectedQ][prop] = val;
-  renderQuestionsList();
+  f.questions[S.selectedQ][prop] = val; renderQuestionsList();
 }
-
 function renderOptionsList(opts) {
-  const list = document.getElementById('eq-options-list');
-  list.innerHTML = '';
+  const list = document.getElementById('eq-options-list'); list.innerHTML = '';
   opts.forEach((o,i) => {
-    const row = document.createElement('div');
-    row.className = 'option-row';
+    const row = document.createElement('div'); row.className = 'option-row';
     row.innerHTML = `<input type="text" value="${o}" placeholder="Option ${i+1}" onchange="updateOption(${i},this.value)">
       <button class="option-del" onclick="removeOption(${i})"><i class="ti ti-x"></i></button>`;
     list.appendChild(row);
@@ -1485,25 +1310,17 @@ function renderOptionsList(opts) {
 function updateOption(i,v){ const f=S.forms.find(x=>x.id===S.currentFormId);if(f&&S.selectedQ!==null){f.questions[S.selectedQ].options[i]=v;renderQuestionsList();} }
 function addOption(){ const f=S.forms.find(x=>x.id===S.currentFormId);if(!f||S.selectedQ===null)return;const q=f.questions[S.selectedQ];q.options=q.options||[];q.options.push('Option '+(q.options.length+1));renderOptionsList(q.options);renderQuestionsList(); }
 function removeOption(i){ const f=S.forms.find(x=>x.id===S.currentFormId);if(!f||S.selectedQ===null)return;f.questions[S.selectedQ].options.splice(i,1);renderOptionsList(f.questions[S.selectedQ].options);renderQuestionsList(); }
-
 function removeQ(idx) {
-  const f = S.forms.find(x=>x.id===S.currentFormId);
-  if (!f) return;
+  const f = S.forms.find(x=>x.id===S.currentFormId); if (!f) return;
   f.questions.splice(idx,1);
-  if (S.selectedQ===idx) S.selectedQ=null;
-  else if (S.selectedQ>idx) S.selectedQ--;
+  if (S.selectedQ===idx) S.selectedQ=null; else if (S.selectedQ>idx) S.selectedQ--;
   renderQuestionsList(); showEditor(S.selectedQ);
 }
 function duplicateQ(idx) {
-  const f = S.forms.find(x=>x.id===S.currentFormId);
-  if (!f) return;
-  const copy = JSON.parse(JSON.stringify(f.questions[idx]));
-  copy.id = 'q'+Date.now();
-  f.questions.splice(idx+1,0,copy);
-  renderQuestionsList();
-  selectQuestion(idx+1);
+  const f = S.forms.find(x=>x.id===S.currentFormId); if (!f) return;
+  const copy = JSON.parse(JSON.stringify(f.questions[idx])); copy.id = 'q'+Date.now();
+  f.questions.splice(idx+1,0,copy); renderQuestionsList(); selectQuestion(idx+1);
 }
-
 function setupQCardDrag(el, idx) {
   el.addEventListener('dragstart', e=>{ e.dataTransfer.setData('qidx',''+idx); el.classList.add('dragging'); });
   el.addEventListener('dragend', ()=>el.classList.remove('dragging'));
@@ -1511,11 +1328,9 @@ function setupQCardDrag(el, idx) {
   el.addEventListener('dragleave', ()=>el.classList.remove('drag-over'));
   el.addEventListener('drop', e=>{
     e.preventDefault(); el.classList.remove('drag-over');
-    const from=+e.dataTransfer.getData('qidx'), to=idx;
-    if(from===to) return;
+    const from=+e.dataTransfer.getData('qidx'), to=idx; if(from===to) return;
     const f=S.forms.find(x=>x.id===S.currentFormId);
-    const [q]=f.questions.splice(from,1);
-    f.questions.splice(to,0,q);
+    const [q]=f.questions.splice(from,1); f.questions.splice(to,0,q);
     renderQuestionsList(); showEditor(null); S.selectedQ=null;
   });
 }
@@ -1524,16 +1339,14 @@ function setupQCardDrag(el, idx) {
 // CLIENTS
 // ════════════════════════════════
 function renderClientsGrid() {
-  const grid = document.getElementById('clientsGrid');
-  grid.innerHTML = '';
+  const grid = document.getElementById('clientsGrid'); grid.innerHTML = '';
   const clients = S.clients.filter(c=>c.district===S.districtId);
-  if (!clients.length) { grid.innerHTML='<div style="text-align:center;padding:32px;color:var(--text3)"><i class="ti ti-users" style="font-size:28px;display:block;margin-bottom:8px;opacity:.4"></i><p style="font-size:13px">No clients yet. Add your first client.</p></div>'; return; }
+  if (!clients.length) { grid.innerHTML='<div style="text-align:center;padding:32px;color:var(--text3)"><i class="ti ti-users" style="font-size:28px;display:block;margin-bottom:8px;opacity:.4"></i><p style="font-size:13px">No clients yet.</p></div>'; return; }
   clients.forEach(c => {
     const assigned = c.forms||[];
     const done = assigned.filter(fid=>S.responses[c.u]?.[fid]).length;
     const pct = assigned.length ? Math.round((done/assigned.length)*100) : 0;
-    const card = document.createElement('div');
-    card.className = 'client-card';
+    const card = document.createElement('div'); card.className = 'client-card';
     card.innerHTML = `
       <div class="client-av">${c.name.charAt(0)}</div>
       <div class="client-info">
@@ -1548,11 +1361,9 @@ function renderClientsGrid() {
     grid.appendChild(card);
   });
 }
-
 function openEditClient(id) {
   S.editingClientId = id;
-  const c = S.clients.find(x=>x.id===id);
-  if (!c) return;
+  const c = S.clients.find(x=>x.id===id); if (!c) return;
   document.getElementById('m-clientTitle').textContent = 'Edit Client';
   document.getElementById('m-cName').value = c.name;
   document.getElementById('m-cUser').value = c.u;
@@ -1561,7 +1372,6 @@ function openEditClient(id) {
   renderClientFormAssign(c);
   openModal('m-client');
 }
-
 function openNewClientModal() {
   S.editingClientId = null;
   document.getElementById('m-clientTitle').textContent = 'Add Client';
@@ -1571,27 +1381,20 @@ function openNewClientModal() {
   renderClientFormAssign(null);
   openModal('m-client');
 }
-
-// Also ensure the Add Client button calls this
-function openClientModal() { openNewClientModal(); }
-
 function renderClientFormAssign(client) {
-  const wrap = document.getElementById('m-cForms');
-  wrap.innerHTML = '';
-  // Show both active and draft forms so admin can assign them
+  const wrap = document.getElementById('m-cForms'); wrap.innerHTML = '';
   const distForms = S.forms.filter(f=>f.district===S.districtId);
-  if (!distForms.length) { wrap.innerHTML='<span style="font-size:12px;color:var(--text3)">No forms in this district yet. Create a form first.</span>'; return; }
+  if (!distForms.length) { wrap.innerHTML='<span style="font-size:12px;color:var(--text3)">No forms in this district yet.</span>'; return; }
   distForms.forEach(f => {
     const checked = client?.forms?.includes(f.id);
     const lbl = document.createElement('label');
     lbl.style.cssText='display:flex;align-items:center;gap:6px;padding:6px 10px;border-radius:7px;border:1.5px solid var(--bord);background:var(--surf);font-size:12px;cursor:pointer;transition:all .18s';
-    lbl.innerHTML=`<input type="checkbox" value="${f.id}" ${checked?'checked':''} style="accent-color:var(--navy)"> ${f.title} <span style="font-size:10px;padding:1px 5px;border-radius:3px;background:${f.status==='active'?'rgba(34,165,90,.1)':'rgba(107,122,153,.1)'};color:${f.status==='active'?'#1a7a40':'#6b7a99'};margin-left:4px">${f.status}</span>`;
+    lbl.innerHTML=`<input type="checkbox" value="${f.id}" ${checked?'checked':''} style="accent-color:var(--navy)"> ${f.title}`;
     if (checked) { lbl.style.borderColor='var(--navy)'; lbl.style.background='#eef2f8'; }
     lbl.querySelector('input').addEventListener('change',function(){lbl.style.borderColor=this.checked?'var(--navy)':'var(--bord)';lbl.style.background=this.checked?'#eef2f8':'var(--surf)';});
     wrap.appendChild(lbl);
   });
 }
-
 async function saveClient() {
   const name = document.getElementById('m-cName').value.trim();
   const u = document.getElementById('m-cUser').value.trim();
@@ -1602,35 +1405,29 @@ async function saveClient() {
   const forms = [...document.querySelectorAll('#m-cForms input:checked')].map(i=>i.value);
   if (editId) {
     const c = S.clients.find(x=>x.id===editId);
-    if (c) {
-      c.name=name; c.u=u; c.forms=forms;
-      if(p) { c.p=p; console.log('Password updated for', u, '— new password:', p); }
-      console.log('Client updated:', JSON.stringify(c));
-    }
+    if (c) { c.name=name; c.u=u; c.forms=forms; if(p) c.p=p; }
   } else {
     if (!p) { toast('Password required for new client','err'); return; }
     if (S.clients.find(x=>x.u===u)) { toast('Username already taken','err'); return; }
-    const newClient = {id:'c'+Date.now(),name,u,p,district:S.districtId,forms};
-    S.clients.push(newClient);
-    console.log('New client added:', JSON.stringify(newClient));
+    S.clients.push({id:'c'+Date.now(),name,u,p,district:S.districtId,forms});
   }
-  console.log('All clients before save:', JSON.stringify(S.clients.map(c=>({u:c.u,p:c.p,name:c.name}))));
-  try {
-    await saveBlobs();
-    console.log('Blobs saved successfully');
-    toast(editId?'Client updated':'Client added');
-  } catch(e) {
-    console.error('Blob save FAILED:', e);
-    toast('Save failed — check console','err');
-  }
-  S.editingClientId = null;
-  closeModal('m-client');
-  renderClientsGrid();
+  try { await saveBlobs(); toast(editId?'Client updated':'Client added'); }
+  catch(e) { toast('Save failed','err'); }
+  S.editingClientId = null; closeModal('m-client'); renderClientsGrid();
 }
 function deleteClient(id) {
   if (!confirm('Delete client?')) return;
   S.clients = S.clients.filter(c=>c.id!==id);
   saveBlobs(); renderClientsGrid(); toast('Client removed','err');
+}
+function createDistrict() {
+  const name = document.getElementById('m-dName').value.trim();
+  if (!name) { toast('District name required','err'); return; }
+  const short = document.getElementById('m-dShort').value.trim()||name.split(' ').map(w=>w[0]).join('').toUpperCase();
+  const fy = document.getElementById('m-dFY').value.trim()||'2025–2026';
+  const id = 'd'+Date.now();
+  S.districts.push({id,name,short,fy});
+  saveBlobs(); closeModal('m-district'); renderDistrictCards(); toast('District created');
 }
 
 // ════════════════════════════════
@@ -1643,18 +1440,16 @@ function renderResponsesPanel() {
 }
 function renderResponses() {
   const formId = document.getElementById('respFormSelect').value;
-  const grid = document.getElementById('responsesGrid');
-  grid.innerHTML = '';
+  const grid = document.getElementById('responsesGrid'); grid.innerHTML = '';
   if (!formId) return;
   const form = S.forms.find(f=>f.id===formId);
   const clients = S.clients.filter(c=>c.district===S.districtId&&c.forms?.includes(formId));
   if (!clients.length) { grid.innerHTML='<div style="text-align:center;padding:24px;color:var(--text3);font-size:13px">No clients assigned to this form</div>'; return; }
   clients.forEach(c => {
     const resp = S.responses[c.u]?.[formId];
-    const card = document.createElement('div');
-    card.className = 'response-card';
+    const card = document.createElement('div'); card.className = 'response-card';
     card.innerHTML=`<div class="rc-header">
-      <div class="rc-client"><span class="client-av" style="width:28px;height:28px;font-size:11px;margin-right:6px">${c.name.charAt(0)}</span>${c.name}</div>
+      <div class="rc-client"><span style="width:28px;height:28px;border-radius:50%;background:var(--navy);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;margin-right:6px">${c.name.charAt(0)}</span>${c.name}</div>
       <span class="badge ${resp&&resp._complete?'badge-green':resp?'badge-gold':'badge-gray'}">${resp&&resp._complete?'Submitted':resp?'In progress':'Not started'}</span>
     </div>
     ${resp ? `<div class="rc-answers">${(form.questions||[]).filter(q=>q.type!=='heading'&&q.type!=='divider').map(q=>`<div class="rc-answer"><div class="rc-q">${q.text||q.type}</div><div class="rc-a">${Array.isArray(resp[q.id])?resp[q.id].join(', '):(resp[q.id]!==undefined&&resp[q.id]!==''?resp[q.id]:'<em style="color:var(--text3)">No response</em>')}</div></div>`).join('')}</div>` : '<div style="font-size:12px;color:var(--text3)">No responses submitted yet</div>'}`;
@@ -1667,29 +1462,25 @@ function exportCSV() {
   const form = S.forms.find(f=>f.id===formId);
   const clients = S.clients.filter(c=>c.district===S.districtId&&c.forms?.includes(formId));
   const qs = form.questions||[];
-  const rows = [['Client','Username',...qs.map(q=>q.text||q.id),'Submitted'],...clients.map(c=>{
-    const r=S.responses[c.u]?.[formId];
-    return [c.name,c.u,...qs.map(q=>r?String(Array.isArray(r[q.id])?r[q.id].join('|'):r[q.id]||''):''),r?r._savedAt||'Yes':'No'];
-  })];
+  const rows = [['Client','Username',...qs.map(q=>q.text||q.id),'Submitted'],
+    ...clients.map(c=>{const r=S.responses[c.u]?.[formId];return[c.name,c.u,...qs.map(q=>r?String(Array.isArray(r[q.id])?r[q.id].join('|'):r[q.id]||''):''),r?r._savedAt||'Yes':'No'];})];
   const csv = rows.map(r=>r.map(x=>`"${String(x).replace(/"/g,'""')}"`).join(',')).join('\n');
   const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download=form.title.replace(/\s+/g,'_')+'.csv';a.click();
   toast('CSV exported');
 }
 
 // ════════════════════════════════
-// SETTINGS
+// SETTINGS & GAUGES
 // ════════════════════════════════
 function renderSettingsPanel() {
-  const d = S.districts.find(x=>x.id===S.districtId);
-  if (!d) return;
+  const d = S.districts.find(x=>x.id===S.districtId); if (!d) return;
   document.getElementById('ds-name').value = d.name;
   document.getElementById('ds-short').value = d.short;
   document.getElementById('ds-fy').value = d.fy;
   renderSettingsGauges();
 }
 function saveDistrictSettings() {
-  const d = S.districts.find(x=>x.id===S.districtId);
-  if (!d) return;
+  const d = S.districts.find(x=>x.id===S.districtId); if (!d) return;
   d.name = document.getElementById('ds-name').value.trim()||d.name;
   d.short = document.getElementById('ds-short').value.trim()||d.short;
   d.fy = document.getElementById('ds-fy').value.trim()||d.fy;
@@ -1703,10 +1494,6 @@ function confirmDeleteDistrict(id) {
   saveBlobs(); goHome(); renderDistrictCards(); toast('District deleted','err');
 }
 function deleteDistrict() { confirmDeleteDistrict(S.districtId); }
-
-// ════════════════════════════════
-// GAUGES
-// ════════════════════════════════
 function gaugeArc(pct,color,sz){
   const r=sz/2-5,cx=sz/2,cy=sz/2,start=-210,sweep=240;
   const a1=start*Math.PI/180,a2=(start+sweep*(pct/100))*Math.PI/180;
@@ -1722,86 +1509,105 @@ function gaugeArc(pct,color,sz){
   </svg>`;
 }
 function renderSettingsGauges() {
-  const wrap = document.getElementById('settingsGauges');
-  if (!wrap) return;
+  const wrap = document.getElementById('settingsGauges'); if (!wrap) return;
   wrap.innerHTML = '';
   S.phases.forEach((ph,i) => {
     const overridePct = S.phaseProgress[S.districtId]?.[ph.id+'_override'] || 0;
     const color = COLORS[i%COLORS.length];
-    const cell = document.createElement('div');
-    cell.className='gcell';
-    cell.id=`sg-${S.districtId}-${ph.id}`;
-    // Start with 0 — will be updated after responses load
+    const cell = document.createElement('div'); cell.className='gcell'; cell.id=`sg-${S.districtId}-${ph.id}`;
     cell.innerHTML=`${gaugeArc(0,color,68)}
       <div class="gpct" style="color:${color}" id="sgpct-${S.districtId}-${ph.id}">0%</div>
       <div class="glbl">${ph.name}</div>
-      <div class="gsub" style="margin-bottom:4px" id="sgsub-${S.districtId}-${ph.id}">loading...</div>
+      <div class="gsub" id="sgsub-${S.districtId}-${ph.id}">loading...</div>
       <div style="font-size:10px;color:var(--text3);margin-bottom:3px">Admin override (0–40%)</div>
       <input type="range" min="0" max="40" step="1" value="${overridePct}" oninput="updateGaugeOverride('${S.districtId}','${ph.id}',+this.value)">`;
     wrap.appendChild(cell);
   });
-  // Refresh with real data after ensuring responses are loaded
-  loadAllResponses().then(()=>{
-    S.phases.forEach(ph => refreshGaugeCell(S.districtId, ph.id));
-  }).catch(()=>{
-    S.phases.forEach(ph => refreshGaugeCell(S.districtId, ph.id));
-  });
+  loadAllResponses().then(()=>{ S.phases.forEach(ph => refreshGaugeCell(S.districtId, ph.id)); }).catch(()=>{ S.phases.forEach(ph => refreshGaugeCell(S.districtId, ph.id)); });
 }
 function updateGaugeOverride(did,pid,val){
   if(!S.phaseProgress[did]) S.phaseProgress[did]={};
   S.phaseProgress[did][pid+'_override'] = val;
-  refreshGaugeCell(did, pid);
-  saveBlobs();
-  renderClientGauges();
+  refreshGaugeCell(did, pid); saveBlobs(); renderClientGauges();
 }
-
 function refreshGaugeCell(did, pid) {
   const autoPct = calcPhaseProgress(did, pid);
   const overridePct = S.phaseProgress[did]?.[pid+'_override'] || 0;
   const totalPct = Math.min(100, autoPct + overridePct);
-  const cell = document.getElementById(`sg-${did}-${pid}`);
-  if (!cell) return;
+  const cell = document.getElementById(`sg-${did}-${pid}`); if (!cell) return;
   const i = S.phases.findIndex(p=>p.id===pid);
   const color = COLORS[i%COLORS.length];
   const old = cell.querySelector('svg');
   if (old) { const t=document.createElement('div'); t.innerHTML=gaugeArc(totalPct,color,68); cell.replaceChild(t.firstChild,old); }
-  const pctEl = document.getElementById(`sgpct-${did}-${pid}`);
-  if (pctEl) pctEl.textContent = totalPct+'%';
-  const sub = cell.querySelector('.gsub');
-  if (sub) sub.textContent = autoPct+'% auto · '+overridePct+'% override';
+  const pctEl = document.getElementById(`sgpct-${did}-${pid}`); if (pctEl) pctEl.textContent = totalPct+'%';
+  const sub = cell.querySelector('.gsub'); if (sub) sub.textContent = autoPct+'% auto · '+overridePct+'% override';
 }
-function updateGauge(did,pid,val,slider){ updateGaugeOverride(did,pid,val); }
 
 // ════════════════════════════════
 // CLIENT APP
 // ════════════════════════════════
 async function launchClient(client) {
   const lsc = document.getElementById('loginScreen');
-  lsc.classList.remove('show');
-  lsc.style.display = 'none';
+  lsc.classList.remove('show'); lsc.style.display = 'none';
   document.getElementById('clientApp').classList.add('show');
-  // Save session — 7 days for client
   const exp = Date.now() + 7*24*60*60*1000;
   localStorage.setItem('lnm_session', JSON.stringify({role:'client',user:client.u,district:client.district,exp}));
   const d = S.districts.find(x=>x.id===client.district);
-  const brandEl = document.getElementById('ctbBrand');
-  brandEl.childNodes[0].textContent = d?.short||'District';
+  document.getElementById('ctbBrand').childNodes[0].textContent = d?.short||'District';
   document.getElementById('ctbSub').textContent = 'Strategic Planning';
   document.getElementById('ctbUser').textContent = client.name;
   document.getElementById('cHeroTitle').textContent = d?.name||'Strategic Planning Dashboard';
   document.getElementById('cHeroSub').textContent = `Fiscal Year ${d?.fy||'2025-2026'} · Learn New Mexico`;
-  renderClientStats(client);
-  renderClientGauges();
-  renderClientForms(client);
-  renderClientProgress(client);
+  applyClientVisibility(client);
+  renderClientStats(client); renderClientGauges(); renderClientForms(client); renderClientProgress(client);
 }
+
+// ── CLIENT VISIBILITY (per-client crosswalk assignment) ──
+function getCrosswalkAssignedClients(districtId) {
+  const d = S.districts.find(x=>x.id===districtId);
+  return d?.crosswalkAssigned || [];
+}
+function setCrosswalkAssigned(districtId, clientIds) {
+  const d = S.districts.find(x=>x.id===districtId);
+  if (!d) return;
+  d.crosswalkAssigned = clientIds;
+}
+
+// Also keep legacy visibility for meetings/kpis/documents
+function getVisibility(districtId) {
+  const d = S.districts.find(x=>x.id===districtId);
+  return d?.clientVisibility || {};
+}
+function setVisibility(districtId, tab, val) {
+  const d = S.districts.find(x=>x.id===districtId);
+  if (!d) return;
+  if (!d.clientVisibility) d.clientVisibility = {};
+  d.clientVisibility[tab] = val;
+  saveBlobs();
+}
+
+// Apply which tabs a client sees
+function applyClientVisibility(client) {
+  const vis = getVisibility(client.district);
+  // meetings, kpis, documents use the old toggle
+  ['meetings','kpis','documents'].forEach(t => {
+    const btn = document.getElementById('ctab-'+t);
+    if (btn) btn.style.display = vis[t] ? 'flex' : 'none';
+  });
+  // crosswalk uses per-client assignment
+  const assigned = getCrosswalkAssignedClients(client.district);
+  const cwBtn = document.getElementById('ctab-crosswalk');
+  if (cwBtn) cwBtn.style.display = assigned.includes(client.id) ? 'flex' : 'none';
+}
+
 function cTab(name,el){
   document.querySelectorAll('.ctab').forEach(t=>t.classList.remove('on'));
   document.querySelectorAll('.cpanel').forEach(p=>p.classList.remove('on'));
   el.classList.add('on');
-  document.getElementById('cp-'+name).classList.add('on');
-  const client = S.clients.find(c=>c.u===S.user);
-  if (!client) return;
+  const panelId = 'cp-'+name;
+  const panel = document.getElementById(panelId);
+  if (panel) panel.classList.add('on');
+  const client = S.clients.find(c=>c.u===S.user); if (!client) return;
   if (name==='cmeetings') renderClientMeetings(client);
   if (name==='ckpis') renderClientKpis(client);
   if (name==='ccrosswalk') renderClientCrosswalk(client);
@@ -1817,14 +1623,12 @@ function renderClientStats(client) {
 }
 function renderClientOverview(client) {
   renderClientStats(client);
-  const wrap = document.getElementById('cGauges');
-  if (!wrap) return;
+  const wrap = document.getElementById('cGauges'); if (!wrap) return;
   wrap.innerHTML = '';
   S.phases.forEach((ph,i) => {
     const pct = calcPhaseProgress(client.district, ph.id);
     const color = COLORS[i % COLORS.length];
-    const cell = document.createElement('div');
-    cell.className = 'gcell';
+    const cell = document.createElement('div'); cell.className = 'gcell';
     cell.innerHTML = `${gaugeArc(pct,color,64)}
       <div class="gpct" style="color:${color}">${pct}%</div>
       <div class="glbl">${ph.name}</div>
@@ -1832,32 +1636,22 @@ function renderClientOverview(client) {
     wrap.appendChild(cell);
   });
 }
-
 function renderClientGauges() {
-  const client = S.clients.find(c=>c.u===S.user);
-  if (!client) return;
+  const client = S.clients.find(c=>c.u===S.user); if (!client) return;
   renderClientOverview(client);
 }
 function renderClientForms(client) {
-  const wrap = document.getElementById('cFormsList');
-  wrap.innerHTML='';
+  const wrap = document.getElementById('cFormsList'); wrap.innerHTML='';
   const assigned = client.forms||[];
-  if (!assigned.length){
-    wrap.innerHTML='<div style="text-align:center;padding:40px;color:var(--text3)"><i class="ti ti-forms" style="font-size:32px;display:block;margin-bottom:10px;opacity:.4"></i><p style="font-size:13px">No forms assigned yet.</p></div>';
-    return;
-  }
+  if (!assigned.length){ wrap.innerHTML='<div style="text-align:center;padding:40px;color:var(--text3)"><i class="ti ti-forms" style="font-size:32px;display:block;margin-bottom:10px;opacity:.4"></i><p style="font-size:13px">No forms assigned yet.</p></div>'; return; }
   assigned.forEach(fid=>{
-    const form=S.forms.find(f=>f.id===fid);
-    if(!form) { console.warn('Form not found:', fid); return; }
-    console.log('Rendering form:', form.title, 'questions:', form.questions?.length);
+    const form=S.forms.find(f=>f.id===fid); if(!form) return;
     const resp=S.responses[client.u]?.[fid];
     const qs=form.questions||[];
     const realQs = qs.filter(q=>q.type!=='heading'&&q.type!=='divider');
     const answered=resp?realQs.filter(q=>resp[q.id]!==undefined&&String(resp[q.id]).trim()!=='').length:0;
     const pct=realQs.length?Math.round((answered/realQs.length)*100):0;
-    const wrap2=document.createElement('div');
-    wrap2.className='client-form-wrap';
-    wrap2.id='cfw-'+fid;
+    const wrap2=document.createElement('div'); wrap2.className='client-form-wrap'; wrap2.id='cfw-'+fid;
     wrap2.innerHTML=`<div class="cfw-header">
       <div><div class="cfw-title">${form.title}</div><div class="cfw-meta">${qs.length} question${qs.length!==1?'s':''}</div></div>
       <span class="badge ${pct===100?'badge-green':pct>0?'badge-gold':'badge-gray'}">${answered}/${realQs.length} answered</span>
@@ -1874,23 +1668,15 @@ function renderClientForms(client) {
     wrap.appendChild(wrap2);
     if(resp&&resp._complete){
       wrap2.innerHTML=`<div style="display:flex;align-items:center;gap:16px;padding:8px 0">
-        <div style="width:48px;height:48px;border-radius:50%;background:rgba(34,165,90,.1);border:2px solid rgba(34,165,90,.3);display:flex;align-items:center;justify-content:center;flex-shrink:0">
-          <i class="ti ti-circle-check" style="font-size:24px;color:#22a55a"></i>
-        </div>
-        <div style="flex:1">
-          <div style="font-size:14px;font-weight:700;color:var(--text)">${form.title}</div>
-          <div style="font-size:12px;color:#22a55a;margin-top:2px"><i class="ti ti-check"></i> Submitted ${resp._savedAt?new Date(resp._savedAt).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}):''}</div>
-        </div>
+        <div style="width:48px;height:48px;border-radius:50%;background:rgba(34,165,90,.1);border:2px solid rgba(34,165,90,.3);display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="ti ti-circle-check" style="font-size:24px;color:#22a55a"></i></div>
+        <div style="flex:1"><div style="font-size:14px;font-weight:700;color:var(--text)">${form.title}</div><div style="font-size:12px;color:#22a55a;margin-top:2px"><i class="ti ti-check"></i> Submitted ${resp._savedAt?new Date(resp._savedAt).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}):''}</div></div>
         <button class="btn btn-ghost btn-sm" onclick="reopenForm('${fid}','${client.u}')"><i class="ti ti-pencil"></i> Edit</button>
       </div>`;
-    } else {
-      renderClientQuestions(fid, client.u, qs, resp);
-    }
+    } else { renderClientQuestions(fid, client.u, qs, resp); }
   });
 }
 function renderClientQuestions(formId,username,questions,resp){
-  const wrap=document.getElementById('cqwrap-'+formId);
-  if(!wrap) return;
+  const wrap=document.getElementById('cqwrap-'+formId); if(!wrap) return;
   wrap.innerHTML='';
   questions.forEach((q,i)=>{
     if(q.type==='divider'){const hr=document.createElement('hr');hr.style.cssText='border:none;border-top:1px solid var(--bord);margin:16px 0';wrap.appendChild(hr);return;}
@@ -1903,19 +1689,17 @@ function renderClientQuestions(formId,username,questions,resp){
     else if(q.type==='number') input=`<input type="number" class="ci" id="ci-${formId}-${q.id}" value="${val||''}" placeholder="0" style="max-width:140px">`;
     else if(q.type==='rating'){const cv=parseInt(val)||0;input=`<div class="star-rate" id="ci-${formId}-${q.id}" data-val="${cv}">${[1,2,3,4,5].map(n=>`<button class="star-btn${n<=cv?' on':''}" onclick="setStarC('${formId}','${q.id}',${n})" type="button">★</button>`).join('')}</div>`;}
     else if(q.type==='radio'){
-      const hasOther = q.allowOther !== false;
+      const radioId='radio-'+formId+'-'+q.id;
       const isOtherSel = val && !(q.options||[]).includes(val);
-      const radioId = 'radio-'+formId+'-'+q.id;
       input=`<div id="${radioId}">${(q.options||[]).map(o=>`<label class="mc-opt${val===o?' sel':''}"><input type="radio" name="${radioId}" value="${o}" ${val===o?'checked':''} onchange="handleRadioChange(this,'${radioId}','${formId}','${q.id}')"> ${o}</label>`).join('')}
-        ${hasOther?`<label class="mc-opt${isOtherSel?' sel':''}" style="flex-direction:column;align-items:flex-start;gap:6px"><span style="display:flex;align-items:center;gap:8px;width:100%"><input type="radio" name="${radioId}" value="__other__" ${isOtherSel?'checked':''} onchange="handleRadioChange(this,'${radioId}','${formId}','${q.id}')"> Other</span><input type="text" id="other-${formId}-${q.id}" placeholder="Please specify..." class="ci" style="display:${isOtherSel?'block':'none'};margin-top:4px;width:100%" value="${isOtherSel?val:''}"></label>`:''}
+        ${q.allowOther!==false?`<label class="mc-opt${isOtherSel?' sel':''}" style="flex-direction:column;align-items:flex-start;gap:6px"><span style="display:flex;align-items:center;gap:8px;width:100%"><input type="radio" name="${radioId}" value="__other__" ${isOtherSel?'checked':''} onchange="handleRadioChange(this,'${radioId}','${formId}','${q.id}')"> Other</span><input type="text" id="other-${formId}-${q.id}" placeholder="Please specify..." class="ci" style="display:${isOtherSel?'block':'none'};margin-top:4px;width:100%" value="${isOtherSel?val:''}"></label>`:''}
       </div>`;
     }
     else if(q.type==='checkbox'){
       const vals=val?(Array.isArray(val)?val:[val]):[];
       const hasOtherVal = vals.find(v=>!((q.options||[]).includes(v)));
-      const hasOther = q.allowOther !== false;
       input=`<div id="ci-${formId}-${q.id}">${(q.options||[]).map(o=>`<label class="mc-opt${vals.includes(o)?' sel':''}"><input type="checkbox" value="${o}" ${vals.includes(o)?'checked':''} onchange="this.closest('.mc-opt').classList.toggle('sel',this.checked)"> ${o}</label>`).join('')}
-        ${hasOther?`<label class="mc-opt${hasOtherVal?' sel':''}" style="flex-direction:column;align-items:flex-start;gap:6px"><span style="display:flex;align-items:center;gap:8px;width:100%"><input type="checkbox" value="__other__" ${hasOtherVal?'checked':''} onchange="this.closest('.mc-opt').classList.toggle('sel',this.checked);document.getElementById('other-cb-${formId}-${q.id}').style.display=this.checked?'block':'none'"> Other</span><input type="text" id="other-cb-${formId}-${q.id}" placeholder="Please specify..." class="ci" style="display:${hasOtherVal?'block':'none'};margin-top:4px;width:100%" value="${hasOtherVal||''}"></label>`:''}
+        ${q.allowOther!==false?`<label class="mc-opt${hasOtherVal?' sel':''}" style="flex-direction:column;align-items:flex-start;gap:6px"><span style="display:flex;align-items:center;gap:8px;width:100%"><input type="checkbox" value="__other__" ${hasOtherVal?'checked':''} onchange="this.closest('.mc-opt').classList.toggle('sel',this.checked);document.getElementById('other-cb-${formId}-${q.id}').style.display=this.checked?'block':'none'"> Other</span><input type="text" id="other-cb-${formId}-${q.id}" placeholder="Please specify..." class="ci" style="display:${hasOtherVal?'block':'none'};margin-top:4px;width:100%" value="${hasOtherVal||''}"></label>`:''}
       </div>`;
     }
     else if(q.type==='dropdown') input=`<select class="ci" id="ci-${formId}-${q.id}"><option value="">Select...</option>${(q.options||[]).map(o=>`<option value="${o}" ${val===o?'selected':''}>${o}</option>`).join('')}</select>`;
@@ -1926,15 +1710,11 @@ function renderClientQuestions(formId,username,questions,resp){
   });
 }
 function handleRadioChange(el, radioId, formId, qid) {
-  // Update selected styles
   document.querySelectorAll('#'+radioId+' .mc-opt').forEach(x=>x.classList.remove('sel'));
   el.closest('.mc-opt').classList.add('sel');
-  // Show/hide other text input
-  const otherId = 'other-'+formId+'-'+qid;
-  const otherEl = document.getElementById(otherId);
+  const otherEl = document.getElementById('other-'+formId+'-'+qid);
   if (otherEl) otherEl.style.display = el.value==='__other__' ? 'block' : 'none';
 }
-
 function setStarC(formId,qid,val){const row=document.getElementById('ci-'+formId+'-'+qid);if(!row)return;row.dataset.val=val;row.querySelectorAll('.star-btn').forEach((b,i)=>b.classList.toggle('on',i+1<=val));}
 async function submitForm(formId,username,complete=false){
   const form=S.forms.find(f=>f.id===formId);if(!form)return;
@@ -1946,18 +1726,15 @@ async function submitForm(formId,username,complete=false){
       const ch=document.querySelector('#'+radioId+' input[type=radio]:checked');
       if(ch&&ch.value==='__other__'){const otherEl=document.getElementById('other-'+formId+'-'+q.id);answers[q.id]=otherEl?otherEl.value:'';}
       else{answers[q.id]=ch?ch.value:'';}
-    }
-    else if(q.type==='checkbox'){
+    } else if(q.type==='checkbox'){
       const checked=[...document.querySelectorAll('#ci-'+formId+'-'+q.id+' input[type=checkbox]:checked')].map(i=>i.value);
       const otherIdx=checked.indexOf('__other__');
       if(otherIdx!==-1){const otherEl=document.getElementById('other-cb-'+formId+'-'+q.id);checked[otherIdx]=otherEl?otherEl.value:'Other';}
       answers[q.id]=checked;
-    }
-    else if(q.type==='rating'){
+    } else if(q.type==='rating'){
       const ratingEl=document.getElementById('ci-'+formId+'-'+q.id);
       answers[q.id]=ratingEl?parseInt(ratingEl.dataset.val)||0:0;
-    }
-    else{
+    } else {
       const el=document.getElementById('ci-'+formId+'-'+q.id);
       if(el) answers[q.id]=el.value||'';
     }
@@ -1967,17 +1744,11 @@ async function submitForm(formId,username,complete=false){
   await saveResponse(username,formId,answers);
   const client=S.clients.find(c=>c.u===username);
   if(complete){
-    // Collapse the form and show complete state
     const wrap2=document.getElementById('cfw-'+formId);
     if(wrap2){
       wrap2.innerHTML=`<div style="display:flex;align-items:center;gap:16px;padding:8px 0">
-        <div style="width:48px;height:48px;border-radius:50%;background:rgba(34,165,90,.1);border:2px solid rgba(34,165,90,.3);display:flex;align-items:center;justify-content:center;flex-shrink:0">
-          <i class="ti ti-circle-check" style="font-size:24px;color:#22a55a"></i>
-        </div>
-        <div style="flex:1">
-          <div style="font-size:14px;font-weight:700;color:var(--text)">${form.title}</div>
-          <div style="font-size:12px;color:#22a55a;margin-top:2px"><i class="ti ti-check"></i> Submitted ${new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</div>
-        </div>
+        <div style="width:48px;height:48px;border-radius:50%;background:rgba(34,165,90,.1);border:2px solid rgba(34,165,90,.3);display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="ti ti-circle-check" style="font-size:24px;color:#22a55a"></i></div>
+        <div style="flex:1"><div style="font-size:14px;font-weight:700;color:var(--text)">${form.title}</div><div style="font-size:12px;color:#22a55a;margin-top:2px"><i class="ti ti-check"></i> Submitted ${new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</div></div>
         <button class="btn btn-ghost btn-sm" onclick="reopenForm('${formId}','${username}')"><i class="ti ti-pencil"></i> Edit</button>
       </div>`;
     }
@@ -1987,24 +1758,13 @@ async function submitForm(formId,username,complete=false){
     if(ss){ss.className='save-status ok';ss.innerHTML='<i class="ti ti-check"></i> Saved';}
     toast('Responses saved');
   }
-  if(client){
-    renderClientStats(client);
-    renderClientProgress(client);
-    // Reload responses so phase gauges update
-    loadMyResponses(username).then(()=>{
-      renderClientOverview(client);
-    }).catch(()=>{});
-  }
+  if(client){ renderClientStats(client); renderClientProgress(client); loadMyResponses(username).then(()=>renderClientOverview(client)).catch(()=>{}); }
 }
-
 function reopenForm(formId,username){
-  const client=S.clients.find(c=>c.u===username);
-  if(!client)return;
+  const client=S.clients.find(c=>c.u===username);if(!client)return;
   const resp=S.responses[username]?.[formId];
-  const form=S.forms.find(f=>f.id===formId);
-  if(!form)return;
-  const wrap=document.getElementById('cfw-'+formId);
-  if(!wrap)return;
+  const form=S.forms.find(f=>f.id===formId);if(!form)return;
+  const wrap=document.getElementById('cfw-'+formId);if(!wrap)return;
   const qs=form.questions||[];
   const realQs=qs.filter(q=>q.type!=='heading'&&q.type!=='divider');
   const answered=resp?realQs.filter(q=>resp[q.id]!==undefined&&String(resp[q.id]).trim()!=='').length:0;
@@ -2033,124 +1793,57 @@ function renderClientProgress(client){
     const form=S.forms.find(f=>f.id===fid);if(!form)return;
     const resp=S.responses[client.u]?.[fid];
     const qs=form.questions||[];
-    const realQs2 = qs.filter(q=>q.type!=='heading'&&q.type!=='divider');
-    const answered=resp?realQs2.filter(q=>resp[q.id]!==undefined&&String(resp[q.id]).trim()!=='').length:0;
-    const pct=realQs2.length?Math.round((answered/realQs2.length)*100):0;
+    const realQs=qs.filter(q=>q.type!=='heading'&&q.type!=='divider');
+    const answered=resp?realQs.filter(q=>resp[q.id]!==undefined&&String(resp[q.id]).trim()!=='').length:0;
+    const pct=realQs.length?Math.round((answered/realQs.length)*100):0;
     card.innerHTML+=`<div style="margin-bottom:16px">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px">
         <span style="font-size:13px;font-weight:700;color:var(--text)">${form.title}</span>
         <span class="badge ${pct===100?'badge-green':pct>0?'badge-gold':'badge-gray'}">${pct===100?'Complete':pct>0?'In progress':'Not started'}</span>
       </div>
       <div class="prog-bar"><div class="prog-fill" style="width:${pct}%;background:${pct===100?'var(--teal)':'var(--gold)'}"></div></div>
-      <div style="font-size:11px;color:var(--text3);margin-top:3px">${answered} of ${realQs2.length} questions answered</div>
+      <div style="font-size:11px;color:var(--text3);margin-top:3px">${answered} of ${realQs.length} questions answered</div>
     </div>`;
   });
   wrap.appendChild(card);
 }
 
 // ════════════════════════════════
-// UTILS
-// ════════════════════════════════
-function openModal(id){
-  document.getElementById(id).classList.add('open');
-  if(id==='m-client') renderClientFormAssign(S.editingClientId?S.clients.find(x=>x.id===S.editingClientId):null);
-}
-function closeModal(id){document.getElementById(id).classList.remove('open');}
-document.addEventListener('click',e=>{if(e.target.classList.contains('modal-overlay'))e.target.classList.remove('open');});
-let toastT;
-function toast(msg,type='ok'){
-  const t=document.getElementById('toast');
-  t.className=type==='err'?'err':'ok';
-  document.getElementById('toastIcon').className=type==='err'?'ti ti-alert-triangle':'ti ti-check';
-  document.getElementById('toastMsg').textContent=msg;
-  t.classList.add('show');
-  clearTimeout(toastT);
-  toastT=setTimeout(()=>t.classList.remove('show'),3000);
-}
-
-
-// ════════════════════════════════
-// VISIBILITY TOGGLES (admin controls what clients see)
-// ════════════════════════════════
-const VISIBILITY_TABS = ['meetings','kpis','documents'];
-const VISIBILITY_LABELS = {meetings:'Meeting Log',kpis:'KPIs & Priorities',documents:'Documents'};
-const VISIBILITY_ICONS = {meetings:'ti-calendar-event',kpis:'ti-target',documents:'ti-folder'};
-
-function getVisibility(districtId) {
-  const d = S.districts.find(x=>x.id===districtId);
-  return d?.clientVisibility || {};
-}
-function setVisibility(districtId, tab, val) {
-  const d = S.districts.find(x=>x.id===districtId);
-  if (!d) return;
-  if (!d.clientVisibility) d.clientVisibility = {};
-  d.clientVisibility[tab] = val;
-  saveBlobs();
-  renderVisibilityBar();
-}
-
-function renderVisibilityBar(containerId='visibilityBar') {
-  const wrap = document.getElementById(containerId);
-  if (!wrap) return;
-  const vis = getVisibility(S.districtId);
-  wrap.innerHTML = `<span class="vb-label"><i class="ti ti-eye"></i> Client visibility</span>` +
-    VISIBILITY_TABS.map(t => {
-      const on = vis[t] === true;
-      return `<div class="vis-toggle ${on?'visible':''}" onclick="setVisibility('${S.districtId}','${t}',${!on})">
-        <i class="ti ${VISIBILITY_ICONS[t]}"></i> ${VISIBILITY_LABELS[t]}
-        <i class="ti ${on?'ti-eye':'ti-eye-off'}" style="margin-left:2px;font-size:12px"></i>
-      </div>`;
-    }).join('');
-}
-
-function applyClientVisibility(client) {
-  const vis = getVisibility(client.district);
-  [...VISIBILITY_TABS, 'crosswalk'].forEach(t => {
-    const btn = document.getElementById('ctab-'+t);
-    if (btn) btn.style.display = vis[t] ? 'flex' : 'none';
-  });
-}
-
-// ════════════════════════════════
 // MEETINGS
 // ════════════════════════════════
 const SOW_REQUIREMENTS = [
-  {type:'Leadership Meeting', phase:'June', required:2, label:'Leadership Meetings'},
-  {type:'Focus Group', phase:'Jul–Aug', required:5, label:'Focus Groups'},
-  {type:'Leadership Retreat', phase:'Jul–Aug', required:1, label:'Leadership Retreat'},
-  {type:'Virtual Check-in', phase:'September', required:2, label:'Check-ins'},
-  {type:'Board Work Session', phase:'October', required:1, label:'Board Work Session'},
-  {type:'Final Presentation', phase:'October', required:1, label:'Final Presentation'},
+  {type:'Leadership Meeting',phase:'June',required:2,label:'Leadership Meetings'},
+  {type:'Focus Group',phase:'Jul–Aug',required:5,label:'Focus Groups'},
+  {type:'Leadership Retreat',phase:'Jul–Aug',required:1,label:'Leadership Retreat'},
+  {type:'Virtual Check-in',phase:'September',required:2,label:'Check-ins'},
+  {type:'Board Work Session',phase:'October',required:1,label:'Board Work Session'},
+  {type:'Final Presentation',phase:'October',required:1,label:'Final Presentation'},
 ];
-
 const MTG_COLORS = {
   'Leadership Meeting':'#1a4f8a','Focus Group':'#27a892','Leadership Retreat':'#d4a843',
   'Board Work Session':'#534ab7','Virtual Check-in':'#378add','Final Presentation':'#d85a30','Community Session':'#993c1d'
 };
+const VISIBILITY_TABS = ['meetings','kpis','documents'];
+const VISIBILITY_LABELS = {meetings:'Meeting Log',kpis:'KPIs & Priorities',documents:'Documents'};
+const VISIBILITY_ICONS = {meetings:'ti-calendar-event',kpis:'ti-target',documents:'ti-folder'};
 
 function renderMeetingsTab() {
-  const wrap = document.getElementById('meetingsList');
-  if (!wrap) return;
+  const wrap = document.getElementById('meetingsList'); if (!wrap) return;
   const meetings = (S.districts.find(d=>d.id===S.districtId)?.meetings||[]).sort((a,b)=>new Date(b.date)-new Date(a.date));
-
-  // SOW tracker
   let html = `<div style="font-size:12px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px">SOW Progress</div>
     <div class="sow-tracker">`;
   SOW_REQUIREMENTS.forEach(req => {
     const count = meetings.filter(m=>m.type===req.type).length;
     const done = count >= req.required;
-    html += `<div class="sow-item ${done?'done':''}">
-      <div class="si-title">${req.label}</div>
-      <div class="si-req">${req.phase} · ${req.required} required</div>
-      <div class="si-count" style="color:${done?'var(--teal)':'var(--text3)'}">${count}/${req.required}</div>
-    </div>`;
+    html += `<div class="sow-item ${done?'done':''}"><div class="si-title">${req.label}</div><div class="si-req">${req.phase} · ${req.required} required</div><div class="si-count" style="color:${done?'var(--teal)':'var(--text3)'}">${count}/${req.required}</div></div>`;
   });
   html += `</div>`;
-
-  // Visibility bar
-  html += `<div class="visibility-bar" id="visibilityBar" style="margin-bottom:16px"></div>`;
-
-  // Meeting cards
+  // visibility bar for meetings/kpis/documents
+  const vis = getVisibility(S.districtId);
+  html += `<div style="background:var(--surf);border:1px solid var(--bord);border-radius:var(--rad);padding:10px 14px;margin-bottom:16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+    <span style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.07em"><i class="ti ti-eye"></i> Client visibility</span>
+    ${VISIBILITY_TABS.map(t=>{const on=vis[t]===true;return `<div class="vis-toggle ${on?'visible':''}" onclick="toggleVisTab('${t}')" style="display:flex;align-items:center;gap:6px;font-size:12px;font-weight:500;padding:5px 10px;border-radius:7px;border:1.5px solid ${on?'var(--teal)':'var(--bord)'};background:${on?'rgba(39,168,146,.08)':'var(--white)'};color:${on?'var(--teal2)':'var(--text2)'};cursor:pointer"><i class="ti ${VISIBILITY_ICONS[t]}"></i> ${VISIBILITY_LABELS[t]} <i class="ti ${on?'ti-eye':'ti-eye-off'}" style="font-size:12px"></i></div>`;}).join('')}
+  </div>`;
   if (!meetings.length) {
     html += `<div style="text-align:center;padding:32px;color:var(--text3)"><i class="ti ti-calendar-off" style="font-size:28px;display:block;margin-bottom:8px;opacity:.4"></i><p style="font-size:13px">No meetings logged yet</p></div>`;
   } else {
@@ -2158,22 +1851,18 @@ function renderMeetingsTab() {
       const color = MTG_COLORS[m.type]||'var(--navy)';
       html += `<div class="meeting-card">
         <div class="meeting-icon" style="background:${color}20;color:${color}"><i class="ti ti-calendar-event"></i></div>
-        <div class="meeting-body">
-          <div class="meeting-title">${m.type}</div>
+        <div class="meeting-body"><div class="meeting-title">${m.type}</div>
           <div class="meeting-meta">${m.date?new Date(m.date+'T12:00:00').toLocaleDateString('en-US',{weekday:'short',month:'long',day:'numeric',year:'numeric'}):''} · ${m.duration||0} min · ${m.attendees||''}</div>
-          ${m.notes?`<div class="meeting-notes">${m.notes}</div>`:''}
-        </div>
+          ${m.notes?`<div class="meeting-notes">${m.notes}</div>`:''}</div>
         <div class="meeting-actions">
           <button class="btn btn-ghost btn-sm" onclick="openEditMeeting(${i})"><i class="ti ti-pencil"></i></button>
           <button class="btn btn-danger btn-sm" onclick="deleteMeeting(${i})"><i class="ti ti-trash"></i></button>
-        </div>
-      </div>`;
+        </div></div>`;
     });
   }
   wrap.innerHTML = html;
-  renderVisibilityBar('visibilityBar');
 }
-
+function toggleVisTab(t) { setVisibility(S.districtId, t, !getVisibility(S.districtId)[t]); renderMeetingsTab(); }
 let editingMeetingIdx = null;
 function openNewMeeting() {
   editingMeetingIdx = null;
@@ -2185,13 +1874,11 @@ function openNewMeeting() {
   document.getElementById('m-mNotes').value = '';
   openModal('m-meeting');
 }
-
 function openEditMeeting(idx) {
   const d = S.districts.find(x=>x.id===S.districtId);
   const meetings = d?.meetings||[];
   const m = meetings.sort((a,b)=>new Date(b.date)-new Date(a.date))[idx];
   if (!m) return;
-  // Find original index in unsorted array
   editingMeetingIdx = d.meetings.indexOf(m);
   document.getElementById('m-meetingTitle').textContent = 'Edit Meeting';
   document.getElementById('m-mType').value = m.type||'Leadership Meeting';
@@ -2201,55 +1888,30 @@ function openEditMeeting(idx) {
   document.getElementById('m-mNotes').value = m.notes||'';
   openModal('m-meeting');
 }
-
 function saveMeeting() {
-  const d = S.districts.find(x=>x.id===S.districtId);
-  if (!d) return;
+  const d = S.districts.find(x=>x.id===S.districtId); if (!d) return;
   if (!d.meetings) d.meetings = [];
-  const m = {
-    type: document.getElementById('m-mType').value,
-    date: document.getElementById('m-mDate').value,
-    duration: +document.getElementById('m-mDuration').value,
-    attendees: document.getElementById('m-mAttendees').value.trim(),
-    notes: document.getElementById('m-mNotes').value.trim(),
-    loggedAt: new Date().toISOString()
-  };
-  if (editingMeetingIdx !== null && editingMeetingIdx >= 0) {
-    d.meetings[editingMeetingIdx] = m;
-    toast('Meeting updated');
-  } else {
-    d.meetings.push(m);
-    toast('Meeting logged');
-  }
-  editingMeetingIdx = null;
-  saveBlobs();
-  closeModal('m-meeting');
-  renderMeetingsTab();
+  const m = {type:document.getElementById('m-mType').value,date:document.getElementById('m-mDate').value,duration:+document.getElementById('m-mDuration').value,attendees:document.getElementById('m-mAttendees').value.trim(),notes:document.getElementById('m-mNotes').value.trim(),loggedAt:new Date().toISOString()};
+  if (editingMeetingIdx !== null && editingMeetingIdx >= 0) { d.meetings[editingMeetingIdx] = m; toast('Meeting updated'); }
+  else { d.meetings.push(m); toast('Meeting logged'); }
+  editingMeetingIdx = null; saveBlobs(); closeModal('m-meeting'); renderMeetingsTab();
 }
-
 function deleteMeeting(idx) {
   if (!confirm('Delete this meeting log?')) return;
   const d = S.districts.find(x=>x.id===S.districtId);
   if (d?.meetings) { d.meetings.splice(idx,1); saveBlobs(); renderMeetingsTab(); toast('Meeting removed','err'); }
 }
-
-// Client meetings view
 function renderClientMeetings(client) {
-  const wrap = document.getElementById('cMeetingsList');
-  if (!wrap) return;
+  const wrap = document.getElementById('cMeetingsList'); if (!wrap) return;
   const d = S.districts.find(x=>x.id===client.district);
   const meetings = (d?.meetings||[]).sort((a,b)=>new Date(b.date)-new Date(a.date));
   if (!meetings.length) { wrap.innerHTML='<div style="text-align:center;padding:32px;color:var(--text3);font-size:13px">No meetings logged yet</div>'; return; }
   wrap.innerHTML = meetings.map(m => {
     const color = MTG_COLORS[m.type]||'var(--navy)';
-    return `<div class="meeting-card">
-      <div class="meeting-icon" style="background:${color}20;color:${color}"><i class="ti ti-calendar-event"></i></div>
-      <div class="meeting-body">
-        <div class="meeting-title">${m.type}</div>
+    return `<div class="meeting-card"><div class="meeting-icon" style="background:${color}20;color:${color}"><i class="ti ti-calendar-event"></i></div>
+      <div class="meeting-body"><div class="meeting-title">${m.type}</div>
         <div class="meeting-meta">${m.date?new Date(m.date+'T12:00:00').toLocaleDateString('en-US',{weekday:'short',month:'long',day:'numeric',year:'numeric'}):''} · ${m.duration||0} min</div>
-        ${m.notes?`<div class="meeting-notes">${m.notes}</div>`:''}
-      </div>
-    </div>`;
+        ${m.notes?`<div class="meeting-notes">${m.notes}</div>`:''}</div></div>`;
   }).join('');
 }
 
@@ -2257,25 +1919,16 @@ function renderClientMeetings(client) {
 // KPIs
 // ════════════════════════════════
 function renderKpisTab() {
-  const wrap = document.getElementById('kpisList');
-  if (!wrap) return;
+  const wrap = document.getElementById('kpisList'); if (!wrap) return;
   const d = S.districts.find(x=>x.id===S.districtId);
   const priorities = d?.priorities||[];
-
-  if (!priorities.length) {
-    wrap.innerHTML=`<div style="text-align:center;padding:40px;color:var(--text3)"><i class="ti ti-target" style="font-size:28px;display:block;margin-bottom:8px;opacity:.4"></i><p style="font-size:13px">No strategic priorities yet. Add your first priority to begin tracking KPIs.</p></div>`;
-    return;
-  }
-
+  if (!priorities.length) { wrap.innerHTML=`<div style="text-align:center;padding:40px;color:var(--text3)"><i class="ti ti-target" style="font-size:28px;display:block;margin-bottom:8px;opacity:.4"></i><p style="font-size:13px">No strategic priorities yet.</p></div>`; return; }
   wrap.innerHTML = priorities.map((p,pi) => `
     <div class="priority-card">
       <div class="priority-header">
         <div style="display:flex;align-items:flex-start;gap:10px;flex:1">
           <div class="priority-num">${pi+1}</div>
-          <div>
-            <div class="priority-title">${p.title}</div>
-            ${p.desc?`<div class="priority-desc">${p.desc}</div>`:''}
-          </div>
+          <div><div class="priority-title">${p.title}</div>${p.desc?`<div class="priority-desc">${p.desc}</div>`:''}</div>
         </div>
         <div style="display:flex;gap:6px">
           <button class="btn btn-ghost btn-sm" onclick="openEditPriority(${pi})"><i class="ti ti-pencil"></i></button>
@@ -2285,46 +1938,23 @@ function renderKpisTab() {
       ${(p.kpis||[]).map((k,ki) => `
         <div class="kpi-row">
           <div class="kpi-label">${k.goal}</div>
-          <div class="kpi-values">
-            <span>Target: <strong>${k.target||'—'}</strong></span>
-            <span>Current: <strong>${k.current||'—'}</strong></span>
-          </div>
+          <div class="kpi-values"><span>Target: <strong>${k.target||'—'}</strong></span><span>Current: <strong>${k.current||'—'}</strong></span></div>
           <span class="kpi-status ${k.status||'not-started'}">${(k.status||'not-started').replace('-',' ')}</span>
-          <button class="btn btn-ghost btn-sm" onclick="updateKpiStatus(${pi},${ki})" title="Update status"><i class="ti ti-refresh"></i></button>
+          <button class="btn btn-ghost btn-sm" onclick="updateKpiStatus(${pi},${ki})"><i class="ti ti-refresh"></i></button>
         </div>`).join('')}
       ${!(p.kpis||[]).length?'<div style="font-size:12px;color:var(--text3);padding:8px 0">No KPI goals added yet</div>':''}
     </div>`).join('');
 }
-
 let editingPriorityIdx = null;
-function openNewPriority() {
-  editingPriorityIdx = null;
-  document.getElementById('m-priorityTitle').textContent = 'Add Strategic Priority';
-  document.getElementById('m-pTitle').value = '';
-  document.getElementById('m-pDesc').value = '';
-  document.getElementById('m-kpiRows').innerHTML = '';
-  addKpiRow();
-  openModal('m-priority');
-}
+function openNewPriority() { editingPriorityIdx=null; document.getElementById('m-priorityTitle').textContent='Add Strategic Priority'; document.getElementById('m-pTitle').value=''; document.getElementById('m-pDesc').value=''; document.getElementById('m-kpiRows').innerHTML=''; addKpiRow(); openModal('m-priority'); }
 function openEditPriority(idx) {
-  editingPriorityIdx = idx;
-  const d = S.districts.find(x=>x.id===S.districtId);
-  const p = d?.priorities?.[idx];
-  if (!p) return;
-  document.getElementById('m-priorityTitle').textContent = 'Edit Priority';
-  document.getElementById('m-pTitle').value = p.title;
-  document.getElementById('m-pDesc').value = p.desc||'';
-  document.getElementById('m-kpiRows').innerHTML = '';
-  (p.kpis||[]).forEach(k => addKpiRow(k));
-  if (!(p.kpis||[]).length) addKpiRow();
-  openModal('m-priority');
+  editingPriorityIdx=idx; const d=S.districts.find(x=>x.id===S.districtId); const p=d?.priorities?.[idx]; if(!p) return;
+  document.getElementById('m-priorityTitle').textContent='Edit Priority'; document.getElementById('m-pTitle').value=p.title; document.getElementById('m-pDesc').value=p.desc||''; document.getElementById('m-kpiRows').innerHTML='';
+  (p.kpis||[]).forEach(k=>addKpiRow(k)); if(!(p.kpis||[]).length) addKpiRow(); openModal('m-priority');
 }
-
 function addKpiRow(kpi={}) {
-  const row = document.createElement('div');
-  row.style.cssText='display:grid;grid-template-columns:1fr auto auto auto;gap:6px;margin-bottom:8px;align-items:center';
-  row.innerHTML = `
-    <input type="text" placeholder="KPI Goal (e.g. 80% of students meet grade-level reading)" value="${kpi.goal||''}" style="padding:8px 10px;border-radius:7px;border:1.5px solid var(--bord);font-size:12px;font-family:inherit;outline:none;background:var(--surf)">
+  const row=document.createElement('div'); row.style.cssText='display:grid;grid-template-columns:1fr auto auto auto;gap:6px;margin-bottom:8px;align-items:center';
+  row.innerHTML=`<input type="text" placeholder="KPI Goal" value="${kpi.goal||''}" style="padding:8px 10px;border-radius:7px;border:1.5px solid var(--bord);font-size:12px;font-family:inherit;outline:none;background:var(--surf)">
     <input type="text" placeholder="Target" value="${kpi.target||''}" style="width:80px;padding:8px 10px;border-radius:7px;border:1.5px solid var(--bord);font-size:12px;font-family:inherit;outline:none;background:var(--surf)">
     <input type="text" placeholder="Current" value="${kpi.current||''}" style="width:80px;padding:8px 10px;border-radius:7px;border:1.5px solid var(--bord);font-size:12px;font-family:inherit;outline:none;background:var(--surf)">
     <select style="padding:8px;border-radius:7px;border:1.5px solid var(--bord);font-size:11px;font-family:inherit;outline:none;background:var(--surf)">
@@ -2335,238 +1965,135 @@ function addKpiRow(kpi={}) {
     </select>`;
   document.getElementById('m-kpiRows').appendChild(row);
 }
-
 function savePriority() {
-  const title = document.getElementById('m-pTitle').value.trim();
-  if (!title) { toast('Priority title required','err'); return; }
-  const desc = document.getElementById('m-pDesc').value.trim();
-  const rows = [...document.querySelectorAll('#m-kpiRows > div')];
-  const kpis = rows.map(r => {
-    const inputs = r.querySelectorAll('input');
-    const sel = r.querySelector('select');
-    return {goal:inputs[0].value.trim(),target:inputs[1].value.trim(),current:inputs[2].value.trim(),status:sel.value};
-  }).filter(k=>k.goal);
-  const d = S.districts.find(x=>x.id===S.districtId);
-  if (!d) return;
-  if (!d.priorities) d.priorities = [];
-  const p = {title,desc,kpis};
-  if (editingPriorityIdx !== null) d.priorities[editingPriorityIdx] = p;
-  else d.priorities.push(p);
+  const title=document.getElementById('m-pTitle').value.trim(); if(!title){toast('Priority title required','err');return;}
+  const desc=document.getElementById('m-pDesc').value.trim();
+  const kpis=[...document.querySelectorAll('#m-kpiRows > div')].map(r=>{const inp=r.querySelectorAll('input');const sel=r.querySelector('select');return{goal:inp[0].value.trim(),target:inp[1].value.trim(),current:inp[2].value.trim(),status:sel.value};}).filter(k=>k.goal);
+  const d=S.districts.find(x=>x.id===S.districtId); if(!d) return;
+  if(!d.priorities) d.priorities=[];
+  const p={title,desc,kpis};
+  if(editingPriorityIdx!==null) d.priorities[editingPriorityIdx]=p; else d.priorities.push(p);
   saveBlobs(); closeModal('m-priority'); renderKpisTab(); toast('Priority saved');
 }
-
 function deletePriority(idx) {
-  if (!confirm('Delete this priority and its KPIs?')) return;
-  const d = S.districts.find(x=>x.id===S.districtId);
-  if (d?.priorities) { d.priorities.splice(idx,1); saveBlobs(); renderKpisTab(); toast('Priority deleted','err'); }
+  if(!confirm('Delete this priority?')) return;
+  const d=S.districts.find(x=>x.id===S.districtId);
+  if(d?.priorities){d.priorities.splice(idx,1);saveBlobs();renderKpisTab();toast('Priority deleted','err');}
 }
-
-function updateKpiStatus(pi, ki) {
-  const d = S.districts.find(x=>x.id===S.districtId);
-  if (!d?.priorities?.[pi]?.kpis?.[ki]) return;
-  const statuses = ['not-started','on-track','at-risk','off-track'];
-  const kpi = d.priorities[pi].kpis[ki];
-  const next = statuses[(statuses.indexOf(kpi.status||'not-started')+1)%statuses.length];
-  kpi.status = next;
+function updateKpiStatus(pi,ki) {
+  const d=S.districts.find(x=>x.id===S.districtId); if(!d?.priorities?.[pi]?.kpis?.[ki]) return;
+  const statuses=['not-started','on-track','at-risk','off-track'];
+  const kpi=d.priorities[pi].kpis[ki];
+  kpi.status=statuses[(statuses.indexOf(kpi.status||'not-started')+1)%statuses.length];
   saveBlobs(); renderKpisTab();
 }
-
-// Client KPIs view
 function renderClientKpis(client) {
-  const wrap = document.getElementById('cKpisList');
-  if (!wrap) return;
-  const d = S.districts.find(x=>x.id===client.district);
-  const priorities = d?.priorities||[];
-  if (!priorities.length) { wrap.innerHTML='<div style="text-align:center;padding:32px;color:var(--text3);font-size:13px">No strategic priorities defined yet</div>'; return; }
-  wrap.innerHTML = priorities.map((p,pi) => `
+  const wrap=document.getElementById('cKpisList'); if(!wrap) return;
+  const d=S.districts.find(x=>x.id===client.district);
+  const priorities=d?.priorities||[];
+  if(!priorities.length){wrap.innerHTML='<div style="text-align:center;padding:32px;color:var(--text3);font-size:13px">No strategic priorities defined yet</div>';return;}
+  wrap.innerHTML=priorities.map((p,pi)=>`
     <div class="priority-card">
-      <div class="priority-header">
-        <div style="display:flex;align-items:flex-start;gap:10px">
-          <div class="priority-num">${pi+1}</div>
-          <div><div class="priority-title">${p.title}</div>${p.desc?`<div class="priority-desc">${p.desc}</div>`:''}</div>
-        </div>
-      </div>
-      ${(p.kpis||[]).map(k=>`
-        <div class="kpi-row">
-          <div class="kpi-label">${k.goal}</div>
-          <div class="kpi-values"><span>Target: <strong>${k.target||'—'}</strong></span><span>Current: <strong>${k.current||'—'}</strong></span></div>
-          <span class="kpi-status ${k.status||'not-started'}">${(k.status||'not-started').replace('-',' ')}</span>
-        </div>`).join('')}
+      <div class="priority-header"><div style="display:flex;align-items:flex-start;gap:10px"><div class="priority-num">${pi+1}</div><div><div class="priority-title">${p.title}</div>${p.desc?`<div class="priority-desc">${p.desc}</div>`:''}</div></div></div>
+      ${(p.kpis||[]).map(k=>`<div class="kpi-row"><div class="kpi-label">${k.goal}</div><div class="kpi-values"><span>Target: <strong>${k.target||'—'}</strong></span><span>Current: <strong>${k.current||'—'}</strong></span></div><span class="kpi-status ${k.status||'not-started'}">${(k.status||'not-started').replace('-',' ')}</span></div>`).join('')}
     </div>`).join('');
 }
 
 // ════════════════════════════════
 // DOCUMENTS
 // ════════════════════════════════
-const DOC_ICONS = {
-  'Strategic Plan':'ti-file-text','Implementation Roadmap':'ti-road',
-  'Communication Summary':'ti-speakerphone','Presentation Deck':'ti-presentation',
-  'KPI Framework':'ti-target','Meeting Notes':'ti-notes',
-  'Focus Group Summary':'ti-users','Other':'ti-paperclip'
-};
-
+const DOC_ICONS={'Strategic Plan':'ti-file-text','Implementation Roadmap':'ti-road','Communication Summary':'ti-speakerphone','Presentation Deck':'ti-presentation','KPI Framework':'ti-target','Meeting Notes':'ti-notes','Focus Group Summary':'ti-users','Other':'ti-paperclip'};
 function renderDocumentsTab() {
-  const wrap = document.getElementById('documentsList');
-  if (!wrap) return;
-  const d = S.districts.find(x=>x.id===S.districtId);
-  const docs = d?.documents||[];
-
-  if (!docs.length) {
-    wrap.innerHTML=`<div style="text-align:center;padding:32px;color:var(--text3)"><i class="ti ti-folder-off" style="font-size:28px;display:block;margin-bottom:8px;opacity:.4"></i><p style="font-size:13px">No documents linked yet. Add a Google Drive link to get started.</p></div>`;
-  } else {
-    wrap.innerHTML = docs.map((doc,i) => `
-      <div class="doc-card">
-        <div class="doc-icon"><i class="ti ${DOC_ICONS[doc.type]||'ti-paperclip'}"></i></div>
-        <div class="doc-info">
-          <div class="doc-title">${doc.title}</div>
-          <div class="doc-meta">${doc.type}${doc.notes?' · '+doc.notes:''}</div>
-        </div>
-        <div class="doc-actions">
-          <a href="${doc.url}" target="_blank" class="btn btn-teal btn-sm"><i class="ti ti-external-link"></i> Open</a>
-          <button class="btn btn-danger btn-sm" onclick="deleteDocument(${i})"><i class="ti ti-trash"></i></button>
-        </div>
-      </div>`).join('');
-  }
-
-  // Generate reports section
-  const reportWrap = document.getElementById('generateReportsList');
-  if (reportWrap) {
-    const forms = S.forms.filter(f=>f.district===S.districtId&&f.status==='active');
-    if (!forms.length) {
-      reportWrap.innerHTML='<div style="font-size:12px;color:var(--text3)">No active forms to generate reports from</div>';
-    } else {
-      reportWrap.innerHTML = forms.map(f=>`
-        <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--surf);border-radius:8px;border:1px solid var(--bord);margin-bottom:6px">
-          <div>
-            <div style="font-size:13px;font-weight:600;color:var(--text)">${f.title}</div>
-            <div style="font-size:11px;color:var(--text3)">${(f.questions||[]).filter(q=>q.type!=='heading'&&q.type!=='divider').length} questions · ${S.clients.filter(c=>c.forms?.includes(f.id)).length} clients assigned</div>
-          </div>
-          <button class="btn btn-primary btn-sm" onclick="generateReport('${f.id}')"><i class="ti ti-file-export"></i> Generate Report</button>
-        </div>`).join('');
-    }
+  const wrap=document.getElementById('documentsList'); if(!wrap) return;
+  const d=S.districts.find(x=>x.id===S.districtId);
+  const docs=d?.documents||[];
+  if(!docs.length){wrap.innerHTML=`<div style="text-align:center;padding:32px;color:var(--text3)"><i class="ti ti-folder-off" style="font-size:28px;display:block;margin-bottom:8px;opacity:.4"></i><p style="font-size:13px">No documents linked yet.</p></div>`;}
+  else{wrap.innerHTML=docs.map((doc,i)=>`<div class="doc-card"><div class="doc-icon"><i class="ti ${DOC_ICONS[doc.type]||'ti-paperclip'}"></i></div><div class="doc-info"><div class="doc-title">${doc.title}</div><div class="doc-meta">${doc.type}${doc.notes?' · '+doc.notes:''}</div></div><div class="doc-actions"><a href="${doc.url}" target="_blank" class="btn btn-teal btn-sm"><i class="ti ti-external-link"></i> Open</a><button class="btn btn-danger btn-sm" onclick="deleteDocument(${i})"><i class="ti ti-trash"></i></button></div></div>`).join('');}
+  const reportWrap=document.getElementById('generateReportsList');
+  if(reportWrap){
+    const forms=S.forms.filter(f=>f.district===S.districtId&&f.status==='active');
+    if(!forms.length){reportWrap.innerHTML='<div style="font-size:12px;color:var(--text3)">No active forms to generate reports from</div>';}
+    else{reportWrap.innerHTML=forms.map(f=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--surf);border-radius:8px;border:1px solid var(--bord);margin-bottom:6px"><div><div style="font-size:13px;font-weight:600;color:var(--text)">${f.title}</div><div style="font-size:11px;color:var(--text3)">${(f.questions||[]).filter(q=>q.type!=='heading'&&q.type!=='divider').length} questions</div></div><button class="btn btn-primary btn-sm" onclick="generateReport('${f.id}')"><i class="ti ti-file-export"></i> Generate Report</button></div>`).join('');}
   }
 }
-
-function openNewDocument() {
-  ['m-docTitle','m-docUrl','m-docNotes'].forEach(id=>document.getElementById(id).value='');
-  openModal('m-document');
-}
-function saveDocument() {
-  const title = document.getElementById('m-docTitle').value.trim();
-  const url = document.getElementById('m-docUrl').value.trim();
-  if (!title||!url) { toast('Title and URL required','err'); return; }
-  const d = S.districts.find(x=>x.id===S.districtId);
-  if (!d) return;
-  if (!d.documents) d.documents = [];
+function openNewDocument(){['m-docTitle','m-docUrl','m-docNotes'].forEach(id=>document.getElementById(id).value='');openModal('m-document');}
+function saveDocument(){
+  const title=document.getElementById('m-docTitle').value.trim();const url=document.getElementById('m-docUrl').value.trim();
+  if(!title||!url){toast('Title and URL required','err');return;}
+  const d=S.districts.find(x=>x.id===S.districtId);if(!d)return;if(!d.documents)d.documents=[];
   d.documents.push({title,type:document.getElementById('m-docType').value,url,notes:document.getElementById('m-docNotes').value.trim(),addedAt:new Date().toISOString()});
-  saveBlobs(); closeModal('m-document'); renderDocumentsTab(); toast('Document added');
+  saveBlobs();closeModal('m-document');renderDocumentsTab();toast('Document added');
 }
-function deleteDocument(idx) {
-  if (!confirm('Remove this document?')) return;
-  const d = S.districts.find(x=>x.id===S.districtId);
-  if (d?.documents) { d.documents.splice(idx,1); saveBlobs(); renderDocumentsTab(); toast('Document removed','err'); }
+function deleteDocument(idx){
+  if(!confirm('Remove this document?'))return;
+  const d=S.districts.find(x=>x.id===S.districtId);
+  if(d?.documents){d.documents.splice(idx,1);saveBlobs();renderDocumentsTab();toast('Document removed','err');}
 }
-
-function generateReport(formId) {
-  const form = S.forms.find(f=>f.id===formId);
-  if (!form) return;
-  const clients = S.clients.filter(c=>c.district===S.districtId&&c.forms?.includes(formId));
-  const qs = (form.questions||[]).filter(q=>q.type!=='heading'&&q.type!=='divider');
-  const d = S.districts.find(x=>x.id===S.districtId);
-
-  let html = `<!DOCTYPE html><html><head><meta charset="UTF-8">
-    <title>${form.title} — Response Report</title>
-    <style>
-      body{font-family:'Segoe UI',sans-serif;max-width:900px;margin:40px auto;padding:0 20px;color:#1a1a2e}
-      h1{font-size:24px;color:#0f2240;border-bottom:3px solid #d4a843;padding-bottom:10px;margin-bottom:6px}
-      .meta{font-size:13px;color:#6b7a99;margin-bottom:28px}
-      h2{font-size:16px;font-weight:700;color:#0f2240;margin-top:28px;margin-bottom:12px;padding:8px 12px;background:#f4f7fb;border-left:4px solid #d4a843}
-      .q-block{margin-bottom:20px;padding:14px;border:1px solid #d0dbe8;border-radius:8px;background:#fff}
-      .q-text{font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:10px}
-      .response{padding:8px 12px;background:#f4f7fb;border-radius:6px;margin-bottom:6px;font-size:13px}
-      .client-name{font-size:11px;font-weight:700;color:#6b7a99;margin-bottom:3px;text-transform:uppercase;letter-spacing:.05em}
-      .no-resp{color:#b8c8d8;font-style:italic}
-      .footer{margin-top:40px;font-size:11px;color:#b8c8d8;border-top:1px solid #d0dbe8;padding-top:12px}
-    </style></head><body>
-    <h1>${form.title}</h1>
-    <div class="meta">District: ${d?.name||''} · Generated: ${new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})} · ${clients.length} respondents</div>`;
-
-  qs.forEach((q,i) => {
-    html += `<div class="q-block"><div class="q-text">${i+1}. ${q.text}</div>`;
-    clients.forEach(c => {
-      const resp = S.responses[c.u]?.[formId];
-      const ans = resp?.[q.id];
-      html += `<div class="client-name">${c.name}</div>
-        <div class="response">${ans?(Array.isArray(ans)?ans.join(', '):String(ans)):'<span class="no-resp">No response</span>'}</div>`;
-    });
-    html += `</div>`;
+function generateReport(formId){
+  const form=S.forms.find(f=>f.id===formId);if(!form)return;
+  const clients=S.clients.filter(c=>c.district===S.districtId&&c.forms?.includes(formId));
+  const qs=(form.questions||[]).filter(q=>q.type!=='heading'&&q.type!=='divider');
+  const d=S.districts.find(x=>x.id===S.districtId);
+  let html=`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${form.title} — Response Report</title>
+    <style>body{font-family:'Segoe UI',sans-serif;max-width:900px;margin:40px auto;padding:0 20px;color:#1a1a2e}h1{font-size:24px;color:#0f2240;border-bottom:3px solid #d4a843;padding-bottom:10px;margin-bottom:6px}.meta{font-size:13px;color:#6b7a99;margin-bottom:28px}.q-block{margin-bottom:20px;padding:14px;border:1px solid #d0dbe8;border-radius:8px}.q-text{font-size:13px;font-weight:700;margin-bottom:10px}.response{padding:8px 12px;background:#f4f7fb;border-radius:6px;margin-bottom:6px;font-size:13px}.client-name{font-size:11px;font-weight:700;color:#6b7a99;margin-bottom:3px;text-transform:uppercase}</style></head><body>
+    <h1>${form.title}</h1><div class="meta">District: ${d?.name||''} · Generated: ${new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})} · ${clients.length} respondents</div>`;
+  qs.forEach((q,i)=>{
+    html+=`<div class="q-block"><div class="q-text">${i+1}. ${q.text}</div>`;
+    clients.forEach(c=>{const resp=S.responses[c.u]?.[formId];const ans=resp?.[q.id];html+=`<div class="client-name">${c.name}</div><div class="response">${ans?(Array.isArray(ans)?ans.join(', '):String(ans)):'<em style="color:#b8c8d8">No response</em>'}</div>`;});
+    html+=`</div>`;
   });
-  html += `<div class="footer">Learn New Mexico LLC · Strategic Planning Platform · ${d?.name||''} · ${d?.fy||''}</div></body></html>`;
-
-  const blob = new Blob([html],{type:'text/html'});
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = form.title.replace(/\s+/g,'_')+'_Report.html';
-  a.click();
-  toast('Report generated — open in browser and print to PDF');
+  html+=`</body></html>`;
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([html],{type:'text/html'}));a.download=form.title.replace(/\s+/g,'_')+'_Report.html';a.click();
+  toast('Report generated');
+}
+function renderClientDocs(client){
+  const wrap=document.getElementById('cDocsList');if(!wrap)return;
+  const d=S.districts.find(x=>x.id===client.district);const docs=d?.documents||[];
+  if(!docs.length){wrap.innerHTML='<div style="text-align:center;padding:32px;color:var(--text3);font-size:13px">No documents shared yet</div>';return;}
+  wrap.innerHTML=docs.map(doc=>`<div class="doc-card"><div class="doc-icon"><i class="ti ${DOC_ICONS[doc.type]||'ti-paperclip'}"></i></div><div class="doc-info"><div class="doc-title">${doc.title}</div><div class="doc-meta">${doc.type}${doc.notes?' · '+doc.notes:''}</div></div><a href="${doc.url}" target="_blank" class="btn btn-teal btn-sm"><i class="ti ti-external-link"></i> Open</a></div>`).join('');
 }
 
-// Client docs view
-function renderClientDocs(client) {
-  const wrap = document.getElementById('cDocsList');
-  if (!wrap) return;
-  const d = S.districts.find(x=>x.id===client.district);
-  const docs = d?.documents||[];
-  if (!docs.length) { wrap.innerHTML='<div style="text-align:center;padding:32px;color:var(--text3);font-size:13px">No documents shared yet</div>'; return; }
-  wrap.innerHTML = docs.map(doc=>`
-    <div class="doc-card">
-      <div class="doc-icon"><i class="ti ${DOC_ICONS[doc.type]||'ti-paperclip'}"></i></div>
-      <div class="doc-info"><div class="doc-title">${doc.title}</div><div class="doc-meta">${doc.type}${doc.notes?' · '+doc.notes:''}</div></div>
-      <a href="${doc.url}" target="_blank" class="btn btn-teal btn-sm"><i class="ti ti-external-link"></i> Open</a>
-    </div>`).join('');
-}
-
-
-
 // ════════════════════════════════
-// SYSTEMS ALIGNMENT CROSSWALK
+// CROSSWALK — REBUILT
 // ════════════════════════════════
-
 function getCrosswalk() {
   const d = S.districts.find(x=>x.id===S.districtId);
-  if (!d.crosswalk) d.crosswalk = { meta:{}, systems:[] };
+  if (!d.crosswalk) d.crosswalk = { systems:[] };
   return d.crosswalk;
 }
 
-// ── VISIBILITY ──
-const VISIBILITY_TABS_EXT = ['crosswalk'];
-function renderCwVisBar() {
-  const wrap = document.getElementById('cwVisBar');
-  if (!wrap) return;
-  const vis = getVisibility(S.districtId);
-  const on = vis['crosswalk'] === true;
-  wrap.innerHTML = `<span class="vb-label"><i class="ti ti-eye"></i> Client visibility</span>
-    <div class="vis-toggle ${on?'visible':''}" onclick="setVisibility('${S.districtId}','crosswalk',${!on})">
-      <i class="ti ti-table"></i> Systems Alignment Mapping
-      <i class="ti ${on?'ti-eye':'ti-eye-off'}" style="margin-left:2px;font-size:12px"></i>
-    </div>`;
+// ── ADMIN: CLIENT ASSIGNMENT CHECKBOXES ──
+function renderCwAssignBar() {
+  const wrap = document.getElementById('cwAssignClients'); if (!wrap) return;
+  const distClients = S.clients.filter(c=>c.district===S.districtId);
+  const assigned = getCrosswalkAssignedClients(S.districtId);
+  wrap.innerHTML = '';
+  if (!distClients.length) { wrap.innerHTML='<span style="font-size:12px;color:var(--text3)">No clients in this district yet.</span>'; return; }
+  distClients.forEach(c => {
+    const isAssigned = assigned.includes(c.id);
+    const lbl = document.createElement('label');
+    lbl.className = 'cw-client-check' + (isAssigned ? ' assigned' : '');
+    lbl.innerHTML = `<input type="checkbox" ${isAssigned?'checked':''} style="accent-color:var(--teal)">
+      <span style="width:24px;height:24px;border-radius:50%;background:var(--navy);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0">${c.name.charAt(0)}</span>
+      ${c.name}`;
+    lbl.querySelector('input').addEventListener('change', function() {
+      lbl.classList.toggle('assigned', this.checked);
+      saveCwAssignment();
+    });
+    wrap.appendChild(lbl);
+  });
 }
-
-// ── META SAVE ──
-function saveCrosswalkMeta() {
-  const cw = getCrosswalk();
-  cw.meta = {
-    focusArea: document.getElementById('cw-focusArea')?.value||'',
-    academicYear: document.getElementById('cw-academicYear')?.value||'',
-    facilitator: document.getElementById('cw-facilitator')?.value||'',
-    reviewTeam: document.getElementById('cw-reviewTeam')?.value||''
-  };
+function saveCwAssignment() {
+  const distClients = S.clients.filter(c=>c.district===S.districtId);
+  const checked = [...document.querySelectorAll('#cwAssignClients input:checked')];
+  const assignedIds = checked.map((cb,i) => distClients[i]?.id).filter(Boolean);
+  setCrosswalkAssigned(S.districtId, assignedIds);
   saveBlobs();
+  toast('Assignment saved');
 }
 
 // ── ADMIN: ADD / EDIT SYSTEM ──
 let editingSystemIdx = null;
-
 function openAddSystem() {
   editingSystemIdx = null;
   document.getElementById('m-systemTitle').textContent = 'Add System / Program';
@@ -2574,105 +2101,84 @@ function openAddSystem() {
   document.getElementById('m-sysPurpose').value = '';
   openModal('m-system');
 }
-
 function openEditSystem(idx) {
-  const cw = getCrosswalk();
-  const sys = cw.systems[idx];
-  if (!sys) return;
+  const cw = getCrosswalk(); const sys = cw.systems[idx]; if (!sys) return;
   editingSystemIdx = idx;
   document.getElementById('m-systemTitle').textContent = 'Edit System';
   document.getElementById('m-sysName').value = sys.name;
   document.getElementById('m-sysPurpose').value = sys.purpose;
   openModal('m-system');
 }
-
 function saveSystem() {
-  const name = document.getElementById('m-sysName').value.trim();
-  if (!name) { toast('System name required','err'); return; }
+  const name = document.getElementById('m-sysName').value.trim(); if (!name) { toast('System name required','err'); return; }
   const cw = getCrosswalk();
-  const sys = { id: 'sys'+Date.now(), name, purpose: document.getElementById('m-sysPurpose').value.trim() };
-  if (editingSystemIdx !== null) {
-    sys.id = cw.systems[editingSystemIdx].id; // preserve id
-    cw.systems[editingSystemIdx] = sys;
-  } else {
-    cw.systems.push(sys);
-  }
-  editingSystemIdx = null;
-  saveBlobs();
-  closeModal('m-system');
-  renderCrosswalkAdmin();
+  const sys = { id: editingSystemIdx!==null ? cw.systems[editingSystemIdx].id : 'sys'+Date.now(), name, purpose: document.getElementById('m-sysPurpose').value.trim() };
+  if (editingSystemIdx !== null) cw.systems[editingSystemIdx] = sys; else cw.systems.push(sys);
+  editingSystemIdx = null; saveBlobs(); closeModal('m-system'); renderCrosswalkAdmin();
   toast(editingSystemIdx !== null ? 'System updated' : 'System added');
 }
-
 function deleteSystem(idx) {
   if (!confirm('Remove this system?')) return;
-  const cw = getCrosswalk();
-  cw.systems.splice(idx, 1);
-  saveBlobs();
-  renderCrosswalkAdmin();
-  toast('System removed','err');
+  const cw = getCrosswalk(); cw.systems.splice(idx,1); saveBlobs(); renderCrosswalkAdmin(); toast('System removed','err');
 }
 
-// ── ADMIN: RENDER ──
+// ── ADMIN: RENDER TABLE WITH AGGREGATED CLIENT RESPONSES ──
 function renderCrosswalkAdmin() {
   const cw = getCrosswalk();
-
-  // Load meta
-  if (cw.meta) {
-    ['focusArea','academicYear','facilitator','reviewTeam'].forEach(f => {
-      const el = document.getElementById('cw-'+f);
-      if (el && cw.meta[f]) el.value = cw.meta[f];
-    });
-  }
-
-  renderCwVisBar();
-
+  renderCwAssignBar();
   const systems = cw.systems||[];
   const tbody = document.getElementById('cwAdminBody');
   const empty = document.getElementById('cwAdminEmpty');
   if (!tbody) return;
-
   tbody.innerHTML = '';
   empty.style.display = systems.length ? 'none' : 'block';
-
-  // Collect all client responses for summary
   const distClients = S.clients.filter(c=>c.district===S.districtId);
-  let totalKeep=0, totalRevise=0, totalRemove=0, totalResponses=0;
+  let totalKeep=0, totalRevise=0, totalRemove=0;
 
   systems.forEach((sys, i) => {
-    // Gather responses for this system
+    // Gather all client responses for this system
     const responses = distClients.map(c => {
       const cwResp = S.responses[c.u]?.['__crosswalk__'];
-      return cwResp?.rows?.[sys.id] ? { client: c.name, ...cwResp.rows[sys.id] } : null;
+      const row = cwResp?.rows?.[sys.id];
+      return row ? { clientName: c.name, eff: row.eff||'', rec: row.rec||'', gap: row.gap||'' } : null;
     }).filter(Boolean);
 
+    // Aggregate
+    const effCounts = {}, recCounts = {};
     responses.forEach(r => {
-      if (r.rec==='Keep') totalKeep++;
-      else if (r.rec==='Revise') totalRevise++;
-      else if (r.rec==='Remove') totalRemove++;
-      if (r.eff||r.rec||r.gap) totalResponses++;
+      if(r.eff) effCounts[r.eff]=(effCounts[r.eff]||0)+1;
+      if(r.rec) { recCounts[r.rec]=(recCounts[r.rec]||0)+1;
+        if(r.rec==='Keep') totalKeep++; if(r.rec==='Revise') totalRevise++; if(r.rec==='Remove') totalRemove++;
+      }
     });
-
-    const recCounts = {};
-    responses.forEach(r => { if(r.rec) recCounts[r.rec]=(recCounts[r.rec]||0)+1; });
+    const topEff = Object.entries(effCounts).sort((a,b)=>b[1]-a[1])[0]?.[0]||'';
     const topRec = Object.entries(recCounts).sort((a,b)=>b[1]-a[1])[0]?.[0]||'';
+    // Build gap summary
+    const gaps = responses.filter(r=>r.gap).map(r=>`<div style="font-size:11px;color:var(--text2);margin-bottom:2px"><strong style="color:var(--text3)">${r.clientName}:</strong> ${r.gap}</div>`).join('');
 
     const tr = document.createElement('tr');
     tr.className = 'cw-row-admin';
     tr.innerHTML = `
-      <td style="padding:10px 14px;font-size:12px;font-weight:700;color:var(--text3);text-align:center">${i+1}</td>
-      <td style="padding:10px 14px">
+      <td style="text-align:center;font-size:12px;font-weight:700;color:var(--text3)">${i+1}</td>
+      <td>
         <div style="font-size:13px;font-weight:700;color:var(--text)">${sys.name}</div>
       </td>
-      <td style="padding:10px 14px;font-size:12px;color:var(--text2);max-width:240px">${sys.purpose||'—'}</td>
-      <td style="padding:10px 14px;text-align:center">
+      <td style="font-size:12px;color:var(--text2);max-width:180px">${sys.purpose||'—'}</td>
+      <td style="text-align:center">
         ${responses.length
-          ? `<div style="font-size:11px;color:var(--text3);margin-bottom:4px">${responses.length}/${distClients.length} responded</div>
-             ${topRec?`<span class="rec-badge ${topRec.toLowerCase()}">${topRec}</span>`:''}
-             <div style="font-size:10px;color:var(--text3);margin-top:4px">${responses.map(r=>`${r.client}: ${r.eff||'?'}`).join(' · ')}</div>`
-          : `<span style="font-size:11px;color:var(--text3)">No responses yet</span>`}
+          ? `${topEff ? `<span class="eff-chip ${topEff.toLowerCase()}">${topEff}</span>` : ''}
+             <div style="font-size:10px;color:var(--text3);margin-top:4px">${responses.length}/${distClients.length} responded</div>`
+          : `<span style="font-size:11px;color:var(--text3)">—</span>`}
       </td>
-      <td style="padding:10px 14px">
+      <td>
+        ${gaps || `<span style="font-size:11px;color:var(--text3)">No responses yet</span>`}
+      </td>
+      <td style="text-align:center">
+        ${topRec ? `<span class="rec-badge ${topRec.toLowerCase()}">${topRec}</span>
+          <div style="font-size:10px;color:var(--text3);margin-top:3px">${Object.entries(recCounts).map(([k,v])=>k+': '+v).join(' · ')}</div>`
+          : `<span style="font-size:11px;color:var(--text3)">—</span>`}
+      </td>
+      <td>
         <div style="display:flex;gap:4px">
           <button class="btn btn-ghost btn-sm" onclick="openEditSystem(${i})"><i class="ti ti-pencil"></i></button>
           <button class="btn btn-danger btn-sm" onclick="deleteSystem(${i})"><i class="ti ti-trash"></i></button>
@@ -2704,38 +2210,35 @@ function renderCrosswalkAdmin() {
         return `<div class="card" style="padding:12px 16px;margin-bottom:8px">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
             <div style="display:flex;align-items:center;gap:8px">
-              <span class="client-av" style="width:28px;height:28px;font-size:11px">${c.name.charAt(0)}</span>
+              <span style="width:28px;height:28px;border-radius:50%;background:var(--navy);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700">${c.name.charAt(0)}</span>
               <span style="font-size:13px;font-weight:600;color:var(--text)">${c.name}</span>
             </div>
             <span class="badge ${pct===100?'badge-green':pct>0?'badge-gold':'badge-gray'}">${completed}/${systems.length} rows</span>
           </div>
           <div class="prog-bar"><div class="prog-fill" style="width:${pct}%;background:${pct===100?'var(--teal)':'var(--gold)'}"></div></div>
-          ${cwResp?.notes?.themes?`<div style="font-size:11px;color:var(--text3);margin-top:8px"><strong>Notes:</strong> ${cwResp.notes.themes}</div>`:''}
         </div>`;
       }).join('');
   }
 }
 
-// ── CLIENT: RENDER ──
+// ── CLIENT: RENDER CROSSWALK ──
 function renderClientCrosswalk(client) {
   const d = S.districts.find(x=>x.id===client.district);
-  if (!d?.crosswalk?.systems?.length) {
+  const systems = d?.crosswalk?.systems||[];
+  const progressBar = document.getElementById('cwClientProgressBar');
+  const notesWrap = document.getElementById('cwClientNotes');
+  const actions = document.getElementById('cwClientActions');
+  if (progressBar) progressBar.style.display = systems.length ? 'block' : 'none';
+  if (notesWrap) notesWrap.style.display = systems.length ? 'block' : 'none';
+  if (actions) actions.style.display = systems.length ? 'flex' : 'none';
+  if (!systems.length) {
     document.getElementById('cwClientForm').innerHTML = '<div style="text-align:center;padding:32px;color:var(--text3);font-size:13px">No systems have been added by your administrator yet.</div>';
     return;
   }
-  const systems = d.crosswalk.systems;
   const existing = S.responses[client.u]?.['__crosswalk__']?.rows||{};
   const notes = S.responses[client.u]?.['__crosswalk__']?.notes||{};
-
-  // Restore notes
-  ['themes','nextSteps','stakeholders','goals'].forEach(f => {
-    const el = document.getElementById('cw-'+f);
-    if (el) el.value = notes[f]||'';
-  });
-
-  const wrap = document.getElementById('cwClientForm');
-  wrap.innerHTML = '';
-
+  ['themes','nextSteps','stakeholders','goals'].forEach(f => { const el=document.getElementById('cw-'+f); if(el) el.value=notes[f]||''; });
+  const wrap = document.getElementById('cwClientForm'); wrap.innerHTML = '';
   systems.forEach((sys, i) => {
     const saved = existing[sys.id]||{};
     const complete = !!(saved.eff||saved.rec);
@@ -2753,8 +2256,8 @@ function renderClientCrosswalk(client) {
       <div style="display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:start">
         <div>
           <div style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px">Effective?</div>
-          <div class="eff-pills">
-            ${['Yes','Partially','No'].map(v=>`<button class="eff-pill-btn ${saved.eff===v?v.toLowerCase():''}" onclick="setCwEff('${sys.id}','${v}',this,'${client.u}')">${v}</button>`).join('')}
+          <div class="eff-pills" style="display:flex;gap:4px;flex-wrap:wrap">
+            ${['Yes','Partially','No'].map(v=>`<button class="eff-pill-btn ${saved.eff===v?v.toLowerCase():''}" onclick="setCwEff('${sys.id}','${v}',this)">${v}</button>`).join('')}
           </div>
         </div>
         <div>
@@ -2764,28 +2267,22 @@ function renderClientCrosswalk(client) {
         <div>
           <div style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px">Recommendation</div>
           <div style="display:flex;flex-direction:column;gap:4px">
-            ${['Keep','Revise','Remove'].map(v=>`<button class="eff-pill-btn ${saved.rec===v?v.toLowerCase():''}" onclick="setCwRec('${sys.id}','${v}',this,'${client.u}')">${v}</button>`).join('')}
+            ${['Keep','Revise','Remove'].map(v=>`<button class="eff-pill-btn ${saved.rec===v?v.toLowerCase():''}" onclick="setCwRec('${sys.id}','${v}',this)">${v}</button>`).join('')}
           </div>
         </div>
       </div>`;
     wrap.appendChild(div);
   });
-
   updateCwClientProgress(client, systems);
 }
-
-function setCwEff(sysId, val, btn, username) {
+function setCwEff(sysId, val, btn) {
   btn.closest('.eff-pills').querySelectorAll('.eff-pill-btn').forEach(b=>{b.className='eff-pill-btn';});
-  btn.classList.add(val.toLowerCase());
-  cwClientAutoSave();
+  btn.classList.add(val.toLowerCase()); cwClientAutoSave();
 }
-
-function setCwRec(sysId, val, btn, username) {
+function setCwRec(sysId, val, btn) {
   btn.closest('div').querySelectorAll('.eff-pill-btn').forEach(b=>{b.className='eff-pill-btn';});
-  btn.classList.add(val.toLowerCase());
-  cwClientAutoSave();
+  btn.classList.add(val.toLowerCase()); cwClientAutoSave();
 }
-
 function updateCwClientProgress(client, systems) {
   const existing = S.responses[client.u]?.['__crosswalk__']?.rows||{};
   const completed = systems.filter(s=>existing[s.id]?.eff||existing[s.id]?.rec).length;
@@ -2795,96 +2292,76 @@ function updateCwClientProgress(client, systems) {
   if (prog) prog.textContent = completed+' of '+systems.length+' rows completed';
   if (fill) { fill.style.width=pct+'%'; fill.style.background=pct===100?'var(--teal)':'var(--gold)'; }
 }
-
 let cwSaveTimer = null;
-function cwClientAutoSave() {
-  clearTimeout(cwSaveTimer);
-  cwSaveTimer = setTimeout(()=>{ submitCrosswalk(false); }, 1200);
-}
-
+function cwClientAutoSave() { clearTimeout(cwSaveTimer); cwSaveTimer = setTimeout(()=>submitCrosswalk(false), 1200); }
 async function submitCrosswalk(complete=true) {
-  const client = S.clients.find(c=>c.u===S.user);
-  if (!client) return;
+  const client = S.clients.find(c=>c.u===S.user); if (!client) return;
   const d = S.districts.find(x=>x.id===client.district);
   const systems = d?.crosswalk?.systems||[];
-
   const rows = {};
   systems.forEach(sys => {
     const effBtns = document.querySelectorAll(`#cwr-${sys.id} .eff-pills .eff-pill-btn`);
-    const recBtns = document.querySelectorAll(`#cwr-${sys.id} > div:last-child > div:last-child .eff-pill-btn`);
-    let eff='', rec='';
+    let eff='';
     effBtns.forEach(b=>{ if(b.classList.contains('yes'))eff='Yes'; if(b.classList.contains('partially'))eff='Partially'; if(b.classList.contains('no'))eff='No'; });
+    const recBtns = document.querySelectorAll(`#cwr-${sys.id} > div:last-child > div:last-child .eff-pill-btn`);
+    let rec='';
     recBtns.forEach(b=>{ if(b.classList.contains('keep'))rec='Keep'; if(b.classList.contains('revise'))rec='Revise'; if(b.classList.contains('remove'))rec='Remove'; });
     const gap = document.getElementById('cwgap-'+sys.id)?.value||'';
     rows[sys.id] = {eff, rec, gap};
   });
-
   const notes = {
     themes: document.getElementById('cw-themes')?.value||'',
     nextSteps: document.getElementById('cw-nextSteps')?.value||'',
     stakeholders: document.getElementById('cw-stakeholders')?.value||'',
     goals: document.getElementById('cw-goals')?.value||''
   };
-
   const payload = { rows, notes, _complete: complete, _savedAt: new Date().toISOString() };
   if (!S.responses[client.u]) S.responses[client.u] = {};
   S.responses[client.u]['__crosswalk__'] = payload;
   await saveResponse(client.u, '__crosswalk__', payload);
-
   const status = document.getElementById('cwClientSaveStatus');
   if (status) { status.className='save-status ok'; status.innerHTML='<i class="ti ti-check"></i> '+(complete?'Submitted':'Auto-saved'); }
   updateCwClientProgress(client, systems);
-
-  // Update completion badges
   systems.forEach(sys => {
-    const row = document.getElementById('cwr-'+sys.id);
-    if (!row) return;
-    const r = rows[sys.id];
+    const row = document.getElementById('cwr-'+sys.id); if (!row) return;
+    const r = rows[sys.id]; const done = !!(r.eff||r.rec);
     const badge = row.querySelector('.badge');
-    if (badge) {
-      const done = !!(r.eff||r.rec);
-      badge.className = 'badge '+(done?'badge-green':'badge-gray');
-      badge.innerHTML = done?'<i class="ti ti-check"></i> Rated':'Pending';
-      row.className = 'cw-client-row'+(done?' complete':'');
-    }
+    if (badge) { badge.className='badge '+(done?'badge-green':'badge-gray'); badge.innerHTML=done?'<i class="ti ti-check"></i> Rated':'Pending'; row.className='cw-client-row'+(done?' complete':''); }
   });
-
   if (complete) toast('Crosswalk submitted');
 }
-
-// ── EXPORT CSV ──
 function exportCrosswalkCSV() {
   const d = S.districts.find(x=>x.id===S.districtId);
   const cw = d?.crosswalk||{};
   const systems = cw.systems||[];
   const distClients = S.clients.filter(c=>c.district===S.districtId);
-
-  let csv = `"Systems Alignment Mapping — ${d?.name||''}"
-`;
-  csv += `"Focus Area: ${cw.meta?.focusArea||''}","Academic Year: ${cw.meta?.academicYear||''}","Facilitator: ${cw.meta?.facilitator||''}"
-
-`;
-  let csvHeader = '"#","System / Program","Purpose"';
-  distClients.forEach(c => { csvHeader += ',"'+c.name+' - Effective?","'+c.name+' - Gap Areas","'+c.name+' - Recommendation"'; });
-  csv += csvHeader + '\n';
-
+  let csv = `"Systems Alignment Mapping — ${d?.name||''}"\n`;
+  let header = '"#","System / Program","Purpose"';
+  distClients.forEach(c => { header += `,"${c.name} - Effective?","${c.name} - Gap Areas","${c.name} - Recommendation"`; });
+  csv += header + '\n';
   systems.forEach((sys,i) => {
-    let row = '"'+(i+1)+'","'+sys.name.replace(/"/g,'""')+'","'+(sys.purpose||'').replace(/"/g,'""')+'"';
-    distClients.forEach(c => {
-      const r = S.responses[c.u]?.['__crosswalk__']?.rows?.[sys.id]||{};
-      row += ',"'+(r.eff||'')+'","'+(r.gap||'').replace(/"/g,'""')+'","'+(r.rec||'')+'"';
-    });
+    let row = `"${i+1}","${sys.name.replace(/"/g,'""')}","${(sys.purpose||'').replace(/"/g,'""')}"`;
+    distClients.forEach(c => { const r=S.responses[c.u]?.['__crosswalk__']?.rows?.[sys.id]||{}; row+=`,"${r.eff||''}","${(r.gap||'').replace(/"/g,'""')}","${r.rec||''}"`; });
     csv += row + '\n';
   });
-
-  const blob = new Blob([csv],{type:'text/csv'});
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = `Systems-Alignment-Mapping-${d?.short||'District'}.csv`;
-  a.click();
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download=`Systems-Alignment-Mapping-${d?.short||'District'}.csv`;a.click();
   toast('CSV exported');
 }
 
+// ════════════════════════════════
+// UTILS
+// ════════════════════════════════
+function openModal(id){ document.getElementById(id).classList.add('open'); }
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+document.addEventListener('click',e=>{if(e.target.classList.contains('modal-overlay'))e.target.classList.remove('open');});
+let toastT;
+function toast(msg,type='ok'){
+  const t=document.getElementById('toast');
+  t.className=type==='err'?'err':'ok';
+  document.getElementById('toastIcon').className=type==='err'?'ti ti-alert-triangle':'ti ti-check';
+  document.getElementById('toastMsg').textContent=msg;
+  t.classList.add('show'); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('show'),3000);
+}
 </script>
 </body>
 </html>
