@@ -649,6 +649,14 @@ input,textarea,select{font-family:'DM Sans',sans-serif}
   </div>
   <div class="client-body">
     <div class="cpanel on" id="cp-overview">
+      <!-- Assignment notification banner -->
+      <div id="cNotifBanner" style="display:none;background:linear-gradient(90deg,rgba(55,138,221,.12),rgba(55,138,221,.06));border:1.5px solid rgba(55,138,221,.3);border-radius:var(--rad);padding:13px 16px;margin-bottom:16px;display:none">
+        <div style="display:flex;align-items:flex-start;gap:10px">
+          <i class="ti ti-bell-ringing" style="font-size:18px;color:var(--blue);margin-top:1px;flex-shrink:0"></i>
+          <div id="cNotifText" style="font-size:13px;color:var(--text2);line-height:1.5;flex:1"></div>
+          <button onclick="this.closest('#cNotifBanner').style.display='none'" style="background:none;border:none;color:var(--text3);font-size:16px;cursor:pointer;padding:0;flex-shrink:0"><i class="ti ti-x"></i></button>
+        </div>
+      </div>
       <div class="client-hero">
         <h2 id="cHeroTitle">Strategic Planning Dashboard</h2>
         <p id="cHeroSub">Fiscal Year 2025–2026 · Learn New Mexico</p>
@@ -658,6 +666,8 @@ input,textarea,select{font-family:'DM Sans',sans-serif}
           <div class="hs"><div class="hs-val" id="cStatPct">0%</div><div class="hs-lbl">Progress</div></div>
         </div>
       </div>
+      <!-- Outstanding work section -->
+      <div id="cOutstandingWrap" style="margin-bottom:16px"></div>
       <div class="card">
         <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:14px">Phase Progress</div>
         <div class="gauge-row" id="cGauges"></div>
@@ -833,6 +843,10 @@ input,textarea,select{font-family:'DM Sans',sans-serif}
     </div>
     <div class="ff"><label>Google Drive Link</label><input type="url" id="m-docUrl" placeholder="https://drive.google.com/..."></div>
     <div class="ff"><label>Notes (optional)</label><input type="text" id="m-docNotes" placeholder="Brief description..."></div>
+    <div class="ff"><label>Client Access</label>
+      <div id="m-docClients" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:4px;min-height:28px"></div>
+      <div style="font-size:11px;color:var(--text3);margin-top:4px">Leave all unchecked to hide from all clients</div>
+    </div>
     <div class="modal-footer">
       <button class="btn btn-ghost" onclick="closeModal('m-document')">Cancel</button>
       <button class="btn btn-primary" onclick="saveDocument()"><i class="ti ti-check"></i> Add Document</button>
@@ -1698,11 +1712,91 @@ function cTab(name,el){
 }
 function renderClientStats(client) {
   const assigned = client.forms||[];
-  const done = assigned.filter(fid=>S.responses[client.u]?.[fid]).length;
+  const done = assigned.filter(fid=>S.responses[client.u]?.[fid]?._complete).length;
   const pct = assigned.length?Math.round((done/assigned.length)*100):0;
   document.getElementById('cStatForms').textContent = assigned.length;
   document.getElementById('cStatDone').textContent = done;
   document.getElementById('cStatPct').textContent = pct+'%';
+  renderClientOutstanding(client);
+  renderClientNotification(client);
+}
+
+function renderClientNotification(client) {
+  const banner = document.getElementById('cNotifBanner');
+  const text = document.getElementById('cNotifText');
+  if (!banner || !text) return;
+  const assigned = client.forms||[];
+  const newForms = assigned.filter(fid => !S.responses[client.u]?.[fid]);
+  const cwAssigned = getCrosswalkAssignedClients(client.district);
+  const cwNew = cwAssigned.includes(client.id) && !S.responses[client.u]?.['__crosswalk__'];
+  const items = [];
+  if (newForms.length) {
+    const names = newForms.map(fid=>S.forms.find(f=>f.id===fid)?.title||'Form').join(', ');
+    items.push(`<strong>${newForms.length} form${newForms.length>1?'s':''}</strong> awaiting your response: ${names}`);
+  }
+  if (cwNew) items.push('<strong>Systems Alignment Mapping</strong> has been assigned to you');
+  if (items.length) {
+    text.innerHTML = '<strong style="color:var(--blue2)">You have new items to complete:</strong><ul style="margin:6px 0 0 16px;padding:0">' + items.map(i=>`<li style="margin-bottom:3px">${i}</li>`).join('') + '</ul>';
+    banner.style.display = 'block';
+  } else {
+    banner.style.display = 'none';
+  }
+}
+
+function renderClientOutstanding(client) {
+  const wrap = document.getElementById('cOutstandingWrap'); if (!wrap) return;
+  const assigned = client.forms||[];
+  const outstanding = assigned.filter(fid => !S.responses[client.u]?.[fid]?._complete);
+  const cwAssigned = getCrosswalkAssignedClients(client.district);
+  const cwPending = cwAssigned.includes(client.id) && !S.responses[client.u]?.['__crosswalk__']?._complete;
+  if (!outstanding.length && !cwPending) {
+    wrap.innerHTML = outstanding.length===0&&assigned.length>0
+      ? `<div style="display:flex;align-items:center;gap:10px;padding:13px 16px;background:rgba(34,165,90,.06);border:1.5px solid rgba(34,165,90,.2);border-radius:var(--rad)"><i class="ti ti-circle-check" style="font-size:20px;color:#22a55a;flex-shrink:0"></i><span style="font-size:13px;font-weight:600;color:#1a7a40">All caught up — everything is submitted!</span></div>`
+      : '';
+    return;
+  }
+  let html = `<div style="font-size:12px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px"><i class="ti ti-list-check" style="margin-right:5px"></i>Outstanding Tasks</div>`;
+  outstanding.forEach(fid => {
+    const form = S.forms.find(f=>f.id===fid); if (!form) return;
+    const resp = S.responses[client.u]?.[fid];
+    const qs = (form.questions||[]).filter(q=>q.type!=='heading'&&q.type!=='divider');
+    const answered = resp ? qs.filter(q=>resp[q.id]!==undefined&&String(resp[q.id]).trim()!=='').length : 0;
+    const pct = qs.length ? Math.round((answered/qs.length)*100) : 0;
+    html += `<div style="display:flex;align-items:center;gap:12px;padding:11px 14px;background:var(--white);border:1.5px solid ${pct>0?'var(--gold)':'var(--bord)'};border-radius:var(--rad);margin-bottom:6px;cursor:pointer" onclick="cTab('myforms',document.querySelector('.ctab[onclick*=myforms]'))">
+      <div style="width:36px;height:36px;border-radius:9px;background:${pct>0?'rgba(212,168,67,.1)':'var(--surf)'};display:flex;align-items:center;justify-content:center;flex-shrink:0">
+        <i class="ti ${pct>0?'ti-pencil':'ti-clipboard-list'}" style="font-size:16px;color:${pct>0?'var(--gold)':'var(--text3)'}"></i>
+      </div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:13px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${form.title}</div>
+        <div style="font-size:11px;color:var(--text3);margin-top:2px">${pct>0?answered+'/'+qs.length+' questions answered — in progress':'Not started · '+qs.length+' questions'}</div>
+      </div>
+      <div style="text-align:right;flex-shrink:0">
+        <div style="font-size:13px;font-weight:700;color:${pct>0?'var(--gold)':'var(--text3)'}">${pct}%</div>
+        <div class="prog-bar" style="width:60px;margin-top:4px"><div class="prog-fill" style="width:${pct}%;background:${pct>0?'var(--gold)':'var(--bord2)'}"></div></div>
+      </div>
+    </div>`;
+  });
+  if (cwPending) {
+    const cwResp = S.responses[client.u]?.['__crosswalk__'];
+    const d = S.districts.find(x=>x.id===client.district);
+    const systems = d?.crosswalk?.systems||[];
+    const rated = cwResp ? Object.keys(cwResp.rows||{}).filter(k=>cwResp.rows[k].eff||cwResp.rows[k].rec).length : 0;
+    const pct = systems.length ? Math.round((rated/systems.length)*100) : 0;
+    html += `<div style="display:flex;align-items:center;gap:12px;padding:11px 14px;background:var(--white);border:1.5px solid ${pct>0?'var(--teal)':'var(--bord)'};border-radius:var(--rad);margin-bottom:6px;cursor:pointer" onclick="cTab('ccrosswalk',document.getElementById('ctab-crosswalk'))">
+      <div style="width:36px;height:36px;border-radius:9px;background:${pct>0?'rgba(39,168,146,.1)':'var(--surf)'};display:flex;align-items:center;justify-content:center;flex-shrink:0">
+        <i class="ti ti-table" style="font-size:16px;color:${pct>0?'var(--teal)':'var(--text3)'}"></i>
+      </div>
+      <div style="flex:1">
+        <div style="font-size:13px;font-weight:700;color:var(--text)">Systems Alignment Mapping</div>
+        <div style="font-size:11px;color:var(--text3);margin-top:2px">${pct>0?rated+'/'+systems.length+' systems rated — in progress':'Not started · '+systems.length+' systems to rate'}</div>
+      </div>
+      <div style="text-align:right;flex-shrink:0">
+        <div style="font-size:13px;font-weight:700;color:${pct>0?'var(--teal)':'var(--text3)'}">${pct}%</div>
+        <div class="prog-bar" style="width:60px;margin-top:4px"><div class="prog-fill" style="width:${pct}%;background:var(--teal)"></div></div>
+      </div>
+    </div>`;
+  }
+  wrap.innerHTML = html;
 }
 function renderClientOverview(client) {
   renderClientStats(client);
@@ -2092,7 +2186,14 @@ function renderDocumentsTab() {
   const d=S.districts.find(x=>x.id===S.districtId);
   const docs=d?.documents||[];
   if(!docs.length){wrap.innerHTML=`<div style="text-align:center;padding:32px;color:var(--text3)"><i class="ti ti-folder-off" style="font-size:28px;display:block;margin-bottom:8px;opacity:.4"></i><p style="font-size:13px">No documents linked yet.</p></div>`;}
-  else{wrap.innerHTML=docs.map((doc,i)=>`<div class="doc-card"><div class="doc-icon"><i class="ti ${DOC_ICONS[doc.type]||'ti-paperclip'}"></i></div><div class="doc-info"><div class="doc-title">${doc.title}</div><div class="doc-meta">${doc.type}${doc.notes?' · '+doc.notes:''}</div></div><div class="doc-actions"><a href="${doc.url}" target="_blank" class="btn btn-teal btn-sm"><i class="ti ti-external-link"></i> Open</a><button class="btn btn-danger btn-sm" onclick="deleteDocument(${i})"><i class="ti ti-trash"></i></button></div></div>`).join('');}
+  else{
+    const distClients=S.clients.filter(c=>c.district===S.districtId);
+    wrap.innerHTML=docs.map((doc,i)=>{
+      const access=doc.clientAccess||[];
+      const accessNames=access.length?distClients.filter(c=>access.includes(c.id)).map(c=>`<span style="font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;background:rgba(15,34,64,.07);border:1px solid var(--bord);color:var(--text2)">${c.name}</span>`).join(''):'<span style="font-size:11px;color:var(--text3)"><i class="ti ti-eye-off"></i> Hidden from all clients</span>';
+      return `<div class="doc-card"><div class="doc-icon"><i class="ti ${DOC_ICONS[doc.type]||'ti-paperclip'}"></i></div><div class="doc-info"><div class="doc-title">${doc.title}</div><div class="doc-meta">${doc.type}${doc.notes?' · '+doc.notes:''}</div><div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:5px">${accessNames}</div></div><div class="doc-actions"><a href="${doc.url}" target="_blank" class="btn btn-teal btn-sm"><i class="ti ti-external-link"></i> Open</a><button class="btn btn-ghost btn-sm" onclick="openEditDocument(${i})"><i class="ti ti-pencil"></i></button><button class="btn btn-danger btn-sm" onclick="deleteDocument(${i})"><i class="ti ti-trash"></i></button></div></div>`;
+    }).join('');
+  }
   const reportWrap=document.getElementById('generateReportsList');
   if(reportWrap){
     const forms=S.forms.filter(f=>f.district===S.districtId&&f.status==='active');
@@ -2100,13 +2201,48 @@ function renderDocumentsTab() {
     else{reportWrap.innerHTML=forms.map(f=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--surf);border-radius:8px;border:1px solid var(--bord);margin-bottom:6px"><div><div style="font-size:13px;font-weight:600;color:var(--text)">${f.title}</div><div style="font-size:11px;color:var(--text3)">${(f.questions||[]).filter(q=>q.type!=='heading'&&q.type!=='divider').length} questions</div></div><button class="btn btn-primary btn-sm" onclick="generateReport('${f.id}')"><i class="ti ti-file-export"></i> Generate Report</button></div>`).join('');}
   }
 }
-function openNewDocument(){['m-docTitle','m-docUrl','m-docNotes'].forEach(id=>document.getElementById(id).value='');openModal('m-document');}
+let editingDocIdx = null;
+function openNewDocument(){
+  editingDocIdx = null;
+  ['m-docTitle','m-docUrl','m-docNotes'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('m-docType').value = 'Strategic Plan';
+  renderDocClientAccess([]);
+  openModal('m-document');
+}
+function openEditDocument(idx){
+  editingDocIdx = idx;
+  const d=S.districts.find(x=>x.id===S.districtId); const doc=d?.documents?.[idx]; if(!doc)return;
+  document.getElementById('m-docTitle').value=doc.title||'';
+  document.getElementById('m-docType').value=doc.type||'Strategic Plan';
+  document.getElementById('m-docUrl').value=doc.url||'';
+  document.getElementById('m-docNotes').value=doc.notes||'';
+  renderDocClientAccess(doc.clientAccess||[]);
+  openModal('m-document');
+}
+function renderDocClientAccess(selected){
+  const wrap=document.getElementById('m-docClients'); if(!wrap)return;
+  const distClients=S.clients.filter(c=>c.district===S.districtId);
+  wrap.innerHTML='';
+  if(!distClients.length){wrap.innerHTML='<span style="font-size:12px;color:var(--text3)">No clients yet</span>';return;}
+  distClients.forEach(c=>{
+    const checked=selected.includes(c.id);
+    const lbl=document.createElement('label');
+    lbl.style.cssText='display:flex;align-items:center;gap:6px;padding:5px 10px;border-radius:7px;border:1.5px solid var(--bord);background:var(--surf);font-size:12px;cursor:pointer;transition:all .18s';
+    lbl.innerHTML=`<input type="checkbox" data-client-id="${c.id}" ${checked?'checked':''} style="accent-color:var(--navy)"> ${c.name}`;
+    if(checked){lbl.style.borderColor='var(--navy)';lbl.style.background='#eef2f8';}
+    lbl.querySelector('input').addEventListener('change',function(){lbl.style.borderColor=this.checked?'var(--navy)':'var(--bord)';lbl.style.background=this.checked?'#eef2f8':'var(--surf)';});
+    wrap.appendChild(lbl);
+  });
+}
 function saveDocument(){
   const title=document.getElementById('m-docTitle').value.trim();const url=document.getElementById('m-docUrl').value.trim();
   if(!title||!url){toast('Title and URL required','err');return;}
+  const clientAccess=[...document.querySelectorAll('#m-docClients input:checked')].map(cb=>cb.dataset.clientId).filter(Boolean);
   const d=S.districts.find(x=>x.id===S.districtId);if(!d)return;if(!d.documents)d.documents=[];
-  d.documents.push({title,type:document.getElementById('m-docType').value,url,notes:document.getElementById('m-docNotes').value.trim(),addedAt:new Date().toISOString()});
-  saveBlobs();closeModal('m-document');renderDocumentsTab();toast('Document added');
+  const doc={title,type:document.getElementById('m-docType').value,url,notes:document.getElementById('m-docNotes').value.trim(),clientAccess,addedAt:new Date().toISOString()};
+  if(editingDocIdx!==null){d.documents[editingDocIdx]=doc;toast('Document updated');}
+  else{d.documents.push(doc);toast('Document added');}
+  editingDocIdx=null; saveBlobs();closeModal('m-document');renderDocumentsTab();
 }
 function deleteDocument(idx){
   if(!confirm('Remove this document?'))return;
@@ -2132,8 +2268,11 @@ function generateReport(formId){
 }
 function renderClientDocs(client){
   const wrap=document.getElementById('cDocsList');if(!wrap)return;
-  const d=S.districts.find(x=>x.id===client.district);const docs=d?.documents||[];
-  if(!docs.length){wrap.innerHTML='<div style="text-align:center;padding:32px;color:var(--text3);font-size:13px">No documents shared yet</div>';return;}
+  const d=S.districts.find(x=>x.id===client.district);
+  const allDocs=d?.documents||[];
+  // Only show docs where this client is in the access list
+  const docs=allDocs.filter(doc=>!doc.clientAccess||doc.clientAccess.length===0?false:doc.clientAccess.includes(client.id));
+  if(!docs.length){wrap.innerHTML='<div style="text-align:center;padding:32px;color:var(--text3);font-size:13px">No documents shared with you yet</div>';return;}
   wrap.innerHTML=docs.map(doc=>`<div class="doc-card"><div class="doc-icon"><i class="ti ${DOC_ICONS[doc.type]||'ti-paperclip'}"></i></div><div class="doc-info"><div class="doc-title">${doc.title}</div><div class="doc-meta">${doc.type}${doc.notes?' · '+doc.notes:''}</div></div><a href="${doc.url}" target="_blank" class="btn btn-teal btn-sm"><i class="ti ti-external-link"></i> Open</a></div>`).join('');
 }
 
@@ -2144,6 +2283,22 @@ function getCrosswalk() {
   const d = S.districts.find(x=>x.id===S.districtId);
   if (!d.crosswalk) d.crosswalk = { systems:[] };
   return d.crosswalk;
+}
+
+// ── PILL BAR: color-coded count pills + proportional width bar underneath ──
+function buildPillBar(segments, responded, total) {
+  const pills = segments.filter(s=>s.count>0).map(s=>
+    `<span style="display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:20px;font-size:11px;font-weight:700;background:${s.bg};color:${s.color};border:1.5px solid ${s.color};white-space:nowrap">${s.count} ${s.label}</span>`
+  ).join('');
+  // Proportional bar
+  const barSegs = segments.map(s=>{
+    const w = responded>0 ? Math.round((s.count/responded)*100) : 0;
+    return w>0 ? `<div style="width:${w}%;background:${s.color};height:100%;opacity:0.7"></div>` : '';
+  }).join('');
+  const noResp = responded < total ? `<span style="font-size:10px;color:var(--text3)">${responded}/${total} resp.</span>` : '';
+  return `<div style="display:flex;flex-wrap:wrap;gap:3px;justify-content:center;margin-bottom:5px">${pills||'<span style="font-size:11px;color:var(--text3)">No answers</span>'}</div>
+    <div style="height:5px;border-radius:4px;overflow:hidden;background:var(--bord);display:flex;width:80px;margin:0 auto 3px">${barSegs}</div>
+    <div style="text-align:center">${noResp}</div>`;
 }
 
 // ── ADMIN: CLIENT ASSIGNMENT CHECKBOXES ──
@@ -2249,17 +2404,24 @@ function renderCrosswalkAdmin() {
       <td style="font-size:12px;color:var(--text2);max-width:180px">${sys.purpose||'—'}</td>
       <td style="text-align:center">
         ${responses.length
-          ? `${topEff ? `<span class="eff-chip ${topEff.toLowerCase()}">${topEff}</span>` : ''}
-             <div style="font-size:10px;color:var(--text3);margin-top:4px">${responses.length}/${distClients.length} responded</div>`
-          : `<span style="font-size:11px;color:var(--text3)">—</span>`}
+          ? buildPillBar([
+              {label:'Yes', count:effCounts['Yes']||0, color:'var(--teal)', bg:'rgba(39,168,146,.12)'},
+              {label:'Part.', count:effCounts['Partially']||0, color:'#8a6200', bg:'rgba(212,168,67,.15)'},
+              {label:'No', count:effCounts['No']||0, color:'#c0392b', bg:'rgba(192,57,43,.1)'}
+            ], responses.length, distClients.length)
+          : '<span style="font-size:11px;color:var(--text3)">—</span>'}
       </td>
       <td>
         ${gaps || `<span style="font-size:11px;color:var(--text3)">No responses yet</span>`}
       </td>
       <td style="text-align:center">
-        ${topRec ? `<span class="rec-badge ${topRec.toLowerCase()}">${topRec}</span>
-          <div style="font-size:10px;color:var(--text3);margin-top:3px">${Object.entries(recCounts).map(([k,v])=>k+': '+v).join(' · ')}</div>`
-          : `<span style="font-size:11px;color:var(--text3)">—</span>`}
+        ${responses.length
+          ? buildPillBar([
+              {label:'Keep', count:recCounts['Keep']||0, color:'var(--teal)', bg:'rgba(39,168,146,.12)'},
+              {label:'Revise', count:recCounts['Revise']||0, color:'#8a6200', bg:'rgba(212,168,67,.15)'},
+              {label:'Remove', count:recCounts['Remove']||0, color:'#c0392b', bg:'rgba(192,57,43,.1)'}
+            ], responses.length, distClients.length)
+          : '<span style="font-size:11px;color:var(--text3)">—</span>'}
       </td>
       <td>
         <div style="display:flex;gap:4px">
@@ -2349,7 +2511,7 @@ function renderClientCrosswalk(client) {
         </div>
         <div>
           <div style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px">Recommendation</div>
-          <div style="display:flex;flex-direction:column;gap:4px">
+          <div class="rec-pills" style="display:flex;flex-direction:column;gap:4px">
             ${['Keep','Revise','Remove'].map(v=>`<button class="eff-pill-btn ${saved.rec===v?v.toLowerCase():''}" onclick="setCwRec('${sys.id}','${v}',this)">${v}</button>`).join('')}
           </div>
         </div>
@@ -2360,11 +2522,18 @@ function renderClientCrosswalk(client) {
 }
 function setCwEff(sysId, val, btn) {
   btn.closest('.eff-pills').querySelectorAll('.eff-pill-btn').forEach(b=>{b.className='eff-pill-btn';});
-  btn.classList.add(val.toLowerCase()); cwClientAutoSave();
+  btn.classList.add(val.toLowerCase());
+  // Visual confirmation: flash a check on the row badge
+  const row = document.getElementById('cwr-'+sysId);
+  if (row) { const badge=row.querySelector('.badge'); if(badge){badge.className='badge badge-green';badge.innerHTML='<i class="ti ti-check"></i> Rated';row.className='cw-client-row complete';} }
+  cwClientAutoSave();
 }
 function setCwRec(sysId, val, btn) {
-  btn.closest('div').querySelectorAll('.eff-pill-btn').forEach(b=>{b.className='eff-pill-btn';});
-  btn.classList.add(val.toLowerCase()); cwClientAutoSave();
+  btn.closest('.rec-pills').querySelectorAll('.eff-pill-btn').forEach(b=>{b.className='eff-pill-btn';});
+  btn.classList.add(val.toLowerCase());
+  const row = document.getElementById('cwr-'+sysId);
+  if (row) { const badge=row.querySelector('.badge'); if(badge){badge.className='badge badge-green';badge.innerHTML='<i class="ti ti-check"></i> Rated';row.className='cw-client-row complete';} }
+  cwClientAutoSave();
 }
 function updateCwClientProgress(client, systems) {
   const existing = S.responses[client.u]?.['__crosswalk__']?.rows||{};
