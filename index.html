@@ -702,17 +702,7 @@ input,textarea,select{font-family:'DM Sans',sans-serif}
         <div class="prog-bar"><div class="prog-fill" id="cwClientProgFill" style="width:0%"></div></div>
       </div>
       <div id="cwClientForm"></div>
-      <div id="cwClientNotes" style="display:none">
-        <div class="card" style="margin-top:16px">
-          <div style="font-size:12px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:14px">Summary Notes</div>
-          <div class="ff"><label>Emerging Themes</label><textarea id="cw-themes" class="ci-ta" placeholder="Common patterns or themes across systems..." oninput="cwClientAutoSave()"></textarea></div>
-          <div class="ff"><label>Recommended Next Steps</label><textarea id="cw-nextSteps" class="ci-ta" placeholder="Priority actions for the planning team..." oninput="cwClientAutoSave()"></textarea></div>
-          <div class="ff-row">
-            <div class="ff"><label>Key Stakeholders</label><input type="text" id="cw-stakeholders" class="ci" placeholder="Who should be involved?" oninput="cwClientAutoSave()"></div>
-            <div class="ff"><label>Alignment Goals</label><input type="text" id="cw-goals" class="ci" placeholder="Strategic priorities to address" oninput="cwClientAutoSave()"></div>
-          </div>
-        </div>
-      </div>
+
       <div style="margin-top:16px;display:flex;justify-content:flex-end;gap:8px" id="cwClientActions" style="display:none">
         <button class="btn btn-teal" onclick="submitCrosswalk(true)"><i class="ti ti-circle-check"></i> Submit Crosswalk</button>
       </div>
@@ -2503,18 +2493,14 @@ function renderClientCrosswalk(client) {
   const d = S.districts.find(x=>x.id===client.district);
   const systems = d?.crosswalk?.systems||[];
   const progressBar = document.getElementById('cwClientProgressBar');
-  const notesWrap = document.getElementById('cwClientNotes');
   const actions = document.getElementById('cwClientActions');
   if (progressBar) progressBar.style.display = systems.length ? 'block' : 'none';
-  if (notesWrap) notesWrap.style.display = systems.length ? 'block' : 'none';
   if (actions) actions.style.display = systems.length ? 'flex' : 'none';
   if (!systems.length) {
     document.getElementById('cwClientForm').innerHTML = '<div style="text-align:center;padding:32px;color:var(--text3);font-size:13px">No systems have been added by your administrator yet.</div>';
     return;
   }
   const existing = S.responses[client.u]?.['__crosswalk__']?.rows||{};
-  const notes = S.responses[client.u]?.['__crosswalk__']?.notes||{};
-  ['themes','nextSteps','stakeholders','goals'].forEach(f => { const el=document.getElementById('cw-'+f); if(el) el.value=notes[f]||''; });
   const wrap = document.getElementById('cwClientForm'); wrap.innerHTML = '';
   systems.forEach((sys, i) => {
     const saved = existing[sys.id]||{};
@@ -2593,13 +2579,7 @@ async function submitCrosswalk(complete=true) {
     const gap = document.getElementById('cwgap-'+sys.id)?.value||'';
     rows[sys.id] = {eff, rec, gap};
   });
-  const notes = {
-    themes: document.getElementById('cw-themes')?.value||'',
-    nextSteps: document.getElementById('cw-nextSteps')?.value||'',
-    stakeholders: document.getElementById('cw-stakeholders')?.value||'',
-    goals: document.getElementById('cw-goals')?.value||''
-  };
-  const payload = { rows, notes, _complete: complete, _savedAt: new Date().toISOString() };
+  const payload = { rows, _complete: complete, _savedAt: new Date().toISOString() };
   if (!S.responses[client.u]) S.responses[client.u] = {};
   S.responses[client.u]['__crosswalk__'] = payload;
   await saveResponse(client.u, '__crosswalk__', payload);
