@@ -261,6 +261,9 @@ input,textarea,select{font-family:'DM Sans',sans-serif}
 .eff-pill-btn.yes{background:rgba(39,168,146,.12);border-color:var(--teal);color:var(--teal2)}
 .eff-pill-btn.partially{background:rgba(212,168,67,.12);border-color:var(--gold);color:#8a6200}
 .eff-pill-btn.no{background:#fff0f0;border-color:#c0392b;color:#c0392b}
+.eff-pill-btn.keep{background:rgba(39,168,146,.12);border-color:var(--teal);color:var(--teal2)}
+.eff-pill-btn.revise{background:rgba(212,168,67,.12);border-color:var(--gold);color:#8a6200}
+.eff-pill-btn.remove{background:#fff0f0;border-color:#c0392b;color:#c0392b}
 .rec-badge{display:inline-flex;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;white-space:nowrap}
 .rec-badge.keep{background:rgba(39,168,146,.1);color:var(--teal2);border:1px solid rgba(39,168,146,.2)}
 .rec-badge.revise{background:rgba(212,168,67,.12);color:#8a6200;border:1px solid rgba(212,168,67,.25)}
@@ -757,6 +760,14 @@ input,textarea,select{font-family:'DM Sans',sans-serif}
       </div>
     </div>
     <div class="ff"><label>Assign Forms</label><div id="m-cForms" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:4px;min-height:28px"></div></div>
+    <div class="ff">
+      <label>Crosswalk Access</label>
+      <label id="m-cCrosswalk" style="display:inline-flex;align-items:center;gap:8px;padding:7px 12px;border-radius:8px;border:1.5px solid var(--bord);background:var(--surf);font-size:13px;cursor:pointer;margin-top:4px;transition:all .2s">
+        <input type="checkbox" id="m-cCrosswalkCheck" style="accent-color:var(--teal);width:14px;height:14px" onchange="const lbl=document.getElementById('m-cCrosswalk');lbl.style.borderColor=this.checked?'var(--teal)':'var(--bord)';lbl.style.background=this.checked?'rgba(39,168,146,.08)':'var(--surf)'">
+        <i class="ti ti-table" style="font-size:14px;color:var(--text3)"></i>
+        Assign Systems Alignment Mapping (Crosswalk)
+      </label>
+    </div>
     <div class="modal-footer">
       <button class="btn btn-ghost" onclick="closeModal('m-client')">Cancel</button>
       <button class="btn btn-primary" onclick="saveClient()"><i class="ti ti-check"></i> Save</button>
@@ -1438,6 +1449,13 @@ function openEditClient(id) {
   const passEl = document.getElementById('m-cPass');
   if (passEl) { passEl.value=''; passEl.dataset.val=''; passEl.style.webkitTextSecurity='disc'; }
   renderClientFormAssign(c);
+  // Set crosswalk checkbox
+  const cwCheck = document.getElementById('m-cCrosswalkCheck');
+  const cwLbl = document.getElementById('m-cCrosswalk');
+  const assigned = getCrosswalkAssignedClients(c.district);
+  const isCwAssigned = assigned.includes(c.id);
+  if (cwCheck) { cwCheck.checked = isCwAssigned; }
+  if (cwLbl) { cwLbl.style.borderColor = isCwAssigned ? 'var(--teal)' : 'var(--bord)'; cwLbl.style.background = isCwAssigned ? 'rgba(39,168,146,.08)' : 'var(--surf)'; }
   openModal('m-client');
 }
 function openNewClientModal() {
@@ -1447,6 +1465,10 @@ function openNewClientModal() {
   const passEl = document.getElementById('m-cPass');
   if (passEl) { passEl.value=''; passEl.dataset.val=''; passEl.style.webkitTextSecurity='disc'; }
   renderClientFormAssign(null);
+  const cwCheck = document.getElementById('m-cCrosswalkCheck');
+  const cwLbl = document.getElementById('m-cCrosswalk');
+  if (cwCheck) cwCheck.checked = false;
+  if (cwLbl) { cwLbl.style.borderColor = 'var(--bord)'; cwLbl.style.background = 'var(--surf)'; }
   openModal('m-client');
 }
 function renderClientFormAssign(client) {
@@ -1471,17 +1493,27 @@ async function saveClient() {
   const editId = S.editingClientId;
   if (!name||!u) { toast('Name and username required','err'); return; }
   const forms = [...document.querySelectorAll('#m-cForms input:checked')].map(i=>i.value);
+  const cwChecked = document.getElementById('m-cCrosswalkCheck')?.checked || false;
+  let clientId = editId;
   if (editId) {
     const c = S.clients.find(x=>x.id===editId);
     if (c) { c.name=name; c.u=u; c.forms=forms; if(p) c.p=p; }
   } else {
     if (!p) { toast('Password required for new client','err'); return; }
     if (S.clients.find(x=>x.u===u)) { toast('Username already taken','err'); return; }
-    S.clients.push({id:'c'+Date.now(),name,u,p,district:S.districtId,forms});
+    clientId = 'c'+Date.now();
+    S.clients.push({id:clientId,name,u,p,district:S.districtId,forms});
   }
+  // Update crosswalk assignment for this district
+  const currentAssigned = getCrosswalkAssignedClients(S.districtId);
+  let newAssigned = currentAssigned.filter(id=>id!==clientId);
+  if (cwChecked) newAssigned.push(clientId);
+  setCrosswalkAssigned(S.districtId, newAssigned);
   try { await saveBlobs(); toast(editId?'Client updated':'Client added'); }
   catch(e) { toast('Save failed','err'); }
   S.editingClientId = null; closeModal('m-client'); renderClientsGrid();
+  // Re-render crosswalk assign bar if open
+  if (document.getElementById('cwAssignClients')) renderCwAssignBar();
 }
 function deleteClient(id) {
   if (!confirm('Delete client?')) return;
@@ -2555,7 +2587,7 @@ async function submitCrosswalk(complete=true) {
     const effBtns = document.querySelectorAll(`#cwr-${sys.id} .eff-pills .eff-pill-btn`);
     let eff='';
     effBtns.forEach(b=>{ if(b.classList.contains('yes'))eff='Yes'; if(b.classList.contains('partially'))eff='Partially'; if(b.classList.contains('no'))eff='No'; });
-    const recBtns = document.querySelectorAll(`#cwr-${sys.id} > div:last-child > div:last-child .eff-pill-btn`);
+    const recBtns = document.querySelectorAll(`#cwr-${sys.id} .rec-pills .eff-pill-btn`);
     let rec='';
     recBtns.forEach(b=>{ if(b.classList.contains('keep'))rec='Keep'; if(b.classList.contains('revise'))rec='Revise'; if(b.classList.contains('remove'))rec='Remove'; });
     const gap = document.getElementById('cwgap-'+sys.id)?.value||'';
