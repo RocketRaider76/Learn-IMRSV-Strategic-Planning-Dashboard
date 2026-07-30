@@ -77,7 +77,7 @@ input,textarea,select{font-family:'DM Sans',sans-serif}
 .add-district-card:hover{border-color:var(--navy);color:var(--navy);background:var(--surf)}
 .add-district-card i{font-size:28px}
 .add-district-card span{font-size:13px;font-weight:600}
-.district-tabs{display:flex;gap:0;border-bottom:1px solid var(--bord);margin-bottom:22px;background:var(--white);border-radius:var(--rad2) var(--rad2) 0 0;overflow:hidden;box-shadow:var(--shadow)}
+.district-tabs{display:flex;gap:0;border-bottom:1px solid var(--bord);margin-bottom:22px;background:var(--white);border-radius:var(--rad2) var(--rad2) 0 0;overflow:hidden;box-shadow:var(--shadow);flex-wrap:wrap}
 .dtab{padding:14px 22px;font-size:13px;font-weight:600;color:var(--text3);border:none;background:none;border-bottom:2px solid transparent;transition:all .2s;display:flex;align-items:center;gap:7px;margin-bottom:-1px}
 .dtab:hover{color:var(--text)}
 .dtab.on{color:var(--navy);border-bottom-color:var(--navy);background:var(--surf)}
@@ -296,7 +296,7 @@ input,textarea,select{font-family:'DM Sans',sans-serif}
 .client-topbar{height:54px;background:#fff;border-bottom:1px solid var(--bord);display:flex;align-items:center;padding:0 20px;gap:0;box-shadow:var(--shadow);flex-shrink:0}
 .ctb-brand{font-size:15px;font-weight:700;color:var(--navy);margin-right:28px;white-space:nowrap}
 .ctb-brand span{display:block;font-size:11px;font-weight:400;color:var(--text3)}
-.ctabs{display:flex;gap:2px}
+.ctabs{display:flex;gap:2px;flex-wrap:wrap}
 .ctab{height:54px;padding:0 16px;display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--text3);border:none;background:none;border-bottom:2px solid transparent;transition:all .2s;margin-bottom:-1px}
 .ctab:hover{color:var(--text)}
 .ctab.on{color:var(--navy);border-bottom-color:var(--navy)}
@@ -336,13 +336,21 @@ input,textarea,select{font-family:'DM Sans',sans-serif}
 #toast.show{transform:translateY(0);opacity:1}
 #toast.ok{background:var(--teal2)}
 #toast.err{background:var(--red)}
-@media(max-width:768px){
-  .districts-grid{grid-template-columns:1fr}
-  .gauge-row{grid-template-columns:repeat(3,1fr)}
-  .ff-row{grid-template-columns:1fr}
-  .builder-left{width:180px}
-  .builder-right{width:220px}
-}
+/* ── ACCREDITATION ── */
+.acc-comp-card{background:var(--white);border:1px solid var(--bord);border-radius:var(--rad2);padding:18px;margin-bottom:12px;box-shadow:var(--shadow)}
+.acc-comp-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:10px}
+.acc-comp-name{font-size:13px;font-weight:700;color:var(--text)}
+.acc-comp-level{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-top:2px}
+.acc-comp-meta{font-size:11px;color:var(--text3);margin-top:6px;line-height:1.5}
+.acc-comp-meta strong{color:var(--text2)}
+.acc-steps{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.acc-step-chip{display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:20px;border:1.5px solid var(--bord);background:var(--surf);font-size:12px;font-weight:600;color:var(--text3);cursor:pointer;transition:all .15s;user-select:none}
+.acc-step-chip.done{border-color:var(--teal);background:rgba(39,168,146,.1);color:var(--teal2)}
+.acc-step-chip.locked{opacity:.5;cursor:not-allowed}
+.acc-progress-wrap{display:flex;align-items:center;gap:10px;margin-top:10px}
+.acc-progress-wrap .prog-bar{flex:1}
+.acc-district-block{margin-bottom:22px}
+.acc-district-hdr{font-size:12px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px;display:flex;align-items:center;gap:8px}
 </style>
 </head>
 <body>
@@ -399,6 +407,7 @@ input,textarea,select{font-family:'DM Sans',sans-serif}
         <button class="dtab" onclick="dTab('meetings',this)"><i class="ti ti-calendar-event"></i> Meetings</button>
         <button class="dtab" onclick="dTab('kpis',this)"><i class="ti ti-target"></i> KPIs</button>
         <button class="dtab" onclick="dTab('crosswalk',this)"><i class="ti ti-table"></i> Crosswalk</button>
+        <button class="dtab" onclick="dTab('accreditation',this)"><i class="ti ti-certificate"></i> Accreditation</button>
         <button class="dtab" onclick="dTab('documents',this)"><i class="ti ti-folder"></i> Documents</button>
         <button class="dtab" onclick="dTab('dsettings',this)"><i class="ti ti-settings"></i> Settings</button>
       </div>
@@ -496,6 +505,26 @@ input,textarea,select{font-family:'DM Sans',sans-serif}
 
         <!-- Client response summary -->
         <div style="margin-top:16px" id="cwClientSummaryWrap"></div>
+      </div>
+
+      <!-- ACCREDITATION — NEW -->
+      <div class="district-panel" id="dp-accreditation">
+        <div class="page-hdr">
+          <div><h2>NMPED Annual Accreditation</h2><p>Track evidence submission status per component for this district</p></div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button class="btn btn-ghost btn-sm" onclick="exportAccreditationCSV()"><i class="ti ti-download"></i> Export CSV</button>
+            <button class="btn btn-primary" onclick="openAddAccComponent()"><i class="ti ti-plus"></i> Add Component</button>
+          </div>
+        </div>
+
+        <div class="cw-assign-bar" id="accAssignBar">
+          <div class="vb-label"><i class="ti ti-users"></i> Assign to Clients — only selected clients will see the Accreditation tab</div>
+          <div class="cw-assign-clients" id="accAssignClients"></div>
+        </div>
+
+        <div id="accSummaryStrip" style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px"></div>
+
+        <div id="accAdminList"></div>
       </div>
 
       <!-- DOCUMENTS -->
@@ -643,6 +672,7 @@ input,textarea,select{font-family:'DM Sans',sans-serif}
       <button class="ctab" id="ctab-meetings" style="display:none" onclick="cTab('cmeetings',this)"><i class="ti ti-calendar-event"></i> Meetings</button>
       <button class="ctab" id="ctab-kpis" style="display:none" onclick="cTab('ckpis',this)"><i class="ti ti-target"></i> KPIs</button>
       <button class="ctab" id="ctab-crosswalk" style="display:none" onclick="cTab('ccrosswalk',this)"><i class="ti ti-table"></i> Crosswalk</button>
+      <button class="ctab" id="ctab-accreditation" style="display:none" onclick="cTab('caccreditation',this)"><i class="ti ti-certificate"></i> Accreditation</button>
       <button class="ctab" id="ctab-documents" style="display:none" onclick="cTab('cdocuments',this)"><i class="ti ti-folder"></i> Documents</button>
     </div>
     <div class="ctb-right">
@@ -706,6 +736,10 @@ input,textarea,select{font-family:'DM Sans',sans-serif}
       <div style="margin-top:16px;display:flex;justify-content:flex-end;gap:8px" id="cwClientActions" style="display:none">
         <button class="btn btn-teal" onclick="submitCrosswalk(true)"><i class="ti ti-circle-check"></i> Submit Crosswalk</button>
       </div>
+    </div>
+    <div class="cpanel" id="cp-caccreditation">
+      <div class="page-hdr"><div><h2>NMPED Annual Accreditation</h2><p>Track your district's status on each required accreditation component</p></div></div>
+      <div id="accClientList"></div>
     </div>
     <div class="cpanel" id="cp-cdocuments">
       <div class="page-hdr"><div><h2>Documents</h2><p>Resources shared by your administrator</p></div></div>
@@ -825,6 +859,29 @@ input,textarea,select{font-family:'DM Sans',sans-serif}
   </div>
 </div>
 
+<div class="modal-overlay" id="m-accComponent">
+  <div class="modal" style="max-width:600px">
+    <button class="mclose" onclick="closeModal('m-accComponent')"><i class="ti ti-x"></i></button>
+    <h3 id="m-accTitle">Add Accreditation Component</h3>
+    <div class="msub">Defines a component of the NMPED annual accreditation matrix</div>
+    <div class="ff-row">
+      <div class="ff"><label>Reporting Level</label><input type="text" id="m-accLevel" placeholder="e.g. District, School, Budget entity"></div>
+      <div class="ff"><label>Component #</label><input type="text" id="m-accNum" placeholder="e.g. 1.1"></div>
+    </div>
+    <div class="ff"><label>Component Name</label><input type="text" id="m-accName" placeholder="e.g. Board training for local school board members"></div>
+    <div class="ff"><label>Who submits evidence?</label><textarea id="m-accSubmit" placeholder="Who is responsible for submitting evidence" style="min-height:56px"></textarea></div>
+    <div class="ff"><label>Who receives and evaluates evidence?</label><input type="text" id="m-accReceives" placeholder="e.g. Office of Strategic Initiatives"></div>
+    <div class="ff-row">
+      <div class="ff"><label>PED Point of Contact</label><input type="text" id="m-accPOC" placeholder="e.g. David Vincent"></div>
+      <div class="ff"><label>Contact Email</label><input type="email" id="m-accEmail" placeholder="name@ped.nm.gov"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('m-accComponent')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveAccComponent()"><i class="ti ti-check"></i> Save Component</button>
+    </div>
+  </div>
+</div>
+
 <div class="modal-overlay" id="m-document">
   <div class="modal">
     <button class="mclose" onclick="closeModal('m-document')"><i class="ti ti-x"></i></button>
@@ -891,7 +948,7 @@ const COLORS = ['#27a892','#d4a843','#378add','#7f77dd','#d85a30'];
 window.addEventListener('load', () => {
   const ls = document.getElementById('loadingScreen');
   const login = document.getElementById('loginScreen');
-  loadBlobs()
+  Promise.all([loadBlobs(), loadAccreditationBlobs()])
     .catch(e => console.warn('Config load failed:', e))
     .finally(() => {
       try {
@@ -996,8 +1053,8 @@ async function doLogin() {
     const c = S.clients.find(x => x.u === u && x.p === p);
     if (c) {
       S.role='client'; S.user=u; S.districtId=c.district;
-      // Load full config first so crosswalkAssigned is hydrated before visibility is applied
-      loadBlobs().catch(()=>{}).finally(() => {
+      // Load full config first so crosswalkAssigned/accreditationAssigned is hydrated before visibility is applied
+      Promise.all([loadBlobs(), loadAccreditationBlobs()]).catch(()=>{}).finally(() => {
         launchClient(c);
         loadMyResponses(u).then(()=>{ renderClientForms(c); renderClientProgress(c); }).catch(()=>{});
       });
@@ -1214,6 +1271,7 @@ function dTab(name, el) {
   if (name==='meetings') renderMeetingsTab();
   if (name==='kpis') renderKpisTab();
   if (name==='crosswalk') { loadAllResponses().then(renderCrosswalkAdmin).catch(renderCrosswalkAdmin); }
+  if (name==='accreditation') { renderAccreditationAdmin(); }
   if (name==='documents') renderDocumentsTab();
 }
 
@@ -1717,6 +1775,10 @@ function applyClientVisibility(client) {
   const assigned = getCrosswalkAssignedClients(client.district);
   const cwBtn = document.getElementById('ctab-crosswalk');
   if (cwBtn) cwBtn.style.display = assigned.includes(client.id) ? 'flex' : 'none';
+  // accreditation uses per-client assignment
+  const accAssigned = getAccreditationAssignedClients(client.district);
+  const accBtn = document.getElementById('ctab-accreditation');
+  if (accBtn) accBtn.style.display = accAssigned.includes(client.id) ? 'flex' : 'none';
 }
 
 function cTab(name,el){
@@ -1730,6 +1792,7 @@ function cTab(name,el){
   if (name==='cmeetings') renderClientMeetings(client);
   if (name==='ckpis') renderClientKpis(client);
   if (name==='ccrosswalk') renderClientCrosswalk(client);
+  if (name==='caccreditation') renderAccreditationClient(client);
   if (name==='cdocuments') renderClientDocs(client);
 }
 function renderClientStats(client) {
@@ -2609,6 +2672,269 @@ function exportCrosswalkCSV() {
     csv += row + '\n';
   });
   const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download=`Systems-Alignment-Mapping-${d?.short||'District'}.csv`;a.click();
+  toast('CSV exported');
+}
+
+// ════════════════════════════════
+// ACCREDITATION — NEW
+// ════════════════════════════════
+// Seed data derived from the NMPED "Annual Accreditation Procedures Points of Contact and Components" matrix
+const ACC_DEFAULT_COMPONENTS = [
+  {num:'1.1',level:'District',name:'Board training for local school board members',submitBy:'Approved training providers, including New Mexico School Boards Association and Think New Mexico, Inc.',receives:'Office of Strategic Initiatives',poc:'David Vincent',email:'david.vincent@ped.nm.gov'},
+  {num:'1.2',level:'Charter school',name:'Board training for charter school governing body members',submitBy:'Approved training providers, including Charter Schools Division and Public Charter Schools of NM, Inc.',receives:'Charter Schools Division',poc:'Missy Brown',email:'melissa.brown@ped.nm.gov'},
+  {num:'2.1',level:'LEA',name:'Financial audit',submitBy:'School districts and state-chartered charter schools',receives:'Administrative Services Division — Accounting and Auditing Bureau',poc:'Amelia "Molly" Saiz',email:'amelia.saiz@ped.nm.gov'},
+  {num:'3.1',level:'School',name:'NM School DASH Plans',submitBy:'Schools',receives:'Priority Schools Bureau',poc:'Elisabeth Peterson',email:'Elisabeth.Peterson@ped.nm.gov'},
+  {num:'3.2',level:'Budget entity',name:'Ed Plans',submitBy:'School districts, locally chartered charter schools, and state-chartered charter schools',receives:'Student Success Services Division',poc:'AnnMarie Strangio',email:'annemarie.strangio@ped.nm.gov'},
+  {num:'3.3',level:'Budget entity',name:'Operating budget',submitBy:'School districts, locally chartered charter schools, and state-chartered charter schools',receives:'School Budget Bureau',poc:'Sara Cordova',email:'sara.cordova3@ped.nm.gov'},
+  {num:'3.4',level:'Budget entity',name:'School-level expenditures',submitBy:'School districts, locally chartered charter schools, and state-chartered charter schools',receives:'School Budget Bureau',poc:'Sara Cordova',email:'sara.cordova3@ped.nm.gov'},
+  {num:'4.1',level:'District or charter school',name:'Nova data submissions',submitBy:'School staff keep SIS up to date and Nova coordinators shepherd the data using the Data Validation Dashboard, Data Adjustment Dashboard, and Nova Data Reports. This year, only attendance data submissions are evaluated for accreditation.',receives:'Information Technology (IT) Division',poc:'Alison Watt',email:'alison.watt@ped.nm.gov'},
+  {num:'5.1',level:'District or charter school',name:'Accountability data',submitBy:'Summative assessment participation is reported by test vendors; graduation validation collected by the REA Bureau; DTC training attendance collected by the Assessment Bureau.',receives:'Assessment, Research, Evaluation, and Accountability Division',poc:'David Winjum',email:'David.Winjum@ped.nm.gov'},
+  {num:'6.1',level:'School',name:'Attendance Improvement Plan',submitBy:'Schools',receives:'Safe and Healthy Schools Bureau',poc:'Angela Crespin',email:'angela.crespin@ped.nm.gov'},
+  {num:'7.1',level:'District or charter school',name:'School safety plans',submitBy:'Schools',receives:'Safe and Healthy Schools Bureau',poc:'Kimberly Montgomery',email:'kimberly.montgomery@ped.nm.gov'},
+  {num:'8.1',level:'District or charter school',name:'Next-step plans',submitBy:'Schools',receives:'College and Career Readiness Bureau',poc:'Judith Cruz',email:'judith.cruz@ped.nm.gov'},
+  {num:'9.1',level:'District or charter school',name:'Class loads and class sizes',submitBy:'School districts, locally chartered charter schools, and state-chartered charter schools',receives:'Educator Growth and Development Bureau',poc:'Birgit Maurer',email:'birgit.maurer@ped.nm.gov'},
+  {num:'9.2',level:'District or charter school',name:'Special education caseloads',submitBy:'Nova coordinators ensure that data is submitted for school districts and charter schools.',receives:'Office of Special Education',poc:'Randy Rapanut',email:'randall.rapanut@ped.nm.gov'},
+  {num:'9.3',level:'District or charter school',name:'Gifted education caseloads',submitBy:'Nova coordinators ensure that data is submitted for school districts and charter schools.',receives:'Curriculum and Instruction Division',poc:'Christopher Vian',email:'christopher.vian@ped.nm.gov'},
+  {num:'9.4',level:'School',name:'Counselor caseloads, counselor-to-student ratios, and licensure types',submitBy:'School principals',receives:'College and Career Readiness Bureau',poc:'Judith Cruz',email:'judith.cruz@ped.nm.gov'},
+  {num:'9.5',level:'District or charter school',name:'Required subject areas — high school credit-bearing classes',submitBy:'School districts and charter schools submit course enrollment and course grades data to Nova for schools with students in Grades 9-12.',receives:'College and Career Readiness Bureau',poc:'Melissa DeLaurentis',email:'melissa.delaurentis@ped.nm.gov'},
+  {num:'9.6',level:'School',name:'Required subject areas — K-8',submitBy:'School principals',receives:'Curriculum and Instruction Division',poc:'Jed Duggan',email:'jed.duggan@ped.nm.gov'},
+  {num:'10.1',level:'District or Charter School',name:'Tribal Education Status Report',submitBy:'School districts with tribal lands in their boundaries',receives:'Indian Education Division',poc:'TBD',email:''},
+  {num:'10.2',level:'District or Charter School',name:'Indian education student needs assessments',submitBy:'Historically defined Indian-impacted school districts and charter schools',receives:'Indian Education Division',poc:'TBD',email:''},
+  {num:'10.3',level:'District or Charter School',name:'Consultation with tribal entities',submitBy:'School districts and charter schools required by state law to consult',receives:'Indian Education Division',poc:'TBD',email:''}
+].map((c,i)=>({id:'acc'+(i+1), ...c}));
+
+// Default checklist steps applied to every component. "submitted" is the only step a client can self-report.
+const ACC_STEP_DEFS = [
+  {id:'submitted', label:'Evidence Submitted', clientEditable:true},
+  {id:'review', label:'Under Review', clientEditable:false},
+  {id:'approved', label:'Approved', clientEditable:false}
+];
+
+let ACC = { components: ACC_DEFAULT_COMPONENTS.slice(), status: {} };
+
+async function loadAccreditationBlobs() {
+  try {
+    const r = await fetch('/.netlify/functions/load-accreditation');
+    if (!r.ok) return;
+    const d = await r.json();
+    if (d.ok && d.accreditation) {
+      if (d.accreditation.components?.length) ACC.components = d.accreditation.components;
+      if (d.accreditation.status) ACC.status = d.accreditation.status;
+    }
+  } catch(e) { console.warn('loadAccreditationBlobs error:', e); }
+}
+async function saveAccreditationBlobs() {
+  try {
+    const res = await fetch('/.netlify/functions/save-accreditation', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ accreditation: { components: ACC.components, status: ACC.status } })
+    });
+    const data = await res.json();
+    if (!data.ok) throw new Error(data.error||'Save failed');
+  } catch(e) { console.warn('saveAccreditationBlobs error:', e); toast('Accreditation save failed','err'); }
+}
+
+function getAccreditationAssignedClients(districtId) {
+  const d = S.districts.find(x=>x.id===districtId);
+  return d?.accreditationAssigned || [];
+}
+function setAccreditationAssigned(districtId, clientIds) {
+  const d = S.districts.find(x=>x.id===districtId);
+  if (!d) return;
+  d.accreditationAssigned = clientIds;
+}
+function getAccStatus(districtId, componentId) {
+  return ACC.status?.[districtId]?.[componentId] || { steps:{}, notes:'' };
+}
+function setAccStep(districtId, componentId, stepId, val) {
+  if (!ACC.status[districtId]) ACC.status[districtId] = {};
+  if (!ACC.status[districtId][componentId]) ACC.status[districtId][componentId] = { steps:{}, notes:'' };
+  ACC.status[districtId][componentId].steps[stepId] = val;
+}
+function accComponentPct(districtId, componentId) {
+  const st = getAccStatus(districtId, componentId);
+  const done = ACC_STEP_DEFS.filter(s=>st.steps[s.id]).length;
+  return Math.round((done/ACC_STEP_DEFS.length)*100);
+}
+
+// ── ADMIN: ASSIGN BAR ──
+function renderAccAssignBar() {
+  const wrap = document.getElementById('accAssignClients'); if (!wrap) return;
+  const distClients = S.clients.filter(c=>c.district===S.districtId);
+  const assigned = getAccreditationAssignedClients(S.districtId);
+  wrap.innerHTML = '';
+  if (!distClients.length) { wrap.innerHTML='<span style="font-size:12px;color:var(--text3)">No clients in this district yet.</span>'; return; }
+  distClients.forEach(c => {
+    const isAssigned = assigned.includes(c.id);
+    const lbl = document.createElement('label');
+    lbl.className = 'cw-client-check' + (isAssigned ? ' assigned' : '');
+    lbl.innerHTML = `<input type="checkbox" data-client-id="${c.id}" ${isAssigned?'checked':''} style="accent-color:var(--teal)">
+      <span style="width:24px;height:24px;border-radius:50%;background:var(--navy);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0">${c.name.charAt(0)}</span>
+      ${c.name}`;
+    lbl.querySelector('input').addEventListener('change', function() {
+      lbl.classList.toggle('assigned', this.checked);
+      const checked = [...wrap.querySelectorAll('input:checked')].map(cb=>cb.dataset.clientId).filter(Boolean);
+      setAccreditationAssigned(S.districtId, checked);
+      saveBlobs(); toast('Assignment saved');
+    });
+    wrap.appendChild(lbl);
+  });
+}
+
+// ── ADMIN: ADD / EDIT COMPONENT ──
+let editingAccIdx = null;
+function openAddAccComponent() {
+  editingAccIdx = null;
+  document.getElementById('m-accTitle').textContent = 'Add Accreditation Component';
+  ['m-accLevel','m-accNum','m-accName','m-accSubmit','m-accReceives','m-accPOC','m-accEmail'].forEach(id=>document.getElementById(id).value='');
+  openModal('m-accComponent');
+}
+function openEditAccComponent(idx) {
+  const c = ACC.components[idx]; if (!c) return;
+  editingAccIdx = idx;
+  document.getElementById('m-accTitle').textContent = 'Edit Accreditation Component';
+  document.getElementById('m-accLevel').value = c.level||'';
+  document.getElementById('m-accNum').value = c.num||'';
+  document.getElementById('m-accName').value = c.name||'';
+  document.getElementById('m-accSubmit').value = c.submitBy||'';
+  document.getElementById('m-accReceives').value = c.receives||'';
+  document.getElementById('m-accPOC').value = c.poc||'';
+  document.getElementById('m-accEmail').value = c.email||'';
+  openModal('m-accComponent');
+}
+function saveAccComponent() {
+  const name = document.getElementById('m-accName').value.trim();
+  if (!name) { toast('Component name required','err'); return; }
+  const comp = {
+    id: editingAccIdx!==null ? ACC.components[editingAccIdx].id : 'acc'+Date.now(),
+    num: document.getElementById('m-accNum').value.trim(),
+    level: document.getElementById('m-accLevel').value.trim(),
+    name,
+    submitBy: document.getElementById('m-accSubmit').value.trim(),
+    receives: document.getElementById('m-accReceives').value.trim(),
+    poc: document.getElementById('m-accPOC').value.trim(),
+    email: document.getElementById('m-accEmail').value.trim()
+  };
+  if (editingAccIdx !== null) ACC.components[editingAccIdx] = comp; else ACC.components.push(comp);
+  editingAccIdx = null;
+  saveAccreditationBlobs(); closeModal('m-accComponent'); renderAccreditationAdmin();
+  toast('Component saved');
+}
+function deleteAccComponent(idx) {
+  if (!confirm('Remove this component? This will not delete any district status history already saved.')) return;
+  ACC.components.splice(idx,1); saveAccreditationBlobs(); renderAccreditationAdmin(); toast('Component removed','err');
+}
+
+// ── ADMIN: RENDER LIST (checklist + gauge per component for this district) ──
+function renderAccreditationAdmin() {
+  renderAccAssignBar();
+  const wrap = document.getElementById('accAdminList'); if (!wrap) return;
+  const comps = ACC.components;
+  if (!comps.length) { wrap.innerHTML = `<div style="text-align:center;padding:40px;color:var(--text3)"><i class="ti ti-certificate-off" style="font-size:28px;display:block;margin-bottom:8px;opacity:.4"></i><p style="font-size:13px">No accreditation components yet.</p></div>`; return; }
+
+  let totalPct = 0, doneCount = 0;
+  const rows = comps.map((c,i) => {
+    const pct = accComponentPct(S.districtId, c.id);
+    totalPct += pct; if (pct===100) doneCount++;
+    const st = getAccStatus(S.districtId, c.id);
+    return `<div class="acc-comp-card">
+      <div class="acc-comp-top">
+        <div>
+          <div class="acc-comp-name">${c.num?c.num+' — ':''}${c.name}</div>
+          <div class="acc-comp-level">${c.level||''}</div>
+          <div class="acc-comp-meta">
+            <strong>Submits:</strong> ${c.submitBy||'—'}<br>
+            <strong>Receives/Evaluates:</strong> ${c.receives||'—'}<br>
+            <strong>PED Contact:</strong> ${c.poc||'—'} ${c.email?`(<a href="mailto:${c.email}" style="color:var(--blue2)">${c.email}</a>)`:''}
+          </div>
+        </div>
+        <div style="display:flex;gap:4px;flex-shrink:0">
+          <button class="btn btn-ghost btn-sm" onclick="openEditAccComponent(${i})"><i class="ti ti-pencil"></i></button>
+          <button class="btn btn-danger btn-sm" onclick="deleteAccComponent(${i})"><i class="ti ti-trash"></i></button>
+        </div>
+      </div>
+      <div class="acc-steps">
+        ${ACC_STEP_DEFS.map(s=>`<div class="acc-step-chip ${st.steps[s.id]?'done':''}" onclick="toggleAccStepAdmin('${c.id}','${s.id}')"><i class="ti ${st.steps[s.id]?'ti-check':'ti-circle'}"></i> ${s.label}</div>`).join('')}
+      </div>
+      <div class="acc-progress-wrap">
+        <div class="prog-bar"><div class="prog-fill" style="width:${pct}%;background:${pct===100?'var(--teal)':'var(--gold)'}"></div></div>
+        <span style="font-size:12px;font-weight:700;color:${pct===100?'var(--teal2)':'var(--text3)'};min-width:36px">${pct}%</span>
+      </div>
+    </div>`;
+  }).join('');
+  wrap.innerHTML = rows;
+
+  const avgPct = comps.length ? Math.round(totalPct/comps.length) : 0;
+  const strip = document.getElementById('accSummaryStrip');
+  if (strip) {
+    strip.innerHTML = [
+      {num:comps.length, lbl:'Total Components', color:'var(--navy)'},
+      {num:doneCount, lbl:'Approved', color:'var(--teal)'},
+      {num:comps.length-doneCount, lbl:'Outstanding', color:'var(--gold)'},
+      {num:avgPct+'%', lbl:'Overall Progress', color:'var(--blue)'}
+    ].map(s=>`<div class="cw-stat-card"><div class="cw-stat-num" style="color:${s.color}">${s.num}</div><div class="cw-stat-lbl">${s.lbl}</div></div>`).join('');
+  }
+}
+function toggleAccStepAdmin(componentId, stepId) {
+  const st = getAccStatus(S.districtId, componentId);
+  setAccStep(S.districtId, componentId, stepId, !st.steps[stepId]);
+  saveAccreditationBlobs();
+  renderAccreditationAdmin();
+}
+
+// ── CLIENT: RENDER LIST (client can only self-report "submitted") ──
+function renderAccreditationClient(client) {
+  const wrap = document.getElementById('accClientList'); if (!wrap) return;
+  const comps = ACC.components;
+  if (!comps.length) { wrap.innerHTML = '<div style="text-align:center;padding:32px;color:var(--text3);font-size:13px">No accreditation components have been added yet.</div>'; return; }
+  wrap.innerHTML = comps.map(c => {
+    const pct = accComponentPct(client.district, c.id);
+    const st = getAccStatus(client.district, c.id);
+    return `<div class="acc-comp-card">
+      <div class="acc-comp-top">
+        <div>
+          <div class="acc-comp-name">${c.num?c.num+' — ':''}${c.name}</div>
+          <div class="acc-comp-level">${c.level||''}</div>
+          <div class="acc-comp-meta">
+            <strong>Submits:</strong> ${c.submitBy||'—'}<br>
+            <strong>PED Contact:</strong> ${c.poc||'—'} ${c.email?`(<a href="mailto:${c.email}" style="color:var(--blue2)">${c.email}</a>)`:''}
+          </div>
+        </div>
+      </div>
+      <div class="acc-steps">
+        ${ACC_STEP_DEFS.map(s=>`<div class="acc-step-chip ${st.steps[s.id]?'done':''}${s.clientEditable?'':' locked'}" ${s.clientEditable?`onclick="toggleAccStepClient('${client.district}','${c.id}','${s.id}')"`:''}><i class="ti ${st.steps[s.id]?'ti-check':(s.clientEditable?'ti-circle':'ti-lock')}"></i> ${s.label}</div>`).join('')}
+      </div>
+      <div class="acc-progress-wrap">
+        <div class="prog-bar"><div class="prog-fill" style="width:${pct}%;background:${pct===100?'var(--teal)':'var(--gold)'}"></div></div>
+        <span style="font-size:12px;font-weight:700;color:${pct===100?'var(--teal2)':'var(--text3)'};min-width:36px">${pct}%</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+function toggleAccStepClient(districtId, componentId, stepId) {
+  const stepDef = ACC_STEP_DEFS.find(s=>s.id===stepId);
+  if (!stepDef || !stepDef.clientEditable) return; // clients can only toggle "submitted"
+  const st = getAccStatus(districtId, componentId);
+  setAccStep(districtId, componentId, stepId, !st.steps[stepId]);
+  saveAccreditationBlobs();
+  const client = S.clients.find(c=>c.u===S.user);
+  if (client) renderAccreditationClient(client);
+}
+
+function exportAccreditationCSV() {
+  const d = S.districts.find(x=>x.id===S.districtId);
+  const comps = ACC.components;
+  let csv = `"NMPED Accreditation — ${d?.name||''}"\n`;
+  csv += '"#","Level","Component","Submits","Receives/Evaluates","PED Contact","Contact Email",' + ACC_STEP_DEFS.map(s=>`"${s.label}"`).join(',') + ',"% Complete"\n';
+  comps.forEach(c => {
+    const st = getAccStatus(S.districtId, c.id);
+    const pct = accComponentPct(S.districtId, c.id);
+    let row = `"${c.num||''}","${(c.level||'').replace(/"/g,'""')}","${(c.name||'').replace(/"/g,'""')}","${(c.submitBy||'').replace(/"/g,'""')}","${(c.receives||'').replace(/"/g,'""')}","${(c.poc||'').replace(/"/g,'""')}","${c.email||''}"`;
+    ACC_STEP_DEFS.forEach(s => { row += `,"${st.steps[s.id]?'Yes':'No'}"`; });
+    row += `,"${pct}%"`;
+    csv += row + '\n';
+  });
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download=`Accreditation-${d?.short||'District'}.csv`;a.click();
   toast('CSV exported');
 }
 
