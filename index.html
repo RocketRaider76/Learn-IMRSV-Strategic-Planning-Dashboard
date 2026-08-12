@@ -270,6 +270,10 @@ input,textarea,select{font-family:'DM Sans',sans-serif}
 .rec-badge.remove{background:#fff0f0;color:#c0392b;border:1px solid #f5c6cb}
 .cw-client-row{background:var(--white);border:1px solid var(--bord);border-radius:var(--rad);padding:16px;margin-bottom:10px}
 .cw-client-row.complete{border-color:var(--teal);background:rgba(39,168,146,.02)}
+.cw-client-row.locked{background:var(--surf);border-color:var(--bord)}
+.cw-client-row.locked .eff-pill-btn{cursor:not-allowed;opacity:.6}
+.cw-client-row.locked .eff-pill-btn:not(.yes):not(.partially):not(.no):not(.keep):not(.revise):not(.remove){opacity:.35}
+.eff-pill-btn:disabled{pointer-events:none}
 .cw-stat-card{background:var(--white);border:1px solid var(--bord);border-radius:var(--rad);padding:14px;text-align:center;box-shadow:var(--shadow)}
 .cw-stat-num{font-size:26px;font-weight:700;line-height:1;margin-bottom:3px}
 .cw-stat-lbl{font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:var(--text3)}
@@ -724,6 +728,17 @@ input,textarea,select{font-family:'DM Sans',sans-serif}
     </div>
     <div class="cpanel" id="cp-ccrosswalk">
       <div class="page-hdr"><div><h2>Systems Alignment Mapping</h2><p>Rate each system's effectiveness and provide recommendations</p></div></div>
+
+      <div id="cwSubmittedBanner" style="display:none;align-items:center;gap:12px;padding:16px 18px;background:rgba(39,168,146,.08);border:1.5px solid rgba(39,168,146,.35);border-radius:var(--rad2);margin-bottom:16px">
+        <div style="width:40px;height:40px;border-radius:50%;background:rgba(39,168,146,.15);border:2px solid var(--teal);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          <i class="ti ti-circle-check" style="font-size:22px;color:var(--teal2)"></i>
+        </div>
+        <div style="flex:1">
+          <div style="font-size:14px;font-weight:700;color:var(--teal2)">Crosswalk submitted</div>
+          <div style="font-size:12px;color:var(--text2);margin-top:2px" id="cwSubmittedMeta">Submitted — your responses are locked. Contact your administrator if changes are needed.</div>
+        </div>
+      </div>
+
       <div id="cwClientProgressBar" style="margin-bottom:16px;display:none">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
           <span style="font-size:12px;color:var(--text3)" id="cwClientProgress">0 of 0 rows completed</span>
@@ -733,8 +748,8 @@ input,textarea,select{font-family:'DM Sans',sans-serif}
       </div>
       <div id="cwClientForm"></div>
 
-      <div style="margin-top:16px;display:flex;justify-content:flex-end;gap:8px" id="cwClientActions" style="display:none">
-        <button class="btn btn-teal" onclick="submitCrosswalk(true)"><i class="ti ti-circle-check"></i> Submit Crosswalk</button>
+      <div style="margin-top:16px;display:none;justify-content:flex-end;gap:8px" id="cwClientActions">
+        <button class="btn btn-teal" onclick="handleSubmitCrosswalkClick()"><i class="ti ti-circle-check"></i> Submit Crosswalk</button>
       </div>
     </div>
     <div class="cpanel" id="cp-caccreditation">
@@ -2537,18 +2552,34 @@ function renderCrosswalkAdmin() {
         const rows = cwResp?.rows||{};
         const completed = Object.keys(rows).filter(k=>rows[k].eff||rows[k].rec).length;
         const pct = systems.length ? Math.round((completed/systems.length)*100) : 0;
+        const isSubmitted = !!cwResp?._complete;
         return `<div class="card" style="padding:12px 16px;margin-bottom:8px">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;gap:10px">
             <div style="display:flex;align-items:center;gap:8px">
               <span style="width:28px;height:28px;border-radius:50%;background:var(--navy);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700">${c.name.charAt(0)}</span>
               <span style="font-size:13px;font-weight:600;color:var(--text)">${c.name}</span>
             </div>
-            <span class="badge ${pct===100?'badge-green':pct>0?'badge-gold':'badge-gray'}">${completed}/${systems.length} rows</span>
+            <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+              <span class="badge ${isSubmitted?'badge-green':pct>0?'badge-gold':'badge-gray'}">${isSubmitted?'Submitted':completed+'/'+systems.length+' rows'}</span>
+              ${isSubmitted?`<button class="btn btn-ghost btn-sm" onclick="reopenCrosswalkForClient('${c.id}')" title="Unlock so the client can edit again"><i class="ti ti-lock-open"></i> Reopen</button>`:''}
+            </div>
           </div>
           <div class="prog-bar"><div class="prog-fill" style="width:${pct}%;background:${pct===100?'var(--teal)':'var(--gold)'}"></div></div>
+          ${isSubmitted&&cwResp._savedAt?`<div style="font-size:10px;color:var(--text3);margin-top:5px">Submitted ${new Date(cwResp._savedAt).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</div>`:''}
         </div>`;
       }).join('');
   }
+}
+
+// Admin: unlock a client's submitted crosswalk so they can edit and resubmit
+async function reopenCrosswalkForClient(clientId) {
+  const client = S.clients.find(c=>c.id===clientId); if (!client) return;
+  const resp = S.responses[client.u]?.['__crosswalk__'];
+  if (!resp) return;
+  resp._complete = false;
+  await saveResponse(client.u, '__crosswalk__', resp);
+  toast('Crosswalk reopened for '+client.name);
+  renderCrosswalkAdmin();
 }
 
 // ── CLIENT: RENDER CROSSWALK ──
@@ -2557,19 +2588,34 @@ function renderClientCrosswalk(client) {
   const systems = d?.crosswalk?.systems||[];
   const progressBar = document.getElementById('cwClientProgressBar');
   const actions = document.getElementById('cwClientActions');
-  if (progressBar) progressBar.style.display = systems.length ? 'block' : 'none';
-  if (actions) actions.style.display = systems.length ? 'flex' : 'none';
+  const banner = document.getElementById('cwSubmittedBanner');
   if (!systems.length) {
+    if (progressBar) progressBar.style.display = 'none';
+    if (actions) actions.style.display = 'none';
+    if (banner) banner.style.display = 'none';
     document.getElementById('cwClientForm').innerHTML = '<div style="text-align:center;padding:32px;color:var(--text3);font-size:13px">No systems have been added by your administrator yet.</div>';
     return;
   }
-  const existing = S.responses[client.u]?.['__crosswalk__']?.rows||{};
+  const cwResp = S.responses[client.u]?.['__crosswalk__'];
+  const existing = cwResp?.rows||{};
+  const locked = !!cwResp?._complete;
+
+  if (progressBar) progressBar.style.display = locked ? 'none' : 'block';
+  if (actions) actions.style.display = locked ? 'none' : 'flex';
+  if (banner) {
+    banner.style.display = locked ? 'flex' : 'none';
+    if (locked) {
+      const meta = document.getElementById('cwSubmittedMeta');
+      if (meta) meta.textContent = 'Submitted' + (cwResp._savedAt ? ' on ' + new Date(cwResp._savedAt).toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'}) : '') + ' — your responses are locked. Contact your administrator if changes are needed.';
+    }
+  }
+
   const wrap = document.getElementById('cwClientForm'); wrap.innerHTML = '';
   systems.forEach((sys, i) => {
     const saved = existing[sys.id]||{};
     const complete = !!(saved.eff||saved.rec);
     const div = document.createElement('div');
-    div.className = 'cw-client-row'+(complete?' complete':'');
+    div.className = 'cw-client-row'+(complete?' complete':'')+(locked?' locked':'');
     div.id = 'cwr-'+sys.id;
     div.innerHTML = `
       <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:12px">
@@ -2577,23 +2623,23 @@ function renderClientCrosswalk(client) {
           <div style="font-size:13px;font-weight:700;color:var(--text)">${i+1}. ${sys.name}</div>
           ${sys.purpose?`<div style="font-size:12px;color:var(--text3);margin-top:2px">${sys.purpose}</div>`:''}
         </div>
-        ${complete?`<span class="badge badge-green"><i class="ti ti-check"></i> Rated</span>`:'<span class="badge badge-gray">Pending</span>'}
+        ${locked?`<span class="badge badge-blue"><i class="ti ti-lock"></i> Locked</span>`:complete?`<span class="badge badge-green"><i class="ti ti-check"></i> Rated</span>`:'<span class="badge badge-gray">Pending</span>'}
       </div>
       <div style="display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:start">
         <div>
           <div style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px">Effective?</div>
           <div class="eff-pills" style="display:flex;gap:4px;flex-wrap:wrap">
-            ${['Yes','Partially','No'].map(v=>`<button class="eff-pill-btn ${saved.eff===v?v.toLowerCase():''}" onclick="setCwEff('${sys.id}','${v}',this)">${v}</button>`).join('')}
+            ${['Yes','Partially','No'].map(v=>`<button class="eff-pill-btn ${saved.eff===v?v.toLowerCase():''}" ${locked?'disabled':''} onclick="setCwEff('${sys.id}','${v}',this)">${v}</button>`).join('')}
           </div>
         </div>
         <div>
           <div style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px">Gap Areas</div>
-          <textarea id="cwgap-${sys.id}" placeholder="What is missing, broken, or duplicated?" style="width:100%;min-height:56px;padding:7px 10px;border-radius:7px;border:1.5px solid var(--bord);background:var(--surf);font-size:12px;font-family:inherit;resize:vertical;outline:none" oninput="cwClientAutoSave()" onfocus="this.style.borderColor='var(--teal)'" onblur="this.style.borderColor='var(--bord)'">${saved.gap||''}</textarea>
+          <textarea id="cwgap-${sys.id}" placeholder="What is missing, broken, or duplicated?" ${locked?'disabled':''} style="width:100%;min-height:56px;padding:7px 10px;border-radius:7px;border:1.5px solid var(--bord);background:${locked?'var(--bg)':'var(--surf)'};font-size:12px;font-family:inherit;resize:vertical;outline:none" oninput="cwClientAutoSave()" onfocus="this.style.borderColor='var(--teal)'" onblur="this.style.borderColor='var(--bord)'">${saved.gap||''}</textarea>
         </div>
         <div>
           <div style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px">Recommendation</div>
           <div class="rec-pills" style="display:flex;flex-direction:column;gap:4px">
-            ${['Keep','Revise','Remove'].map(v=>`<button class="eff-pill-btn ${saved.rec===v?v.toLowerCase():''}" onclick="setCwRec('${sys.id}','${v}',this)">${v}</button>`).join('')}
+            ${['Keep','Revise','Remove'].map(v=>`<button class="eff-pill-btn ${saved.rec===v?v.toLowerCase():''}" ${locked?'disabled':''} onclick="setCwRec('${sys.id}','${v}',this)">${v}</button>`).join('')}
           </div>
         </div>
       </div>`;
@@ -2602,6 +2648,7 @@ function renderClientCrosswalk(client) {
   updateCwClientProgress(client, systems);
 }
 function setCwEff(sysId, val, btn) {
+  if (btn.disabled) return;
   btn.closest('.eff-pills').querySelectorAll('.eff-pill-btn').forEach(b=>{b.className='eff-pill-btn';});
   btn.classList.add(val.toLowerCase());
   // Visual confirmation: flash a check on the row badge
@@ -2610,6 +2657,7 @@ function setCwEff(sysId, val, btn) {
   cwClientAutoSave();
 }
 function setCwRec(sysId, val, btn) {
+  if (btn.disabled) return;
   btn.closest('.rec-pills').querySelectorAll('.eff-pill-btn').forEach(b=>{b.className='eff-pill-btn';});
   btn.classList.add(val.toLowerCase());
   const row = document.getElementById('cwr-'+sysId);
@@ -2626,9 +2674,28 @@ function updateCwClientProgress(client, systems) {
   if (fill) { fill.style.width=pct+'%'; fill.style.background=pct===100?'var(--teal)':'var(--gold)'; }
 }
 let cwSaveTimer = null;
-function cwClientAutoSave() { clearTimeout(cwSaveTimer); cwSaveTimer = setTimeout(()=>submitCrosswalk(false), 1200); }
+function cwClientAutoSave() {
+  // Never autosave over a locked/submitted crosswalk
+  const client = S.clients.find(c=>c.u===S.user);
+  if (client && S.responses[client.u]?.['__crosswalk__']?._complete) return;
+  clearTimeout(cwSaveTimer); cwSaveTimer = setTimeout(()=>submitCrosswalk(false), 1200);
+}
+// Manual submit button handler — confirms if not every row has been rated yet
+function handleSubmitCrosswalkClick() {
+  const client = S.clients.find(c=>c.u===S.user); if (!client) return;
+  const d = S.districts.find(x=>x.id===client.district);
+  const systems = d?.crosswalk?.systems||[];
+  const existing = S.responses[client.u]?.['__crosswalk__']?.rows||{};
+  const completed = systems.filter(s=>existing[s.id]?.eff||existing[s.id]?.rec).length;
+  if (completed < systems.length) {
+    if (!confirm(`You've rated ${completed} of ${systems.length} systems. Submit anyway? Once submitted you won't be able to make further edits unless your administrator reopens it.`)) return;
+  }
+  submitCrosswalk(true);
+}
 async function submitCrosswalk(complete=true) {
   const client = S.clients.find(c=>c.u===S.user); if (!client) return;
+  // Guard: never let a stale autosave timer overwrite an already-submitted crosswalk
+  if (!complete && S.responses[client.u]?.['__crosswalk__']?._complete) return;
   const d = S.districts.find(x=>x.id===client.district);
   const systems = d?.crosswalk?.systems||[];
   const rows = {};
@@ -2648,14 +2715,19 @@ async function submitCrosswalk(complete=true) {
   await saveResponse(client.u, '__crosswalk__', payload);
   const status = document.getElementById('cwClientSaveStatus');
   if (status) { status.className='save-status ok'; status.innerHTML='<i class="ti ti-check"></i> '+(complete?'Submitted':'Auto-saved'); }
-  updateCwClientProgress(client, systems);
-  systems.forEach(sys => {
-    const row = document.getElementById('cwr-'+sys.id); if (!row) return;
-    const r = rows[sys.id]; const done = !!(r.eff||r.rec);
-    const badge = row.querySelector('.badge');
-    if (badge) { badge.className='badge '+(done?'badge-green':'badge-gray'); badge.innerHTML=done?'<i class="ti ti-check"></i> Rated':'Pending'; row.className='cw-client-row'+(done?' complete':''); }
-  });
-  if (complete) toast('Crosswalk submitted');
+  if (complete) {
+    // Re-render into the locked/banner state
+    renderClientCrosswalk(client);
+    toast('Crosswalk submitted');
+  } else {
+    updateCwClientProgress(client, systems);
+    systems.forEach(sys => {
+      const row = document.getElementById('cwr-'+sys.id); if (!row) return;
+      const r = rows[sys.id]; const done = !!(r.eff||r.rec);
+      const badge = row.querySelector('.badge');
+      if (badge) { badge.className='badge '+(done?'badge-green':'badge-gray'); badge.innerHTML=done?'<i class="ti ti-check"></i> Rated':'Pending'; row.className='cw-client-row'+(done?' complete':''); }
+    });
+  }
 }
 function exportCrosswalkCSV() {
   const d = S.districts.find(x=>x.id===S.districtId);
