@@ -1068,10 +1068,10 @@ async function doLogin() {
     const c = S.clients.find(x => x.u === u && x.p === p);
     if (c) {
       S.role='client'; S.user=u; S.districtId=c.district;
-      // Load full config first so crosswalkAssigned/accreditationAssigned is hydrated before visibility is applied
-      Promise.all([loadBlobs(), loadAccreditationBlobs()]).catch(()=>{}).finally(() => {
+      // Load full config + district-wide response data first so gauges (which include nudge + district totals) render correctly
+      Promise.all([loadBlobs(), loadAccreditationBlobs(), loadAllResponses()]).catch(()=>{}).finally(() => {
         launchClient(c);
-        loadMyResponses(u).then(()=>{ renderClientForms(c); renderClientProgress(c); }).catch(()=>{});
+        loadMyResponses(u).then(()=>{ renderClientForms(c); renderClientProgress(c); renderClientGauges(); }).catch(()=>{});
       });
     } else {
       err.textContent = 'Invalid client credentials.';
@@ -1099,10 +1099,12 @@ async function launchClientSilent(client) {
   const heroTitle = document.getElementById('cHeroTitle'); if(heroTitle) heroTitle.textContent = d?.name||'Strategic Planning Dashboard';
   const heroSub = document.getElementById('cHeroSub'); if(heroSub) heroSub.textContent = 'Fiscal Year '+(d?.fy||'2025-2026')+' · Learn New Mexico';
   try { await loadMyResponses(client.u); } catch(e) {}
+  try { await loadAllResponses(); } catch(e) {}
   applyClientVisibility(client);
   renderClientOverview(client);
   renderClientForms(client);
   renderClientProgress(client);
+  startClientPolling(client);
 }
 function togglePassVis() {
   const el = document.getElementById('m-cPass');
@@ -1115,6 +1117,7 @@ function togglePassVis() {
 function signOut() {
   S.role=null; S.user=null; S.districtId=null;
   localStorage.removeItem('lnm_session');
+  stopClientPolling();
   ['adminApp','clientApp'].forEach(id=>document.getElementById(id).classList.remove('show'));
   const ls = document.getElementById('loginScreen');
   ls.style.display = 'flex'; ls.classList.add('show');
@@ -1122,7 +1125,26 @@ function signOut() {
   document.getElementById('lPass').value='';
 }
 
-// ════════════════════════════════
+// ── CLIENT LIVE POLLING (phase-progress indicators only) ──
+// No websocket/push layer in this stack, so "real time" is approximated with light polling.
+let clientPollTimer = null;
+function startClientPolling(client) {
+  stopClientPolling();
+  clientPollTimer = setInterval(async () => {
+    if (S.role !== 'client') { stopClientPolling(); return; }
+    if (document.hidden) return; // skip fetches while tab is in the background
+    try {
+      await Promise.all([loadBlobs(), loadAllResponses()]);
+      const c = S.clients.find(x => x.u === S.user);
+      if (c) renderClientOverview(c);
+    } catch (e) { /* silent — next cycle will retry */ }
+  }, 60000);
+}
+function stopClientPolling() {
+  if (clientPollTimer) { clearInterval(clientPollTimer); clientPollTimer = null; }
+}
+
+
 // ADMIN LAUNCH
 // ════════════════════════════════
 function launchAdmin() {
@@ -1752,6 +1774,7 @@ async function launchClient(client) {
   document.getElementById('cHeroSub').textContent = `Fiscal Year ${d?.fy||'2025-2026'} · Learn New Mexico`;
   applyClientVisibility(client);
   renderClientStats(client); renderClientGauges(); renderClientForms(client); renderClientProgress(client);
+  startClientPolling(client);
 }
 
 // ── CLIENT VISIBILITY (per-client crosswalk assignment) ──
@@ -1903,7 +1926,8 @@ function renderClientOverview(client) {
   const wrap = document.getElementById('cGauges'); if (!wrap) return;
   wrap.innerHTML = '';
   S.phases.forEach((ph,i) => {
-    const pct = calcPhaseProgressClient(client, ph.id);
+    const ownPct = calcPhaseProgressClient(client, ph.id);
+    const district = calcPhaseProgressAdmin(client.district, ph.id); // {auto, nudge, total} — same number admin sees, nudge included
     const color = COLORS[i % COLORS.length];
     // Count their assigned forms in this phase for the sub-label
     const phaseForms = S.forms.filter(f=>f.district===client.district&&f.phase===ph.id&&f.status==='active'&&client.forms?.includes(f.id));
@@ -1914,10 +1938,14 @@ function renderClientOverview(client) {
       return a+(resp?qs.filter(q=>resp[q.id]!==undefined&&String(resp[q.id]).trim()!=='').length:0);
     },0);
     const cell = document.createElement('div'); cell.className = 'gcell';
-    cell.innerHTML = `${gaugeArc(pct,color,64)}
-      <div class="gpct" style="color:${color}">${pct}%</div>
+    cell.innerHTML = `${gaugeArcDual(district.auto, district.total, color, 64)}
+      <div class="gpct" style="color:${color}">${district.total}%</div>
       <div class="glbl">${ph.name}</div>
-      <div class="gsub">${phaseForms.length ? answeredQs+'/'+totalQs+' answers' : pct>=100?'Complete':pct>0?'In progress':'Upcoming'}</div>`;
+      <div class="gsub">District total${district.nudge>0?` <span style="color:${color}">(+${district.nudge}% nudge)</span>`:''}</div>
+      <div style="font-size:10px;color:var(--text3);margin-top:5px;padding-top:5px;border-top:1px dashed var(--bord)">
+        Your forms: <strong style="color:${color}">${ownPct}%</strong>
+        ${phaseForms.length ? `<div style="margin-top:1px">${answeredQs}/${totalQs} answers</div>` : ''}
+      </div>`;
     wrap.appendChild(cell);
   });
 }
