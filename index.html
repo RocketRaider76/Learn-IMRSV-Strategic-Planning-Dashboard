@@ -1136,7 +1136,7 @@ function startClientPolling(client) {
     try {
       await Promise.all([loadBlobs(), loadAllResponses()]);
       const c = S.clients.find(x => x.u === S.user);
-      if (c) renderClientOverview(c);
+      if (c) { renderClientOverview(c); applyClientVisibility(c); }
     } catch (e) { /* silent — next cycle will retry */ }
   }, 60000);
 }
@@ -1804,11 +1804,16 @@ function setVisibility(districtId, tab, val) {
 // Apply which tabs a client sees
 function applyClientVisibility(client) {
   const vis = getVisibility(client.district);
-  // meetings, kpis, documents use the old toggle
-  ['meetings','kpis','documents'].forEach(t => {
+  // meetings, kpis use the old district-wide toggle
+  ['meetings','kpis'].forEach(t => {
     const btn = document.getElementById('ctab-'+t);
     if (btn) btn.style.display = vis[t] ? 'flex' : 'none';
   });
+  // documents: show the tab if this client has at least one document assigned to them
+  // (falls back to the legacy district-wide toggle too, so nothing that worked before breaks)
+  const hasAssignedDocs = clientHasAssignedDocuments(client);
+  const docBtn = document.getElementById('ctab-documents');
+  if (docBtn) docBtn.style.display = (hasAssignedDocs || vis.documents) ? 'flex' : 'none';
   // crosswalk uses per-client assignment
   const assigned = getCrosswalkAssignedClients(client.district);
   const cwBtn = document.getElementById('ctab-crosswalk');
@@ -1817,6 +1822,11 @@ function applyClientVisibility(client) {
   const accAssigned = getAccreditationAssignedClients(client.district);
   const accBtn = document.getElementById('ctab-accreditation');
   if (accBtn) accBtn.style.display = accAssigned.includes(client.id) ? 'flex' : 'none';
+}
+function clientHasAssignedDocuments(client) {
+  const d = S.districts.find(x=>x.id===client.district);
+  const docs = d?.documents||[];
+  return docs.some(doc => (doc.clientAccess||[]).includes(client.id));
 }
 
 function cTab(name,el){
