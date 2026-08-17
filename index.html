@@ -952,10 +952,49 @@ const S = {
   ],
   responses: {},
   phaseProgress: {},
+  seededForms: [],
   currentFormId: null,
   loginTab: 'admin'
 };
 const COLORS = ['#27a892','#d4a843','#378add','#7f77dd','#d85a30'];
+
+// ════════════════════════════════
+// SEED FORMS — built-in discovery instruments, added once per district
+// then owned/editable in the builder like any other form.
+// ════════════════════════════════
+const SEED_FORMS = [{
+  id: 'f-pmsd-board-survey',
+  title: 'PMSD Board of Education Discovery Questions',
+  district: 'pmsd',
+  phase: 'p1',
+  status: 'active',
+  createdAt: '2026-08-17T00:00:00.000Z',
+  desc: [
+    "As part of Learn New Mexico's strategic planning engagement with Portales Municipal School District, we are conducting a discovery process to build a strategic plan grounded in the district's current reality. This process unfolds in two phases: Phase I gathered foundational context from district and school leadership — including student achievement data, instructional systems, professional learning structures, and support programs (SPED, MLSS, ELD, attendance, and federal programs). Phase II builds on that foundation with a deeper focus on instruction, examining how frameworks, initiatives, and accountability structures function together — or in some cases, work against each other — across the district.",
+    "Your perspective as a Board member is essential to this process. While teachers and school-level staff can speak to day-to-day implementation, the Board holds a distinct vantage point: you approve the purchase of the instructional materials, programs, and services that support district initiatives, and you are accountable for district-wide outcomes to the community and to NMPED. The questions below are designed to surface what the Board has approved for purchase, how it is currently tracking progress, and where governance-level judgment can help identify what should be preserved, strengthened, or reconsidered in the new strategic plan.",
+    "Your candid input will directly inform the priorities and structure of PMSD's strategic plan."
+  ].join('\n\n'),
+  questions: [
+    { id:'q-board-hdr', type:'heading', text:'Discovery Questions', helper:'' },
+    { id:'q-board-1', type:'textarea', required:false, helper:'',
+      text:"What instructional frameworks, curricula, or programs has the Board approved for purchase district-wide, and how confident is the Board that these are being implemented consistently across all schools?" },
+    { id:'q-board-2', type:'textarea', required:false, helper:'',
+      text:"Which district-wide initiatives is the Board currently monitoring, and what accountability structures (reporting cadence, metrics, board presentations) are in place to track the materials, programs, or services approved for purchase in support of them?" },
+    { id:'q-board-3', type:'textarea', required:false, helper:'',
+      text:"What professional development programs or services has the Board approved for purchase, and how does the Board evaluate whether that spending is producing measurable instructional gains?" },
+    { id:'q-board-4', type:'textarea', required:false, helper:'',
+      text:"Where has the Board observed conflicting, overlapping, or duplicative purchased programs or materials competing for the same instructional time, staff capacity, or funding?" },
+    { id:'q-board-5', type:'textarea', required:false, helper:'',
+      text:"Which currently purchased PMSD frameworks, curricula, or programs does the Board consider proven and worth renewing or expanding in the new strategic plan, versus which are unproven or unaligned with Board priorities?" },
+    { id:'q-board-6', type:'textarea', required:false,
+      text:"Are there currently purchased programs or materials in the budget that the Board suspects are consuming resources without demonstrated impact on student outcomes?",
+      helper:"If so, which, and what evidence would the Board need to make that determination?" },
+    { id:'q-board-7', type:'textarea', required:false, helper:'',
+      text:"What data systems has the Board approved for purchase to track student outcomes district-wide, how often is that data reported to the Board, and is that reporting sufficient for Board-level decision-making and NMPED accountability?" },
+    { id:'q-board-8', type:'textarea', required:false, helper:'',
+      text:"What previous strategic plans or improvement efforts has the Board overseen — including the major purchases made to support them — and in the Board's assessment, what worked, what didn't, and what should inform the plan going forward?" }
+  ]
+}];
 
 // ════════════════════════════════
 // INIT
@@ -964,6 +1003,7 @@ window.addEventListener('load', () => {
   const ls = document.getElementById('loadingScreen');
   const login = document.getElementById('loginScreen');
   Promise.all([loadBlobs(), loadAccreditationBlobs()])
+    .then(() => applySeedForms())
     .catch(e => console.warn('Config load failed:', e))
     .finally(() => {
       try {
@@ -1010,10 +1050,24 @@ async function loadBlobs() {
     if (c.forms) S.forms = c.forms;
     if (c.clients?.length) S.clients = c.clients;
     if (c.phaseProgress) S.phaseProgress = c.phaseProgress;
+    if (c.seededForms) S.seededForms = c.seededForms;
   }
 }
+// Inject any built-in seed form the district hasn't received yet. Ids are recorded
+// in config so an admin who deletes a seeded form doesn't get it back on next load.
+async function applySeedForms() {
+  let changed = false;
+  SEED_FORMS.forEach(seed => {
+    if (S.seededForms.includes(seed.id)) return;
+    S.seededForms.push(seed.id);
+    if (!S.forms.some(f => f.id === seed.id)) S.forms.push(JSON.parse(JSON.stringify(seed)));
+    changed = true;
+  });
+  if (!changed) return;
+  try { await saveBlobs(); } catch (e) { console.warn('Seed form save failed:', e); }
+}
 async function saveBlobs() {
-  const payload = {config:{adminCreds:S.adminCreds,districts:S.districts,phases:S.phases,forms:S.forms,clients:S.clients,phaseProgress:S.phaseProgress}};
+  const payload = {config:{adminCreds:S.adminCreds,districts:S.districts,phases:S.phases,forms:S.forms,clients:S.clients,phaseProgress:S.phaseProgress,seededForms:S.seededForms}};
   const res = await fetch('/.netlify/functions/save-config', {
     method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload)
   });
@@ -1980,6 +2034,7 @@ function renderClientForms(client) {
       <span class="badge ${pct===100?'badge-green':pct>0?'badge-gold':'badge-gray'}">${answered}/${realQs.length} answered</span>
     </div>
     <div class="prog-bar" style="margin-bottom:18px"><div class="prog-fill" style="width:${pct}%;background:${pct===100?'var(--teal)':'var(--gold)'}"></div></div>
+    ${form.desc?`<div class="cfw-desc" style="white-space:pre-line;font-size:13px;line-height:1.6;color:var(--text2);background:var(--surf);border:1px solid var(--bord);border-left:3px solid var(--gold);border-radius:var(--rad);padding:14px 16px;margin-bottom:18px">${form.desc}</div>`:''}
     <div id="cqwrap-${fid}"></div>
     <div class="save-bar">
       <div class="save-status" id="css-${fid}"><i class="ti ti-clock"></i> Unsaved</div>
@@ -2097,6 +2152,7 @@ function reopenForm(formId,username){
     <span class="badge badge-gold">${answered}/${realQs.length} answered</span>
   </div>
   <div class="prog-bar" style="margin-bottom:18px"><div class="prog-fill" style="width:${pct}%;background:var(--gold)"></div></div>
+  ${form.desc?`<div class="cfw-desc" style="white-space:pre-line;font-size:13px;line-height:1.6;color:var(--text2);background:var(--surf);border:1px solid var(--bord);border-left:3px solid var(--gold);border-radius:var(--rad);padding:14px 16px;margin-bottom:18px">${form.desc}</div>`:''}
   <div id="cqwrap-${formId}"></div>
   <div class="save-bar">
     <div class="save-status" id="css-${formId}"><i class="ti ti-clock"></i> Unsaved</div>
